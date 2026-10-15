@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* ===== BEKİR-EREN Tema ===== */
+
+@theme {
+  /* Arka plan */
+  --color-bg-primary: #0f0a2e;
+  --color-bg-secondary: #1a1145;
+  --color-bg-card: rgba(255, 255, 255, 0.06);
+
+  /* Oyun renkleri */
+  --color-correct: #22c55e;
+  --color-present: #facc15;
+  --color-absent: #ef4444;
+
+  /* Metin */
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+
+  /* Vurgular */
+  --color-accent: #8b5cf6;
+  --color-accent-glow: rgba(139, 92, 246, 0.3);
+}
+
+/* ===== Global stiller ===== */
+
+html {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Masaüstünde ortada telefon genişliğinde çerçeve */
+@media (min-width: 640px) {
+  #root {
+    max-width: 430px;
+    margin: 0 auto;
+    box-shadow: 0 0 60px rgba(139, 92, 246, 0.15);
+  }
+}

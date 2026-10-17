@@ -16,11 +16,13 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "autoprefixer": "^10.4.21",
+    "better-sqlite3": "^13.0.3",
     "postcss": "^8.5.5",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.1.11",

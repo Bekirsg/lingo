@@ -6,7 +6,6 @@ import {
   letterCount,
   isValidWord,
   evaluateGuess,
-  type Mark,
   ROUND_CONFIGS,
   maxRoundPoints,
   MAX_TREASURY,

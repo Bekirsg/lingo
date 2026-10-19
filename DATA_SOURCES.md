@@ -33,22 +33,26 @@
 3. **Hariç tutulanlar:**
    - Özel isimler (`ozel_mi === "1"`) → 2.266 madde elendi
    - Birleşik/deyim maddeleri (boşluk, tire, kesme işareti, rakam içerenler) → 34.018 madde elendi
-   - Harf dışı karakter içerenler → 36 madde elendi
+   - Kalıplaşmış/çekimli sözler (`cesit !== 0`) → 108 madde elendi (örn. adamı, belası, aldı, gitti, bakılsa, akıllım, canım gibi çekimli/iyelikli veya kalıplaşmış sözler)
+   - Harf dışı karakter içerenler → 0 madde
 4. **Geçerlilik:** Sadece `[a-zçğıöşü]` harflerinden oluşanlar kabul edildi
 5. **Harf sayısı** normalizasyondan sonra hesaplandı
-6. **Tekrar silme:** Normalizasyon sonrası aynı kelime → 621 tekrar elendi
+6. **Tekrar silme:** Normalizasyon sonrası aynı kelime → 619 tekrar elendi
 
 ---
 
-## Bonus Tanım Filtreleri (SPEC Bölüm 5.3)
+## Bonus Tanım Filtreleri (SPEC Bölüm 5.3 Sıkılaştırılmış)
 
-1. **"Bkz." yönlendirmeleri** atlandı
-2. **"►" işaretli kısa yönlendirmeler** atlandı (bunlar da bkz. niteliğinde)
-3. **5 karakterden kısa tanımlar** atlandı
-4. **Cevabı sızdıran tanımlar** elendi:
-   - Tanım metni cevabın kendisini içeriyorsa → atla
-   - Tanım metni cevabın ilk 5 harfini paylaşan bir sözcük içeriyorsa → atla
-   - Tüm anlamlar sızdırıyorsa kelime bonus havuzundan çıkarıldı
+1. **"Bkz." ve "►" yönlendirmeleri** atlandı (1.611 kelime)
+2. **Karakter ve sözcük uzunluğu:**
+   - Anlamın `;` işaretinden önceki ilk bölümü alındı.
+   - 90 karakterden uzun olanlar elendi (459 kelime).
+   - 20 karakterden kısa veya 4 sözcükten az olan muğlak tanımlar elendi (3.533 kelime).
+3. **Cevabı sızdıran tanımlar:**
+   - Tanım metni cevabın kendisini içeriyorsa elendi (39 kelime).
+   - Tanımdaki herhangi bir sözcük (en az 4 harfli) cevabın ilk 4 harfiyle başlıyorsa elendi (949 kelime).
+   - Cevap `-mek`/`-mak` ile bitiyorsa kökün ilk 3 harfiyle başlayan sözcük içerenler elendi (85 kelime).
+4. **Seçim:** Bu kuralları karşılayan ilk anlam seçildi; hiçbir anlamı uymayan kelimeler bonus havuzundan çıkarıldı.
 
 ---
 
@@ -56,12 +60,12 @@
 
 | Uzunluk | Kelime Sayısı | Kullanım |
 |---------|---------------|----------|
-| 4 harfli | **2.050** | 1. tur + 4. tur etap 1 |
-| 5 harfli | **5.456** | 2. tur + 4. tur etap 2 |
-| 6 harfli | **6.042** | 3. tur + 4. tur etap 3 |
-| 7 harfli | **7.933** | 4. tur etap 4 |
-| 8 harfli (bonus, tanımlı) | **3.811** | Bonus soruları |
-| **Toplam** | **25.292** | — |
+| 4 harfli | **2.049** | 1. tur + 4. tur etap 1 |
+| 5 harfli | **5.449** | 2. tur + 4. tur etap 2 |
+| 6 harfli | **6.033** | 3. tur + 4. tur etap 3 |
+| 7 harfli | **7.917** | 4. tur etap 4 |
+| 8 harfli (bonus, tanımlı) | **2.269** | Bonus soruları |
+| **Toplam** | **23.717** | — |
 
 ---
 

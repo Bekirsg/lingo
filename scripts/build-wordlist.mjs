@@ -92,8 +92,20 @@ let stats = {
   ozelIsim: 0,
   invalid: 0,
   birlesik: 0,
+  cesitNonZero: 0,
   accepted: 0,
   duplicateAfterNorm: 0,
+}
+
+let bonusStats = {
+  total8Candidates: 0,
+  accepted: 0,
+  bkz: 0,
+  tooLong: 0,
+  tooShortOrFewWords: 0,
+  leakExact: 0,
+  leakRoot4: 0,
+  leakVerbRoot3: 0,
 }
 
 for (const entry of entries) {
@@ -109,6 +121,12 @@ for (const entry of entries) {
   // Birleşik/deyim maddeleri hariç
   if (/[\s\-''`'0-9]/.test(madde)) {
     stats.birlesik++
+    continue
+  }
+
+  // Kalıplaşmış söz/ekli madde filtresi (TDK GTS cesit > 0 ise hariç tut)
+  if (entry.cesit != 0) {
+    stats.cesitNonZero++
     continue
   }
 
@@ -129,70 +147,122 @@ for (const entry of entries) {
       stats.accepted++
 
       if (len === 8) {
-        const definition = extractDefinition(entry, normalized)
-        if (definition) {
-          bonus8.push({ w: normalized, d: definition })
+        bonusStats.total8Candidates++
+        const { def, reason } = extractDefinition(entry, normalized)
+        if (def) {
+          bonusStats.accepted++
+          bonus8.push({ w: normalized, d: def })
+        } else if (bonusStats[reason] !== undefined) {
+          bonusStats[reason]++
         }
       }
     }
   }
 }
 
-// ─── Tanım çıkarma (SPEC 5.3) ──────────────────────────────────
+// ─── Tanım çıkarma (SPEC 5.3 Sıkılaştırılmış) ──────────────────
 
 function extractDefinition(entry, normalizedWord) {
   const anlamlar = entry.anlamlarListe
-  if (!anlamlar || !Array.isArray(anlamlar) || anlamlar.length === 0) return null
+  if (!anlamlar || !Array.isArray(anlamlar) || anlamlar.length === 0) return { def: null, reason: 'tooShortOrFewWords' }
+
+  const wordLower = normalizedWord
+  const isVerb = wordLower.endsWith('mek') || wordLower.endsWith('mak')
+  const root4 = wordLower.substring(0, 4)
+  const root3 = isVerb ? wordLower.substring(0, 3) : null
+
+  let lastReason = 'tooShortOrFewWords'
 
   for (const anlam of anlamlar) {
-    let def = anlam.anlam
-    if (!def) continue
-    def = def.trim()
+    let rawDef = anlam.anlam
+    if (!rawDef) { lastReason = 'tooShortOrFewWords'; continue }
+    rawDef = rawDef.trim()
 
-    // "Bkz." yönlendirmelerini atla
-    if (/^bkz\b/i.test(def)) continue
-
-    // "►" ile başlayan kısa yönlendirmeleri atla (bunlar da bkz. niteliğinde)
-    if (def.startsWith('►')) continue
-
-    // Çok kısa tanımları atla
-    if (def.length < 5) continue
-
-    // Cevabı sızdıran tanım kontrolü
-    const defLower = turkishLower(def)
-    const wordLower = normalizedWord
-
-    // Tanım cevabın kendisini içeriyor mu?
-    if (defLower.includes(wordLower)) continue
-
-    // Tanım cevabın kökünü (ilk 5 harfi) paylaşan bir sözcük içeriyor mu?
-    if (wordLower.length >= 5) {
-      const root = wordLower.substring(0, 5)
-      const defTokens = defLower.split(/[^a-zçğıöşü]+/)
-      if (defTokens.some(t => t.startsWith(root))) continue
+    // 1) "Bkz." ve "►" yönlendirmelerini atla
+    if (/^bkz\b/i.test(rawDef) || rawDef.startsWith('►')) {
+      lastReason = 'bkz'
+      continue
     }
 
-    return def
+    // 2) Anlamın ';' işaretinden önceki ilk bölümünü al
+    let def = rawDef.split(';')[0].trim()
+
+    // 3) Çok uzun tanım kontrolü: 90 karakteri aşıyorsa sonraki anlamı dene
+    if (def.length > 90) {
+      lastReason = 'tooLong'
+      continue
+    }
+
+    // 4) Muğlak/çok kısa tanım kontrolü: en az 20 karakter ve en az 4 sözcük
+    const words = def.split(/\s+/).filter(w => w.length > 0)
+    if (def.length < 20 || words.length < 4) {
+      lastReason = 'tooShortOrFewWords'
+      continue
+    }
+
+    // 5) Sızıntı kontrolü
+    const defLower = turkishLower(def)
+
+    // Tanım kelimenin kendisini içeriyor mu?
+    if (defLower.includes(wordLower)) {
+      lastReason = 'leakExact'
+      continue
+    }
+
+    // Tanımdaki herhangi bir sözcük (en az 4 harfli) cevabın ilk 4 harfiyle başlıyor mu?
+    const tokens = defLower.split(/[^a-zçğıöşü]+/).filter(t => t.length >= 4)
+    let leaked = false
+    for (const token of tokens) {
+      if (token.startsWith(root4)) {
+        leaked = true
+        lastReason = 'leakRoot4'
+        break
+      }
+    }
+    if (leaked) continue
+
+    // Cevap -mek/-mak ile bitiyorsa ayrıca ilk 3 harfle de kontrol et
+    if (root3) {
+      const allTokens3 = defLower.split(/[^a-zçğıöşü]+/).filter(t => t.length >= 3)
+      if (allTokens3.some(t => t.startsWith(root3))) {
+        lastReason = 'leakVerbRoot3'
+        continue
+      }
+    }
+
+    return { def, reason: 'accepted' }
   }
 
-  return null
+  return { def: null, reason: lastReason }
 }
 
 // ─── Çıktıları yaz ─────────────────────────────────────────────
 
-console.log('\n📊 Kelime sayıları (Kaynak 1 — GTS v12, filtre sonrası):')
+console.log('\n📊 Kelime sayıları (Kaynak 1 — GTS v12, bağımsız madde filtresi sonrası):')
 for (const len of [4, 5, 6, 7, 8]) {
   console.log(`  ${len} harfli: ${wordsByLength[len].size}`)
 }
-console.log(`  8 harfli (tanımlı bonus): ${bonus8.length}`)
+console.log(`  8 harfli (tanımlı bonus havuzu): ${bonus8.length}`)
 
 console.log('\n📊 Filtreleme istatistikleri:')
 console.log(`  Toplam madde: ${stats.total}`)
 console.log(`  Özel isim (elendi): ${stats.ozelIsim}`)
 console.log(`  Birleşik/deyim (elendi): ${stats.birlesik}`)
+console.log(`  Kalıplaşmış/çekimli söz (cesit>0 elendi): ${stats.cesitNonZero}`)
 console.log(`  Geçersiz karakter (elendi): ${stats.invalid}`)
 console.log(`  Normalizasyon sonrası tekrar: ${stats.duplicateAfterNorm}`)
 console.log(`  Kabul edilen (4-8 harf): ${stats.accepted}`)
+
+console.log('\n📊 Bonus-8 Tanım Filtre İstatistikleri:')
+console.log(`  Toplam 8 harfli aday kelime: ${bonusStats.total8Candidates}`)
+console.log(`  Kabul edilen bonus kelime: ${bonusStats.accepted}`)
+console.log(`  Elenen toplam: ${bonusStats.total8Candidates - bonusStats.accepted}`)
+console.log(`    - Bkz / ► yönlendirme: ${bonusStats.bkz}`)
+console.log(`    - 90 karakterden uzun: ${bonusStats.tooLong}`)
+console.log(`    - 20 karakterden kısa veya < 4 sözcük: ${bonusStats.tooShortOrFewWords}`)
+console.log(`    - Cevabın kendisini içeren (leakExact): ${bonusStats.leakExact}`)
+console.log(`    - İlk 4 harfle başlayan sözcük içeren (leakRoot4): ${bonusStats.leakRoot4}`)
+console.log(`    - Fiil kökü 3 harfle başlayan sözcük içeren (leakVerbRoot3): ${bonusStats.leakVerbRoot3}`)
 
 // JSON dosyalarını yaz
 for (const len of [4, 5, 6, 7]) {

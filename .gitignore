@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw TDK data (büyük dosyalar, repoya dahil değil)
+scripts/raw-data/

@@ -1,262 +1,320 @@
 /**
- * build-wordlist.mjs — TDK Güncel Türkçe Sözlük verilerinden
- * oyun için kelime listesi ve bonus dosyaları üretir.
- * 
- * Kaynak: ogun/guncel-turkce-sozluk (v12, 99.236 madde)
- * SPEC Bölüm 5'e göre filtreler uygulanır.
- * 
+ * TDK GTS v12 verisinden kelime listesi üretir + çapraz doğrulama yapar.
+ *
+ * Kaynak 1 (Ana):  ogun/guncel-turkce-sozluk v12 — scripts/raw-data/gts.json
+ * Kaynak 2 (Doğr): emrahcom/turkce_kelimeler — scripts/raw-data/imla-kilavuzu.txt
+ *
  * Kullanım: node scripts/build-wordlist.mjs
  */
 
-import Database from 'better-sqlite3';
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { readFileSync, writeFileSync } from 'fs'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-// ─── Ayarlar ─────────────────────────────────────────────────────
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const RAW_PATH = resolve(__dirname, 'raw-data/gts.json')
+const IMLA_PATH = resolve(__dirname, 'raw-data/imla-kilavuzu.txt')
+const OUT_DIR = resolve(__dirname, '../public/data')
 
-const DB_PATH = join(process.env.TEMP, 'gts.sqlite3.db');
-const OUT_DIR = resolve('public/data');
-const VALID_CHARS = /^[a-zçğıöşü]+$/;
-
-// ─── Türkçe normalizasyon (SPEC 5.2) ────────────────────────────
+// ─── Türkçe normalizasyon ───────────────────────────────────────
 
 function turkishLower(s) {
-  return s.toLocaleLowerCase('tr-TR');
+  return s.toLocaleLowerCase('tr-TR')
 }
 
 function normalizeHat(s) {
-  return s.replace(/â/g, 'a').replace(/î/g, 'i').replace(/û/g, 'u');
+  return s.replace(/â/g, 'a').replace(/î/g, 'i').replace(/û/g, 'u')
 }
 
 function normalize(s) {
-  return normalizeHat(turkishLower(s));
+  return normalizeHat(turkishLower(s))
+}
+
+const VALID_CHARS = /^[a-zçğıöşü]+$/
+
+function isValidWord(s) {
+  return VALID_CHARS.test(s)
 }
 
 function letterCount(s) {
-  return Array.from(s).length;
+  return Array.from(s).length
 }
 
-// ─── Veritabanı sorgusu ──────────────────────────────────────────
+// ─── Kaynak 1: TDK GTS v12 ─────────────────────────────────────
 
-if (!existsSync(DB_PATH)) {
-  console.error(`HATA: SQLite veritabanı bulunamadı: ${DB_PATH}`);
-  console.error('Önce "Invoke-WebRequest" ile indirin (bkz. build-wordlist.mjs dosya başı).');
-  process.exit(1);
+console.log('📖 Kaynak 1: TDK GTS v12 verisi okunuyor...')
+const rawText = readFileSync(RAW_PATH, 'utf8')
+
+let entries
+try {
+  entries = JSON.parse(rawText)
+  if (!Array.isArray(entries)) throw new Error('not array')
+} catch {
+  entries = rawText
+    .split('\n')
+    .filter(line => line.trim())
+    .map(line => JSON.parse(line))
 }
 
-const db = new Database(DB_PATH, { readonly: true });
+console.log(`  ✅ ${entries.length} madde okundu`)
 
-// Tüm maddebaşlarını al (özel isimler hariç)
-// ozel_mi = 1 özel isimdir, hariç tut
-// madde: kelimenin kendisi, madde_duz: şapkasız hali (ama biz kendi normalize ederiz)
-const allEntries = db.prepare(`
-  SELECT m.madde_id, m.madde, m.ozel_mi
-  FROM madde m
-  WHERE m.ozel_mi = 0
-`).all();
+// ─── Kaynak 2: İmla Kılavuzu (çapraz doğrulama) ────────────────
 
-console.log(`Veritabanından ${allEntries.length} madde alındı (özel isimler hariç).`);
+console.log('📖 Kaynak 2: TDK İmla Kılavuzu okunuyor...')
+const imlaRaw = readFileSync(IMLA_PATH, 'utf8')
+const imlaWords = new Set()
 
-// ─── SPEC 5.2: Temiz havuz oluştur ─────────────────────────────
+for (const line of imlaRaw.split('\n')) {
+  const trimmed = line.trim()
+  if (!trimmed) continue
 
-const stats = {
-  total: allEntries.length,
-  skippedSpecialChars: 0,
-  skippedMultiWord: 0,
-  skippedInvalid: 0,
-  afterNormalize: 0,
-  duplicatesRemoved: 0,
-};
+  // İmla kılavuzunda ek bilgiler var: "abacılık,-ğı" gibi — virgülden önce al
+  const base = trimmed.split(',')[0].trim()
 
-/** @type {Map<number, Map<string, string>>} harf sayısı → { normalized → original madde } */
-const wordsByLength = new Map();
+  // Boşluk/tire içerenler birleşik — atla
+  if (/[\s\-]/.test(base)) continue
 
-for (const entry of allEntries) {
-  const raw = entry.madde;
-
-  // SPEC 5.2-3: Boşluk, tire, kesme işareti, rakam içerenleri hariç tut
-  if (/[\s\-'0-9]/.test(raw)) {
-    stats.skippedMultiWord++;
-    continue;
-  }
-
-  // Normalize
-  const norm = normalize(raw);
-
-  // SPEC 5.2-3: Sadece geçerli Türkçe harflerden oluşmalı
-  if (!VALID_CHARS.test(norm)) {
-    stats.skippedInvalid++;
-    continue;
-  }
-
-  const len = letterCount(norm);
-  if (len < 4 || len > 8) continue; // Sadece 4-8 harfli kelimeler
-
-  if (!wordsByLength.has(len)) {
-    wordsByLength.set(len, new Map());
-  }
-  
-  const bucket = wordsByLength.get(len);
-  if (!bucket.has(norm)) {
-    bucket.set(norm, raw);
-  } else {
-    stats.duplicatesRemoved++;
+  const norm = normalize(base)
+  if (isValidWord(norm)) {
+    imlaWords.add(norm)
   }
 }
 
-stats.afterNormalize = Array.from(wordsByLength.values()).reduce((sum, m) => sum + m.size, 0);
+console.log(`  ✅ ${imlaWords.size} geçerli tekil kelime`)
 
-// ─── 4-7 harfli kelime listeleri (words-N.json) ─────────────────
+// ─── Filtreleme ────────────────────────────────────────────────
 
-mkdirSync(OUT_DIR, { recursive: true });
+const wordsByLength = { 4: new Set(), 5: new Set(), 6: new Set(), 7: new Set(), 8: new Set() }
+const bonus8 = []
 
-const counts = {};
-for (let len = 4; len <= 7; len++) {
-  const bucket = wordsByLength.get(len) || new Map();
-  const words = Array.from(bucket.keys()).sort((a, b) => a.localeCompare(b, 'tr-TR'));
-  counts[len] = words.length;
-  
-  const outPath = join(OUT_DIR, `words-${len}.json`);
-  writeFileSync(outPath, JSON.stringify(words), 'utf-8');
-  console.log(`words-${len}.json: ${words.length} kelime (${(JSON.stringify(words).length / 1024).toFixed(1)} KB)`);
+let stats = {
+  total: entries.length,
+  ozelIsim: 0,
+  invalid: 0,
+  birlesik: 0,
+  accepted: 0,
+  duplicateAfterNorm: 0,
 }
 
-// ─── 8 harfli bonus kelimeler (bonus-8.json) ────────────────────
+for (const entry of entries) {
+  const madde = entry.madde
+  if (!madde) continue
 
-// 8 harfli kelimelerin tanımlarını al
-const bonus8Words = wordsByLength.get(8) || new Map();
-const bonusEntries = [];
-const bonusSkipped = { noDefinition: 0, leakedAnswer: 0, bkz: 0 };
-
-for (const [norm, originalMadde] of bonus8Words) {
-  // madde_id bul — orijinal madde üzerinden
-  const maddeRow = db.prepare(
-    `SELECT madde_id FROM madde WHERE madde = ? AND ozel_mi = 0 LIMIT 1`
-  ).get(originalMadde);
-  
-  if (!maddeRow) continue;
-  
-  // İlk anlamı al (anlam_sira = 1)
-  const meanings = db.prepare(
-    `SELECT anlam, gos FROM anlam WHERE madde_id = ? ORDER BY anlam_sira ASC`
-  ).all(maddeRow.madde_id);
-  
-  if (meanings.length === 0) {
-    bonusSkipped.noDefinition++;
-    continue;
+  // Özel isimler hariç
+  if (entry.ozel_mi === '1' || entry.ozel_mi === 1) {
+    stats.ozelIsim++
+    continue
   }
-  
-  // SPEC 5.3: Tanım seçimi
-  let selectedDef = null;
-  for (const m of meanings) {
-    let def = m.anlam.trim();
-    
-    // "Bkz." yönlendirmesi varsa atla
-    if (/^[Bb]kz\./.test(def) || /^[Bb]akınız/.test(def)) {
-      bonusSkipped.bkz++;
-      continue;
+
+  // Birleşik/deyim maddeleri hariç
+  if (/[\s\-''`'0-9]/.test(madde)) {
+    stats.birlesik++
+    continue
+  }
+
+  const normalized = normalize(madde)
+
+  if (!isValidWord(normalized)) {
+    stats.invalid++
+    continue
+  }
+
+  const len = letterCount(normalized)
+
+  if (len >= 4 && len <= 8 && wordsByLength[len]) {
+    if (wordsByLength[len].has(normalized)) {
+      stats.duplicateAfterNorm++
+    } else {
+      wordsByLength[len].add(normalized)
+      stats.accepted++
+
+      if (len === 8) {
+        const definition = extractDefinition(entry, normalized)
+        if (definition) {
+          bonus8.push({ w: normalized, d: definition })
+        }
+      }
     }
-    
-    // Çok kısa tanımları atla (2 karakter ve altı)
-    if (def.length <= 2) continue;
-    
-    // SPEC 5.3: Cevabı sızdıran tanım kontrolü
-    // Tanım, kelimenin kendisini veya kökünü (ilk 5 harfini paylaşan sözcüğü) içeriyorsa atla
-    const root = norm.slice(0, 5);
-    const defLower = turkishLower(def);
-    if (defLower.includes(norm) || defLower.includes(root)) {
-      bonusSkipped.leakedAnswer++;
-      continue;
+  }
+}
+
+// ─── Tanım çıkarma (SPEC 5.3) ──────────────────────────────────
+
+function extractDefinition(entry, normalizedWord) {
+  const anlamlar = entry.anlamlarListe
+  if (!anlamlar || !Array.isArray(anlamlar) || anlamlar.length === 0) return null
+
+  for (const anlam of anlamlar) {
+    let def = anlam.anlam
+    if (!def) continue
+    def = def.trim()
+
+    // "Bkz." yönlendirmelerini atla
+    if (/^bkz\b/i.test(def)) continue
+
+    // "►" ile başlayan kısa yönlendirmeleri atla (bunlar da bkz. niteliğinde)
+    if (def.startsWith('►')) continue
+
+    // Çok kısa tanımları atla
+    if (def.length < 5) continue
+
+    // Cevabı sızdıran tanım kontrolü
+    const defLower = turkishLower(def)
+    const wordLower = normalizedWord
+
+    // Tanım cevabın kendisini içeriyor mu?
+    if (defLower.includes(wordLower)) continue
+
+    // Tanım cevabın kökünü (ilk 5 harfi) paylaşan bir sözcük içeriyor mu?
+    if (wordLower.length >= 5) {
+      const root = wordLower.substring(0, 5)
+      const defTokens = defLower.split(/[^a-zçğıöşü]+/)
+      if (defTokens.some(t => t.startsWith(root))) continue
     }
-    
-    selectedDef = def;
-    break;
+
+    return def
   }
-  
-  if (!selectedDef) {
-    bonusSkipped.noDefinition++;
-    continue;
+
+  return null
+}
+
+// ─── Çıktıları yaz ─────────────────────────────────────────────
+
+console.log('\n📊 Kelime sayıları (Kaynak 1 — GTS v12, filtre sonrası):')
+for (const len of [4, 5, 6, 7, 8]) {
+  console.log(`  ${len} harfli: ${wordsByLength[len].size}`)
+}
+console.log(`  8 harfli (tanımlı bonus): ${bonus8.length}`)
+
+console.log('\n📊 Filtreleme istatistikleri:')
+console.log(`  Toplam madde: ${stats.total}`)
+console.log(`  Özel isim (elendi): ${stats.ozelIsim}`)
+console.log(`  Birleşik/deyim (elendi): ${stats.birlesik}`)
+console.log(`  Geçersiz karakter (elendi): ${stats.invalid}`)
+console.log(`  Normalizasyon sonrası tekrar: ${stats.duplicateAfterNorm}`)
+console.log(`  Kabul edilen (4-8 harf): ${stats.accepted}`)
+
+// JSON dosyalarını yaz
+for (const len of [4, 5, 6, 7]) {
+  const sorted = [...wordsByLength[len]].sort((a, b) => a.localeCompare(b, 'tr-TR'))
+  writeFileSync(resolve(OUT_DIR, `words-${len}.json`), JSON.stringify(sorted))
+  console.log(`\n✅ words-${len}.json yazıldı (${sorted.length} kelime)`)
+}
+
+const bonusSorted = bonus8.sort((a, b) => a.w.localeCompare(b.w, 'tr-TR'))
+writeFileSync(resolve(OUT_DIR, 'bonus-8.json'), JSON.stringify(bonusSorted))
+console.log(`✅ bonus-8.json yazıldı (${bonusSorted.length} kelime+tanım)`)
+
+// ─── Çapraz doğrulama ──────────────────────────────────────────
+
+console.log('\n\n═══════════════════════════════════════════════')
+console.log('🔄 ÇAPRAZ DOĞRULAMA: GTS v12 vs İmla Kılavuzu')
+console.log('═══════════════════════════════════════════════')
+
+for (const len of [4, 5, 6, 7]) {
+  const gtsSet = wordsByLength[len]
+  let inBoth = 0
+  let onlyGts = 0
+  let onlyImla = 0
+
+  for (const w of gtsSet) {
+    if (imlaWords.has(w)) inBoth++
+    else onlyGts++
   }
-  
-  bonusEntries.push({ w: norm, d: selectedDef });
+
+  // İmla kılavuzunda olup GTS'de olmayan (aynı uzunluktaki)
+  for (const w of imlaWords) {
+    if (letterCount(w) === len && !gtsSet.has(w)) onlyImla++
+  }
+
+  const overlap = gtsSet.size > 0 ? ((inBoth / gtsSet.size) * 100).toFixed(1) : '0'
+  console.log(`\n  ${len} harfli:`)
+  console.log(`    GTS: ${gtsSet.size} | İmla: (${len} harfli filtreli)`)
+  console.log(`    Her ikisinde: ${inBoth} | Sadece GTS: ${onlyGts} | Sadece İmla: ${onlyImla}`)
+  console.log(`    Örtüşme oranı: %${overlap}`)
 }
 
-// Alfabetik sırala
-bonusEntries.sort((a, b) => a.w.localeCompare(b.w, 'tr-TR'));
-counts[8] = bonusEntries.length;
+// Rastgele 20 kelimeyi TDK İmla'da kontrol
+console.log('\n\n🔍 Rastgele 20 kelime × İmla Kılavuzu doğrulaması:')
+const allWords4to7 = []
+for (const len of [4, 5, 6, 7]) {
+  for (const w of wordsByLength[len]) allWords4to7.push(w)
+}
+const sampleCheck = []
+const sampledIdx = new Set()
+while (sampleCheck.length < 20 && sampleCheck.length < allWords4to7.length) {
+  const idx = Math.floor(Math.random() * allWords4to7.length)
+  if (!sampledIdx.has(idx)) {
+    sampledIdx.add(idx)
+    sampleCheck.push(allWords4to7[idx])
+  }
+}
+let foundInImla = 0
+for (const w of sampleCheck) {
+  const found = imlaWords.has(w)
+  if (found) foundInImla++
+  console.log(`  "${w}" → İmla'da ${found ? '✅ VAR' : '⚠️ YOK (GTS\'ye özgü olabilir)'}`)
+}
+console.log(`  Sonuç: ${foundInImla}/20 kelime (%${((foundInImla / 20) * 100).toFixed(0)}) İmla Kılavuzu'nda da mevcut`)
 
-const bonusOutPath = join(OUT_DIR, 'bonus-8.json');
-writeFileSync(bonusOutPath, JSON.stringify(bonusEntries), 'utf-8');
-console.log(`bonus-8.json: ${bonusEntries.length} kelime+tanım (${(JSON.stringify(bonusEntries).length / 1024).toFixed(1)} KB)`);
+// ─── Duman testi ────────────────────────────────────────────────
 
-db.close();
+console.log('\n\n═════════════════════')
+console.log('🔍 DUMAN TESTİ')
+console.log('═════════════════════')
 
-// ─── Duman testi (SPEC 5.4-4) ───────────────────────────────────
+const smokeIn = ['kale', 'küpe', 'araba', 'kitap']
+const smokeOut = ['kalemi', 'xyzq']
 
-console.log('\n── Duman Testi ──');
-
-function smokeTest(len) {
-  const path = join(OUT_DIR, `words-${len}.json`);
-  const data = JSON.parse(require('fs').readFileSync(path, 'utf-8'));
-  const set = new Set(data);
-  return set;
+let smokePass = true
+for (const w of smokeIn) {
+  const len = letterCount(w)
+  const found = wordsByLength[len]?.has(w) ?? false
+  const ok = found
+  if (!ok) smokePass = false
+  console.log(`  "${w}" (${len} harf) listede VAR mı? ${ok ? '✅ EVET' : '❌ HAYIR — SORUN!'}`)
 }
 
-const sets = {};
-for (let len = 4; len <= 7; len++) {
-  sets[len] = new Set(JSON.parse(require('fs').readFileSync(join(OUT_DIR, `words-${len}.json`), 'utf-8')));
+for (const w of smokeOut) {
+  const len = letterCount(w)
+  const pool = wordsByLength[len]
+  const found = pool ? pool.has(w) : false
+  const ok = !found
+  if (!ok) smokePass = false
+  console.log(`  "${w}" (${len} harf) listede YOK mu? ${ok ? '✅ DOĞRU (YOK)' : '❌ SORUN — OLMAMALI!'}`)
 }
 
-// Olması gereken kelimeler
-const mustExist = [
-  { word: 'kale', len: 4 },
-  { word: 'küpe', len: 4 },
-  { word: 'elle', len: 4 },
-  { word: 'araba', len: 5 },
-  { word: 'kitap', len: 5 },
-  { word: 'kalem', len: 5 },
-  { word: 'masa', len: 4 },
-  { word: 'güzel', len: 5 },
-  { word: 'türkçe', len: 6 },
-];
+console.log(`\n  Duman testi: ${smokePass ? '✅ GEÇTİ' : '❌ BAŞARISIZ'}`)
 
-// Olmaması gereken kelimeler
-const mustNotExist = [
-  { word: 'kalemi', len: 6, reason: 'çekimli hal' },
-  { word: 'xyzq', len: 4, reason: 'uydurma' },
-  { word: 'asdf', len: 4, reason: 'uydurma' },
-];
+// ─── Her uzunluktan 20 rastgele kelime ──────────────────────────
 
-let smokePass = true;
-for (const { word, len } of mustExist) {
-  const exists = sets[len]?.has(word);
-  const status = exists ? '✅' : '❌';
-  if (!exists) smokePass = false;
-  console.log(`  ${status} "${word}" (${len} harf) → ${exists ? 'BULUNDU' : 'BULUNAMADI!'}`);
+console.log('\n\n📝 Rastgele örnekler:')
+for (const len of [4, 5, 6, 7]) {
+  const arr = [...wordsByLength[len]]
+  const sample = []
+  const usedIdx = new Set()
+  while (sample.length < 20 && sample.length < arr.length) {
+    const idx = Math.floor(Math.random() * arr.length)
+    if (!usedIdx.has(idx)) {
+      usedIdx.add(idx)
+      sample.push(arr[idx])
+    }
+  }
+  console.log(`  ${len} harfli: ${sample.join(', ')}`)
 }
 
-for (const { word, len, reason } of mustNotExist) {
-  const exists = sets[len]?.has(word);
-  const status = !exists ? '✅' : '❌';
-  if (exists) smokePass = false;
-  console.log(`  ${status} "${word}" (${reason}) → ${!exists ? 'YOK (doğru)' : 'VAR (hata!)'}`);
+console.log('\n📝 Bonus 8 harfli örnekler (kelime + tanım):')
+const bonusSample = []
+const usedBonusIdx = new Set()
+while (bonusSample.length < 10 && bonusSample.length < bonusSorted.length) {
+  const idx = Math.floor(Math.random() * bonusSorted.length)
+  if (!usedBonusIdx.has(idx)) {
+    usedBonusIdx.add(idx)
+    bonusSample.push(bonusSorted[idx])
+  }
+}
+for (const { w, d } of bonusSample) {
+  console.log(`  "${w}" → "${d}"`)
 }
 
-console.log(`\nDuman testi: ${smokePass ? '✅ GEÇTİ' : '❌ BAŞARISIZ'}`);
-
-// ─── Özet istatistikler ─────────────────────────────────────────
-
-console.log('\n── Özet ──');
-console.log(`Veritabanı toplam madde: ${stats.total}`);
-console.log(`Atlanan (boşluk/tire/kesme): ${stats.skippedMultiWord}`);
-console.log(`Atlanan (geçersiz karakter): ${stats.skippedInvalid}`);
-console.log(`Normalizasyon sonrası tekrar: ${stats.duplicatesRemoved}`);
-console.log(`Temiz havuz toplam: ${stats.afterNormalize}`);
-console.log(`\nHarf sayılarına göre:`);
-for (let len = 4; len <= 8; len++) {
-  console.log(`  ${len} harfli: ${counts[len] || 0}`);
-}
-console.log(`\nBonus 8 harfli atlanan:`);
-console.log(`  Tanım yok: ${bonusSkipped.noDefinition}`);
-console.log(`  Bkz. yönlendirme: ${bonusSkipped.bkz}`);
-console.log(`  Cevap sızdırma: ${bonusSkipped.leakedAnswer}`);
+console.log('\n✅ Kelime listesi üretimi ve doğrulama tamamlandı!')

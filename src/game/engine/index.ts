@@ -70,6 +70,32 @@ export function evaluateGuess(answer: string, guess: string): Mark[] {
   return marks
 }
 
+/**
+ * Tahminlerden klavye tuşlarının renk durumlarını çıkarır.
+ * Öncelik sırası: green > yellow > red
+ */
+export function getKeyboardStatuses(
+  guesses: { guess: string; marks: Mark[] }[],
+): Record<string, Mark> {
+  const statuses: Record<string, Mark> = {}
+  for (const { guess, marks } of guesses) {
+    const chars = Array.from(guess)
+    for (let i = 0; i < chars.length; i++) {
+      const c = chars[i]
+      const mark = marks[i]
+      const current = statuses[c]
+      if (mark === 'green') {
+        statuses[c] = 'green'
+      } else if (mark === 'yellow' && current !== 'green') {
+        statuses[c] = 'yellow'
+      } else if (mark === 'red' && !current) {
+        statuses[c] = 'red'
+      }
+    }
+  }
+  return statuses
+}
+
 // ─── Tur Yapılandırması ─────────────────────────────────────────
 
 export interface RoundConfig {

@@ -167,7 +167,62 @@ export class GameController {
   /**
    * 1–3. turlarda tahmin gönderir.
    */
-  submitGuess(guessRaw: string): void {
+  /**
+   * Klavyeden harf yazma (Özel klavye veya fiziksel klavye)
+   * İlk harf kilitlidir, oyuncu sadece 2. kutudan sonrakileri doldurur.
+   */
+  typeLetter(char: string): void {
+    if (this.state.screen !== 'playing_round' || !this.state.roundState) return
+    const rs = this.state.roundState
+    if (rs.wordWon || rs.wordLost) return
+
+    const normalized = normalize(char)
+    if (!/^[a-zçğıöşü]$/.test(normalized)) return
+
+    if (letterCount(rs.currentInput) < rs.letterCount) {
+      rs.currentInput += normalized
+      this.emitState()
+    }
+  }
+
+  /**
+   * Sil tuşuna basıldığında çağrılır.
+   * İlk harf kilitlidir ve ASLA silinemez!
+   */
+  deleteLetter(): void {
+    if (this.state.screen !== 'playing_round' || !this.state.roundState) return
+    const rs = this.state.roundState
+    if (rs.wordWon || rs.wordLost) return
+
+    const chars = Array.from(rs.currentInput)
+    if (chars.length > 1) {
+      chars.pop()
+      rs.currentInput = chars.join('')
+      this.emitState()
+    }
+  }
+
+  /**
+   * Tahmin süresini (10 sn) başlatır.
+   * Kutu çevirme animasyonu bittiğinde çağrılır.
+   */
+  startGuessTimer(): void {
+    if (
+      this.state.screen === 'playing_round' &&
+      this.state.roundState &&
+      !this.state.roundState.wordWon &&
+      !this.state.roundState.wordLost
+    ) {
+      this.clock.start(GUESS_TIME_LIMIT, () => this.onGuessTimeout())
+    }
+  }
+
+  /**
+   * 1–3. turlarda tahmin gönderir.
+   * @param guessRaw Tahmin metni
+   * @param autoStartNextTimer UI animasyonu varsa false verilir, animasyon bitince startGuessTimer() çağrılır.
+   */
+  submitGuess(guessRaw: string, autoStartNextTimer: boolean = true): void {
     if (this.state.screen !== 'playing_round' || !this.state.roundState) return
     const rs = this.state.roundState
     if (rs.wordWon || rs.wordLost) return
@@ -227,9 +282,13 @@ export class GameController {
       return
     }
 
-    // Yanlış tahmin, hak devam ediyor -> Bir sonraki tahmin için 10 sn yeniden başlar
+    // Yanlış tahmin, hak devam ediyor
     rs.currentInput = Array.from(rs.currentWord)[0]
-    this.clock.start(GUESS_TIME_LIMIT, () => this.onGuessTimeout())
+    if (autoStartNextTimer) {
+      this.clock.start(GUESS_TIME_LIMIT, () => this.onGuessTimeout())
+    } else {
+      this.clock.stop()
+    }
     this.emitState()
   }
 

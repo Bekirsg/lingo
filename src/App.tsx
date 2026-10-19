@@ -4,9 +4,10 @@ import MainMenu from './screens/MainMenu'
 import HowToPlay from './screens/HowToPlay'
 import HighScore from './screens/HighScore'
 import Settings from './screens/Settings'
+import GameScreen from './screens/GameScreen'
 
 /** Uygulama kök ekran durumları */
-type Screen = 'splash' | 'menu' | 'howtoplay' | 'highscore' | 'settings'
+type Screen = 'splash' | 'menu' | 'game' | 'howtoplay' | 'highscore' | 'settings'
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('splash')
@@ -18,6 +19,8 @@ export default function App() {
       return <SplashScreen onReady={() => navigate('menu')} />
     case 'menu':
       return <MainMenu onNavigate={navigate} />
+    case 'game':
+      return <GameScreen onBackToMenu={() => navigate('menu')} />
     case 'howtoplay':
       return <HowToPlay onBack={() => navigate('menu')} />
     case 'highscore':

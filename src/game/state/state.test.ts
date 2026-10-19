@@ -8,7 +8,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     words4: ['kale', 'kutu', 'kedi', 'kuzu', 'kına', 'kupa', 'kare', 'kuru', 'kura', 'kola'],
     words5: ['kalem', 'kitap', 'kazak', 'kavun', 'kayık', 'köpek', 'kaşık', 'keser', 'koyun', 'külah'],
     words6: ['kelime', 'karaca', 'kartal', 'kaynak', 'kudret', 'kandil', 'kabile', 'karpuz', 'kavram', 'koltuk'],
-    words7: ['karanfi', 'kelebek', 'karınca', 'kestane', 'kurnazı', 'kaplıca', 'katedral', 'kolonya', 'kılavuz', 'kıvılcı'],
+    words7: ['karanfi', 'kelebek', 'karınca', 'kestane', 'kurnazı', 'kaplıca', 'kadayıf', 'kolonya', 'kılavuz', 'kıvılcı'],
     bonus8: [
       { w: 'bilgisay', d: 'Elektronik veri işleme cihazı' },
       { w: 'çalışmak', d: 'Bir sonuca ulaşmak için güç harcamak' },
@@ -395,5 +395,60 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       expect(game.getState().round4State!.wordsAttemptedInStage).toBe(3)
       expect(game.getState().round4State!.guesses).toHaveLength(0)
     }
+  })
+
+  // ─── 6. Harf Yazma, Silme ve Kilitli İlk Harf Kontrolü ───────────
+
+  it('senaryo 6: typeLetter ve deleteLetter ile kilitli ilk harf silinemez', () => {
+    const game = new GameController({ words: mockRepo })
+    game.startNewGame()
+    game.tickCountdown(0)
+
+    const firstChar = Array.from(game.getState().roundState!.currentWord)[0]
+    expect(game.getState().roundState!.currentInput).toBe(firstChar)
+
+    // Silmeye çalış -> ilk harf silinemez
+    game.deleteLetter()
+    game.deleteLetter()
+    expect(game.getState().roundState!.currentInput).toBe(firstChar)
+
+    // Harf yaz
+    game.typeLetter('A')
+    game.typeLetter('L')
+    expect(game.getState().roundState!.currentInput).toBe(firstChar + 'al')
+
+    // Sil
+    game.deleteLetter()
+    expect(game.getState().roundState!.currentInput).toBe(firstChar + 'a')
+  })
+
+  // ─── 7. Animasyon Sonrası Tahmin Süresi Başlatma (startGuessTimer) ──
+
+  it('senaryo 7: animasyon sırasında 10 sn sayacı beklemede kalır, startGuessTimer ile başlar', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
+
+    game.startNewGame()
+    game.tickCountdown(0)
+
+    const currentWord = game.getState().roundState!.currentWord
+    const firstChar = Array.from(currentWord)[0]
+    const otherValid = mockRepo.getWords(4).find(w => Array.from(w)[0] === firstChar && w !== currentWord)!
+
+    // Tahmin gönder ama autoStartNextTimer = false (animasyon oynayacak)
+    game.submitGuess(otherValid, false)
+    expect(game.getClock().isRunning()).toBe(false)
+
+    // Animasyon süresi geçti (örn. 600 ms)
+    mockTime += 600
+    expect(game.getClock().isRunning()).toBe(false)
+
+    // Animasyon bitti sinyali geldi -> Sayaç başlar
+    game.startGuessTimer()
+    expect(game.getClock().isRunning()).toBe(true)
+    expect(game.getClock().getRemainingSeconds()).toBe(10)
   })
 })

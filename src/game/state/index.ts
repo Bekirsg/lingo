@@ -351,6 +351,7 @@ export class GameController {
       bilPressed: false,
       userInput: '',
       won: false,
+      answered: false,
     }
   }
 
@@ -402,6 +403,7 @@ export class GameController {
     this.clock.stop()
     const answer = normalize(answerRaw)
     bs.userInput = answer
+    bs.answered = true
 
     if (answer === bs.word) {
       bs.won = true
@@ -422,6 +424,7 @@ export class GameController {
 
     this.clock.stop()
     bs.won = false
+    bs.answered = true
     this.state.screen = 'bonus_result'
     this.emitState()
   }
@@ -433,6 +436,7 @@ export class GameController {
 
     this.clock.stop()
     bs.won = false
+    bs.answered = true
     bs.revealedCount = 7
     bs.currentScore = 0
     this.state.screen = 'bonus_result'
@@ -464,6 +468,149 @@ export class GameController {
     this.state.screen = 'countdown'
     this.state.countdownValue = 3
     this.state.countdownTarget = 'playing_round'
+    this.emitState()
+  }
+
+  // ─── Bonus Yazma (BİL sonrası harf girme) ────────────────────────
+
+  /**
+   * Bonus yazma fazında kilitli olan (açılmış) pozisyon indekslerini döndürür.
+   * İlk harf (index 0) daima kilitlidir.
+   */
+  getLockedPositions(): Set<number> {
+    const bs = this.state.bonusState
+    if (!bs) return new Set()
+    const locked = new Set<number>([0])
+    for (let i = 0; i < bs.revealedCount; i++) {
+      locked.add(bs.revealOrder[i])
+    }
+    return locked
+  }
+
+  /**
+   * Bonus yazma fazında boş kutuların pozisyon indekslerini soldan sağa sıralı döndürür.
+   */
+  getEmptyPositions(): number[] {
+    const bs = this.state.bonusState
+    if (!bs) return []
+    const locked = this.getLockedPositions()
+    const empty: number[] = []
+    for (let i = 0; i < 8; i++) {
+      if (!locked.has(i)) empty.push(i)
+    }
+    return empty
+  }
+
+  /**
+   * Bonus yazma fazında harf yazar (sıradaki boş kutuya).
+   * SPEC 4.6: Açılan harfler kilitli; oyuncu sadece boş kutuları yazar,
+   * imleç sıradaki boş kutuya atlar.
+   * Tüm kutular dolunca otomatik gönderilir.
+   */
+  typeBonusLetter(char: string): void {
+    if (this.state.screen !== 'bonus_writing' || !this.state.bonusState) return
+    const bs = this.state.bonusState
+    if (bs.answered) return
+
+    const normalized = normalize(char)
+    if (!/^[a-zçğıöşü]$/.test(normalized)) return
+
+    const emptyPositions = this.getEmptyPositions()
+    if (bs.userInput.length >= emptyPositions.length) return
+
+    bs.userInput += normalized
+
+    // Tüm boş kutular dolduysa otomatik gönder
+    if (bs.userInput.length === emptyPositions.length) {
+      this.autoSubmitBonus()
+      return
+    }
+
+    this.emitState()
+  }
+
+  /**
+   * Bonus yazma fazında son harfi siler.
+   * SPEC 4.6: SİL sadece oyuncunun yazdığı harfleri siler.
+   */
+  deleteBonusLetter(): void {
+    if (this.state.screen !== 'bonus_writing' || !this.state.bonusState) return
+    const bs = this.state.bonusState
+    if (bs.answered) return
+
+    if (bs.userInput.length > 0) {
+      bs.userInput = bs.userInput.slice(0, -1)
+      this.emitState()
+    }
+  }
+
+  /**
+   * Tüm kutular dolunca otomatik olarak bonus cevabını oluşturup gönderir.
+   */
+  private autoSubmitBonus(): void {
+    if (!this.state.bonusState) return
+    const bs = this.state.bonusState
+    const locked = this.getLockedPositions()
+    const emptyPositions = this.getEmptyPositions()
+
+    // 8 harfli kelimeyi birleştir
+    const wordChars = Array.from(bs.word)
+    const result: string[] = new Array(8)
+
+    // Kilitli pozisyonlara doğru harfleri koy
+    for (let i = 0; i < 8; i++) {
+      if (locked.has(i)) {
+        result[i] = wordChars[i]
+      }
+    }
+
+    // Boş pozisyonlara kullanıcının harflerini koy
+    for (let j = 0; j < emptyPositions.length; j++) {
+      result[emptyPositions[j]] = bs.userInput[j] ?? ''
+    }
+
+    const fullAnswer = result.join('')
+    this.submitBonusAnswer(fullAnswer)
+  }
+
+  // ─── Dev-Only Kısayollar (Yalnızca Geliştirme Modu) ─────────────
+
+  /**
+   * Mevcut turda kalan kelimeleri atlayıp doğrudan bonusa gider.
+   * Sadece geliştirme modunda (import.meta.env.DEV) çağrılmalıdır.
+   */
+  devSkipToBonus(): void {
+    if (this.state.screen !== 'playing_round' && this.state.screen !== 'word_result' && this.state.screen !== 'countdown') return
+    if (!this.state.roundState) return
+
+    this.clock.stop()
+    // Bonus soruyu hazırla
+    this.setupBonusQuestion()
+    this.state.screen = 'countdown'
+    this.state.countdownValue = 3
+    this.state.countdownTarget = 'bonus_reading'
+    this.emitState()
+  }
+
+  /**
+   * Mevcut turu atlayıp sonraki tura geçer (bonus dahil atlar).
+   * Sadece geliştirme modunda (import.meta.env.DEV) çağrılmalıdır.
+   */
+  devSkipToNextRound(): void {
+    const currentRound = this.state.roundState?.round ?? 1
+
+    this.clock.stop()
+    if (currentRound < 3) {
+      const nextR = (currentRound + 1) as 2 | 3
+      this.state.currentRoundPoints = 0
+      this.setupRoundWord(nextR, 1)
+      this.state.screen = 'countdown'
+      this.state.countdownValue = 3
+      this.state.countdownTarget = 'playing_round'
+    } else {
+      // 3. tur → 4. tur intro
+      this.state.screen = 'round4_intro'
+    }
     this.emitState()
   }
 

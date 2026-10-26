@@ -10,6 +10,8 @@ import WordResultModal from '../components/WordResultModal'
 import CountdownOverlay from '../components/CountdownOverlay'
 import PausedOverlay from '../components/PausedOverlay'
 import DevDebugBar from '../components/DevDebugBar'
+import BonusScreen from './BonusScreen'
+import RoundSummaryModal from '../components/RoundSummaryModal'
 
 interface GameScreenProps {
   onBackToMenu: () => void
@@ -143,6 +145,29 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     )
   }
 
+  // ─── Bonus Ekranları (okuma + yazma + sonuç) ─────────────────
+  if (
+    gameState.screen === 'bonus_reading' ||
+    gameState.screen === 'bonus_writing' ||
+    gameState.screen === 'bonus_result'
+  ) {
+    return (
+      <>
+        <BonusScreen
+          state={gameState}
+          controller={controller}
+          clock={controller.getClock()}
+        />
+
+        {/* Dev Debug: bonus kelimesini göster + atla kısayolları */}
+        <DevDebugBar
+          bonusWord={gameState.bonusState?.word}
+          controller={controller}
+        />
+      </>
+    )
+  }
+
   const rs = gameState.roundState
   const canSubmit =
     Boolean(rs) &&
@@ -181,7 +206,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       />
 
       {/* Geliştirici Hata Ayıklama Paneli (Sadece DEV modunda) */}
-      <DevDebugBar currentWord={rs?.currentWord} />
+      <DevDebugBar
+        currentWord={rs?.currentWord}
+        controller={controller}
+      />
 
       {/* 3-2-1 Geri Sayım Katmanı */}
       {gameState.screen === 'countdown' && (
@@ -212,47 +240,17 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         />
       )}
 
-      {/* Geçici Placeholder Katmanları (M5 & M7 ekranları yapılana kadar akış çıkmaza girmesin) */}
-      {(gameState.screen === 'bonus_reading' ||
-        gameState.screen === 'bonus_writing' ||
-        gameState.screen === 'bonus_result') && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/85 backdrop-blur-md">
-          <div className="max-w-xs w-full p-6 rounded-3xl bg-slate-900 border border-violet-500/40 text-center flex flex-col items-center">
-            <span className="text-4xl mb-3">⭐</span>
-            <h3 className="text-xl font-black text-white mb-1">Bonus Soru</h3>
-            <p className="text-xs text-slate-400 mb-4">
-              M5 aşamasında tamamlanacak.
-            </p>
-            <button
-              type="button"
-              onClick={() => controller.dismissBonusResult()}
-              className="w-full py-3 px-4 rounded-xl bg-violet-600 text-white font-bold"
-            >
-              Turu Bitir ➔
-            </button>
-          </div>
-        </div>
-      )}
-
+      {/* Tur Özeti (SPEC 4.7) */}
       {gameState.screen === 'round_summary' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/85 backdrop-blur-md">
-          <div className="max-w-xs w-full p-6 rounded-3xl bg-slate-900 border border-emerald-500/40 text-center flex flex-col items-center">
-            <span className="text-4xl mb-3">🏆</span>
-            <h3 className="text-xl font-black text-white mb-1">Tur Tamamlandı!</h3>
-            <p className="text-sm font-bold text-emerald-400 mb-4">
-              Toplam Kasa: {gameState.treasury.toLocaleString('tr-TR')}
-            </p>
-            <button
-              type="button"
-              onClick={() => controller.nextRound()}
-              className="w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold"
-            >
-              Sonraki Tura Geç ➔
-            </button>
-          </div>
-        </div>
+        <RoundSummaryModal
+          round={gameState.roundState?.round ?? 1}
+          roundPoints={gameState.currentRoundPoints}
+          treasury={gameState.treasury}
+          onContinue={() => controller.nextRound()}
+        />
       )}
 
+      {/* 4. Tur Giriş Ekranı (M6'da tamamlanacak) */}
       {gameState.screen === 'round4_intro' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/85 backdrop-blur-md">
           <div className="max-w-xs w-full p-6 rounded-3xl bg-slate-900 border border-amber-500/40 text-center flex flex-col items-center">

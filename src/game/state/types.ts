@@ -58,10 +58,12 @@ export interface BonusState {
   frozenScore: number
   /** BİL basıldı mı? */
   bilPressed: boolean
-  /** Oyuncunun yazdığı tahmin */
+  /** Oyuncunun yazdığı harfler (sadece boş kutulara, sırayla) */
   userInput: string
   /** Bonus bilindi mi? */
   won: boolean
+  /** Bonus yazma süresi doldu veya sonuç gösterildi mi? */
+  answered: boolean
 }
 
 export interface Round4State {

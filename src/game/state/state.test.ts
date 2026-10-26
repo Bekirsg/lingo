@@ -451,4 +451,107 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getClock().isRunning()).toBe(true)
     expect(game.getClock().getRemainingSeconds()).toBe(10)
   })
+
+  // ─── 8. 4. Tur Etap Kazançları & Süre Bitimi Senaryoları ─────────
+
+  it('senaryo 8: 4. turda 4 ve 5 harfli etaplar tamamlandıktan sonra süre dolarsa final skor K olur', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
+
+    // 20.000 kasa ile doğrudan 4. tura atla
+    game.devSkipToRound4(20_000)
+    expect(game.getState().screen).toBe('round4_intro')
+    expect(game.getState().treasury).toBe(20_000)
+
+    game.startRound4()
+    game.tickCountdown(0)
+    expect(game.getState().screen).toBe('round4_playing')
+    expect(game.getState().round4State!.stage).toBe(4)
+
+    // 4 harfli kelimeyi bil
+    game.submitRound4Guess(game.getState().round4State!.currentWord)
+    expect(game.getState().screen).toBe('round4_stage_cleared')
+    expect(game.getState().round4State!.lastCompletedStage).toBe(4)
+
+    // Sonraki etaba devam et (5 harfli)
+    game.continueRound4()
+    expect(game.getState().screen).toBe('round4_playing')
+    expect(game.getState().round4State!.stage).toBe(5)
+
+    // 5 harfli kelimeyi bil
+    game.submitRound4Guess(game.getState().round4State!.currentWord)
+    expect(game.getState().screen).toBe('round4_stage_cleared')
+    expect(game.getState().round4State!.lastCompletedStage).toBe(5)
+
+    // 6 harfli etaba geç
+    game.continueRound4()
+    expect(game.getState().screen).toBe('round4_playing')
+    expect(game.getState().round4State!.stage).toBe(6)
+
+    // 6 harflideyken süre doldu (120 sn bitti)
+    game.onRound4Timeout()
+    expect(game.getState().screen).toBe('game_over')
+    // 5 harfli tamamlandığı için kazanç K = 20.000
+    expect(game.getState().finalScore).toBe(20_000)
+  })
+
+  it('senaryo 9: 4. turda 6 harfli etap tamamlandıktan sonra süre dolarsa final skor 2*K olur', () => {
+    const game = new GameController({
+      words: mockRepo,
+    })
+
+    // 15.000 kasa ile doğrudan 4. tura atla
+    game.devSkipToRound4(15_000)
+    game.startRound4()
+    game.tickCountdown(0)
+
+    // 4, 5 ve 6 harfli etapları tamamla
+    for (const stage of [4, 5, 6]) {
+      expect(game.getState().round4State!.stage).toBe(stage)
+      game.submitRound4Guess(game.getState().round4State!.currentWord)
+      expect(game.getState().screen).toBe('round4_stage_cleared')
+      expect(game.getState().round4State!.lastCompletedStage).toBe(stage)
+      game.continueRound4()
+    }
+
+    // Şimdi 7 harfli etapta
+    expect(game.getState().round4State!.stage).toBe(7)
+    // Süre doldu
+    game.onRound4Timeout()
+    expect(game.getState().screen).toBe('game_over')
+    // 6 harfli tamamlandığı için final skor = 2 * 15.000 = 30.000
+    expect(game.getState().finalScore).toBe(30_000)
+  })
+
+  it('senaryo 10: 4. turda dev kısayolları ve harf yazma/silme kontrolleri', () => {
+    const game = new GameController({ words: mockRepo })
+    game.devSkipToRound4(10_000)
+    game.startRound4()
+    game.tickCountdown(0)
+
+    expect(game.getState().screen).toBe('round4_playing')
+    const r4 = game.getState().round4State!
+    const firstChar = Array.from(r4.currentWord)[0]
+
+    // Harf yaz ve sil
+    game.typeLetter('e')
+    expect(game.getState().round4State!.currentInput).toBe(firstChar + 'e')
+    game.deleteLetter()
+    expect(game.getState().round4State!.currentInput).toBe(firstChar)
+    // İlk harf silinemez
+    game.deleteLetter()
+    expect(game.getState().round4State!.currentInput).toBe(firstChar)
+
+    // Dev kısayolu: devSetRound4Time
+    game.devSetRound4Time(10)
+    expect(Math.ceil(game.getClock().getRemainingSeconds())).toBe(10)
+
+    // Dev kısayolu: devAutoSolveRound4
+    game.devAutoSolveRound4()
+    expect(game.getState().screen).toBe('round4_stage_cleared')
+    expect(game.getState().round4State!.lastCompletedStage).toBe(4)
+  })
 })

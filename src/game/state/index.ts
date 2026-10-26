@@ -172,16 +172,22 @@ export class GameController {
    * İlk harf kilitlidir, oyuncu sadece 2. kutudan sonrakileri doldurur.
    */
   typeLetter(char: string): void {
-    if (this.state.screen !== 'playing_round' || !this.state.roundState) return
-    const rs = this.state.roundState
-    if (rs.wordWon || rs.wordLost) return
-
     const normalized = normalize(char)
     if (!/^[a-zçğıöşü]$/.test(normalized)) return
 
-    if (letterCount(rs.currentInput) < rs.letterCount) {
-      rs.currentInput += normalized
-      this.emitState()
+    if (this.state.screen === 'playing_round' && this.state.roundState) {
+      const rs = this.state.roundState
+      if (rs.wordWon || rs.wordLost) return
+      if (letterCount(rs.currentInput) < rs.letterCount) {
+        rs.currentInput += normalized
+        this.emitState()
+      }
+    } else if (this.state.screen === 'round4_playing' && this.state.round4State) {
+      const r4 = this.state.round4State
+      if (letterCount(r4.currentInput) < r4.stage) {
+        r4.currentInput += normalized
+        this.emitState()
+      }
     }
   }
 
@@ -190,15 +196,23 @@ export class GameController {
    * İlk harf kilitlidir ve ASLA silinemez!
    */
   deleteLetter(): void {
-    if (this.state.screen !== 'playing_round' || !this.state.roundState) return
-    const rs = this.state.roundState
-    if (rs.wordWon || rs.wordLost) return
-
-    const chars = Array.from(rs.currentInput)
-    if (chars.length > 1) {
-      chars.pop()
-      rs.currentInput = chars.join('')
-      this.emitState()
+    if (this.state.screen === 'playing_round' && this.state.roundState) {
+      const rs = this.state.roundState
+      if (rs.wordWon || rs.wordLost) return
+      const chars = Array.from(rs.currentInput)
+      if (chars.length > 1) {
+        chars.pop()
+        rs.currentInput = chars.join('')
+        this.emitState()
+      }
+    } else if (this.state.screen === 'round4_playing' && this.state.round4State) {
+      const r4 = this.state.round4State
+      const chars = Array.from(r4.currentInput)
+      if (chars.length > 1) {
+        chars.pop()
+        r4.currentInput = chars.join('')
+        this.emitState()
+      }
     }
   }
 
@@ -612,6 +626,41 @@ export class GameController {
       this.state.screen = 'round4_intro'
     }
     this.emitState()
+  }
+
+  /**
+   * Doğrudan 4. tura atlar (belirtilen kasa ile).
+   * Sadece geliştirme modunda çağrılmalıdır.
+   */
+  devSkipToRound4(treasury: number = 20000): void {
+    this.clock.stop()
+    this.state.treasury = treasury
+    this.state.currentRoundPoints = 0
+    this.state.screen = 'round4_intro'
+    this.emitState()
+  }
+
+  /**
+   * 4. turda kalan süreyi 10 saniyeye düşürür.
+   * Sadece geliştirme modunda çağrılmalıdır.
+   */
+  devSetRound4Time(seconds: number): void {
+    if (this.state.screen !== 'round4_playing') return
+    // Saati durdur ve yeniden başlat (kısa süreyle)
+    this.clock.stop()
+    this.clock.start(seconds, () => this.onRound4Timeout())
+    this.emitState()
+  }
+
+  /**
+   * 4. turda mevcut kelimeyi otomatik bildir.
+   * Sadece geliştirme modunda çağrılmalıdır.
+   */
+  devAutoSolveRound4(): void {
+    if (this.state.screen !== 'round4_playing' || !this.state.round4State) return
+    const word = this.state.round4State.currentWord
+    this.state.round4State.currentInput = word
+    this.submitRound4Guess(word)
   }
 
   // ─── 4. Tur (Büyük Final) Akışı (SPEC Bölüm 4.8) ───────────────────

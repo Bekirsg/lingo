@@ -3,8 +3,18 @@ import type { RoundState } from '../game/state'
 import type { Mark } from '../game/engine'
 import { turkishUpper } from '../utils/turkish'
 
+interface BoardData {
+  letterCount: number
+  currentWord: string
+  guesses: { guess: string; marks: Mark[] }[]
+  currentInput: string
+  wordWon?: boolean
+  wordLost?: boolean
+}
+
 interface BoardProps {
-  roundState: RoundState
+  roundState?: RoundState
+  boardData?: BoardData
   /** Tahmin gönderildiğinde animasyonu başlatmak için bayrak */
   isEvaluating?: boolean
   /** Animasyon bittiğinde çağrılır (maks ≤ 700 ms) */
@@ -15,11 +25,14 @@ interface BoardProps {
 
 export default function Board({
   roundState,
+  boardData,
   isEvaluating = false,
   onAnimationComplete,
   isShaking = false,
 }: BoardProps) {
-  const { letterCount, currentWord, guesses, currentInput, wordWon, wordLost } = roundState
+  const data = boardData ?? roundState
+  if (!data) return null
+  const { letterCount, currentWord, guesses, currentInput, wordWon = false, wordLost = false } = data
 
   // Animasyon süresi yönetimi (≤ 700 ms)
   const [animatingRow, setAnimatingRow] = useState<number | null>(null)

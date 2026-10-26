@@ -13,8 +13,10 @@ export interface WordRepository {
   getWords(length: number): string[]
   /** Kelime geçerli mi (sözlükte var mı)? O(1) Set araması */
   isValidWord(word: string, length: number): boolean
-  /** Bonus kelimeler (8 harfli + tanım) */
+  /** Bonus kelimeler (8 harfli + tanım) — lazy yüklenir */
   getBonusWords(): BonusWordItem[]
+  /** Bonus verisini sonradan yükler (lazy) */
+  loadBonusWords?(items: BonusWordItem[]): void
 }
 
 /** Bellek içi kelime deposu oluşturur */
@@ -23,7 +25,7 @@ export function createWordRepository(data: {
   words5: string[]
   words6: string[]
   words7: string[]
-  bonus8: BonusWordItem[]
+  bonus8?: BonusWordItem[]
 }): WordRepository {
   const pools: Record<number, string[]> = {
     4: data.words4,
@@ -39,6 +41,8 @@ export function createWordRepository(data: {
     7: new Set(data.words7),
   }
 
+  let bonusData: BonusWordItem[] = data.bonus8 ?? []
+
   return {
     getWords(length: number): string[] {
       return pools[length] ?? []
@@ -48,7 +52,10 @@ export function createWordRepository(data: {
       return set ? set.has(word) : false
     },
     getBonusWords(): BonusWordItem[] {
-      return data.bonus8
+      return bonusData
+    },
+    loadBonusWords(items: BonusWordItem[]): void {
+      bonusData = items
     },
   }
 }

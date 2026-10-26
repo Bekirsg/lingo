@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { GameController, type GameState } from '../game/state'
 import { getKeyboardStatuses } from '../game/engine'
-import { loadWordRepository } from '../data/wordsLoader'
+import { loadWordRepository, ensureBonusLoaded } from '../data/wordsLoader'
 import { getHighScore } from '../data/storage'
 import Hud from '../components/Hud'
 import Board from '../components/Board'
@@ -12,6 +12,9 @@ import PausedOverlay from '../components/PausedOverlay'
 import DevDebugBar from '../components/DevDebugBar'
 import BonusScreen from './BonusScreen'
 import RoundSummaryModal from '../components/RoundSummaryModal'
+import Round4IntroScreen from '../components/Round4IntroScreen'
+import Round4StageClearedModal from '../components/Round4StageClearedModal'
+import GameOverModal from '../components/GameOverModal'
 
 interface GameScreenProps {
   onBackToMenu: () => void
@@ -51,6 +54,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
         // Oyunu hemen başlat
         game.startNewGame()
+
+        // Bonus verisini arka planda pre-fetch et (bonusa gelince hazır olsun)
+        ensureBonusLoaded(repo).catch(() => {})
       })
       .catch((err) => {
         console.error('Kelime verisi yüklenirken hata:', err)
@@ -84,11 +90,19 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     }
   }, [])
 
+  const isRound4 =
+    gameState?.screen === 'round4_playing' || gameState?.screen === 'round4_stage_cleared'
+  const rs = gameState?.roundState
+  const r4 = gameState?.round4State
+
   // Klavye harf durumları
   const keyboardStatuses = useMemo(() => {
-    if (!gameState?.roundState) return {}
-    return getKeyboardStatuses(gameState.roundState.guesses)
-  }, [gameState?.roundState])
+    if (isRound4 && r4) {
+      return getKeyboardStatuses(r4.guesses)
+    }
+    if (!rs) return {}
+    return getKeyboardStatuses(rs.guesses)
+  }, [isRound4, r4, rs])
 
   // Harf tuşuna basıldığında
   const handleChar = useCallback(
@@ -103,36 +117,54 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const handleDelete = useCallback(() => {
     if (!controller || isEvaluating) return
     controller.deleteLetter()
-  }, [controller, isEvaluating],)
+  }, [controller, isEvaluating])
 
   // Tahmin gönderildiğinde
   const handleSubmit = useCallback(() => {
-    if (!controller || !gameState?.roundState || isEvaluating) return
-    const rs = gameState.roundState
-    const guess = rs.currentInput
+    if (!controller || isEvaluating) return
 
-    if (guess.length !== rs.letterCount) return
+    if (isRound4 && r4) {
+      const guess = r4.currentInput
+      if (guess.length !== r4.stage) return
 
-    // Tahmini gönder: autoStartNextTimer = false (çünkü kutu çevirme animasyonu oynayacak!)
-    setIsEvaluating(true)
-    controller.submitGuess(guess, false)
+      setIsEvaluating(true)
+      const prevAttempt = r4.wordsAttemptedInStage
+      controller.submitRound4Guess(guess)
 
-    // Geçersiz kelime kontrolü -> titreme tetikle
-    const latestState = controller.getState()
-    if (latestState.roundState?.lossReason === 'invalid_word') {
-      setIsShaking(true)
-      setTimeout(() => setIsShaking(false), 500)
+      // Geçersiz kelime veya 5 hak bittiğinde yeni kelime gelir -> satırı salla
+      const latestR4 = controller.getState().round4State
+      if (latestR4 && latestR4.wordsAttemptedInStage > prevAttempt) {
+        setIsShaking(true)
+        setTimeout(() => setIsShaking(false), 500)
+      }
+      return
     }
-  }, [controller, gameState?.roundState, isEvaluating])
+
+    if (rs) {
+      const guess = rs.currentInput
+      if (guess.length !== rs.letterCount) return
+
+      // Tahmini gönder: autoStartNextTimer = false (çünkü kutu çevirme animasyonu oynayacak!)
+      setIsEvaluating(true)
+      controller.submitGuess(guess, false)
+
+      // Geçersiz kelime kontrolü -> titreme tetikle
+      const latestState = controller.getState()
+      if (latestState.roundState?.lossReason === 'invalid_word') {
+        setIsShaking(true)
+        setTimeout(() => setIsShaking(false), 500)
+      }
+    }
+  }, [controller, isEvaluating, isRound4, r4, rs])
 
   // Kutu çevirme animasyonu bittiğinde (≤ 700 ms)
   const handleAnimationComplete = useCallback(() => {
     setIsEvaluating(false)
-    if (controller) {
-      // SPEC 4.4: Animasyon bitince bir sonraki tahminin 10 sn'si başlar
+    if (controller && gameState?.screen === 'playing_round') {
+      // SPEC 4.4: 1–3. Turda animasyon bitince bir sonraki tahminin 10 sn'si başlar
       controller.startGuessTimer()
     }
-  }, [controller])
+  }, [controller, gameState?.screen])
 
   if (loading || !controller || !gameState) {
     return (
@@ -163,22 +195,64 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         <DevDebugBar
           bonusWord={gameState.bonusState?.word}
           controller={controller}
+          screen={gameState.screen}
         />
       </>
     )
   }
 
-  const rs = gameState.roundState
-  const canSubmit =
-    Boolean(rs) &&
-    rs!.currentInput.length === rs!.letterCount &&
-    !rs!.wordWon &&
-    !rs!.wordLost &&
-    !isEvaluating
+  // ─── 4. Tur Giriş Ekranı (SPEC 4.8) ──────────────────────────
+  if (gameState.screen === 'round4_intro') {
+    return (
+      <>
+        <Round4IntroScreen
+          treasury={gameState.treasury}
+          onStart={() => controller.startRound4()}
+        />
+        <DevDebugBar
+          controller={controller}
+          screen={gameState.screen}
+        />
+      </>
+    )
+  }
+
+  // ─── Oyun Sonu / Final Skor Ekranı (SPEC 4.9) ─────────────────
+  if (gameState.screen === 'game_over') {
+    return (
+      <>
+        <GameOverModal
+          state={gameState}
+          onNewGame={() => controller.startNewGame()}
+          onBackToMenu={onBackToMenu}
+        />
+        <DevDebugBar
+          controller={controller}
+          screen={gameState.screen}
+        />
+      </>
+    )
+  }
+
+  const canSubmit = isRound4
+    ? Boolean(r4) && r4!.currentInput.length === r4!.stage && !isEvaluating
+    : Boolean(rs) &&
+      rs!.currentInput.length === rs!.letterCount &&
+      !rs!.wordWon &&
+      !rs!.wordLost &&
+      !isEvaluating
+
+  const isKeyboardDisabled =
+    isEvaluating ||
+    (isRound4
+      ? !r4 || gameState.screen === 'round4_stage_cleared'
+      : !rs || rs.wordWon || rs.wordLost)
+
+  const activeWord = isRound4 ? r4?.currentWord : rs?.currentWord
 
   return (
     <div className="flex-1 flex flex-col justify-between items-center bg-gradient-to-b from-[#0f0a2e] via-[#150d3d] to-[#0a0620] relative overflow-hidden select-none">
-      {/* HUD: Tur, Kelime, Hak, Kasa ve Canlı Süre */}
+      {/* HUD: Tur, Kelime/Etap, Hak, Kasa/Kazanç ve Canlı Süre */}
       <Hud
         state={gameState}
         clock={controller.getClock()}
@@ -186,14 +260,28 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       />
 
       {/* Oyun Tahtası (5 satır x N harf) */}
-      {rs && (
+      {isRound4 && r4 ? (
+        <Board
+          boardData={{
+            letterCount: r4.stage,
+            currentWord: r4.currentWord,
+            guesses: r4.guesses,
+            currentInput: r4.currentInput,
+            wordWon: false,
+            wordLost: false,
+          }}
+          isEvaluating={isEvaluating}
+          onAnimationComplete={handleAnimationComplete}
+          isShaking={isShaking}
+        />
+      ) : rs ? (
         <Board
           roundState={rs}
           isEvaluating={isEvaluating}
           onAnimationComplete={handleAnimationComplete}
           isShaking={isShaking}
         />
-      )}
+      ) : null}
 
       {/* Ekran Klavyesi (Özel Türkçe tuşlar) */}
       <Keyboard
@@ -202,13 +290,14 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         onDelete={handleDelete}
         onSubmit={handleSubmit}
         canSubmit={canSubmit}
-        disabled={isEvaluating || !rs || rs.wordWon || rs.wordLost}
+        disabled={isKeyboardDisabled}
       />
 
       {/* Geliştirici Hata Ayıklama Paneli (Sadece DEV modunda) */}
       <DevDebugBar
-        currentWord={rs?.currentWord}
+        currentWord={activeWord}
         controller={controller}
+        screen={gameState.screen}
       />
 
       {/* 3-2-1 Geri Sayım Katmanı */}
@@ -219,7 +308,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           label={
             gameState.countdownTarget === 'bonus_reading'
               ? 'Bonus Soru Başlıyor!'
-              : `${rs?.round ?? 1}. Tur Hazırlanıyor`
+              : gameState.countdownTarget === 'round4_playing'
+                ? 'Büyük Final Başlıyor!'
+                : `${rs?.round ?? 1}. Tur Hazırlanıyor`
           }
         />
       )}
@@ -232,6 +323,16 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         />
       )}
 
+      {/* 4. Tur Duraklama Ekranı (Etap Bilindiğinde - SPEC 4.8) */}
+      {gameState.screen === 'round4_stage_cleared' && r4 && (
+        <Round4StageClearedModal
+          round4State={r4}
+          treasury={gameState.treasury}
+          clock={controller.getClock()}
+          onContinue={() => controller.continueRound4()}
+        />
+      )}
+
       {/* Duraklatıldı Katmanı */}
       {gameState.screen === 'paused' && (
         <PausedOverlay
@@ -240,7 +341,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         />
       )}
 
-      {/* Tur Özeti (SPEC 4.7) */}
+      {/* Tur Özeti (1. ve 2. Tur Sonu - SPEC 4.7) */}
       {gameState.screen === 'round_summary' && (
         <RoundSummaryModal
           round={gameState.roundState?.round ?? 1}
@@ -248,26 +349,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           treasury={gameState.treasury}
           onContinue={() => controller.nextRound()}
         />
-      )}
-
-      {/* 4. Tur Giriş Ekranı (M6'da tamamlanacak) */}
-      {gameState.screen === 'round4_intro' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/85 backdrop-blur-md">
-          <div className="max-w-xs w-full p-6 rounded-3xl bg-slate-900 border border-amber-500/40 text-center flex flex-col items-center">
-            <span className="text-4xl mb-3">🔥</span>
-            <h3 className="text-xl font-black text-white mb-1">Büyük Final (4. Tur)</h3>
-            <p className="text-xs text-slate-400 mb-4">
-              M6 aşamasında tamamlanacak.
-            </p>
-            <button
-              type="button"
-              onClick={onBackToMenu}
-              className="w-full py-3 px-4 rounded-xl bg-amber-600 text-white font-bold"
-            >
-              Ana Menüye Dön
-            </button>
-          </div>
-        </div>
       )}
     </div>
   )

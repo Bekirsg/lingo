@@ -131,7 +131,7 @@ export default function Keyboard({
           className={`
             px-2.5 h-12 rounded-lg text-xs font-black tracking-wider
             border transition-all duration-150 active:scale-90
-            flex items-center justify-center uppercase
+            flex items-center justify-center
             ${
               canSubmit
                 ? 'bg-violet-600 hover:bg-violet-500 text-white border-violet-400 shadow-md shadow-violet-600/40'

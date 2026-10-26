@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { RoundState } from '../game/state'
 import type { Mark } from '../game/engine'
+import { turkishUpper } from '../utils/turkish'
 
 interface BoardProps {
   roundState: RoundState
@@ -43,8 +44,8 @@ export default function Board({
   const cols = Array.from({ length: letterCount }, (_, i) => i)
 
   const activeRowIndex = wordWon || wordLost ? -1 : guesses.length
-  const lockedFirstChar = Array.from(currentWord)[0]?.toUpperCase() ?? ''
-  const currentChars = Array.from(currentInput).map(c => c.toUpperCase())
+  const lockedFirstChar = turkishUpper(Array.from(currentWord)[0] ?? '')
+  const currentChars = Array.from(currentInput).map(c => turkishUpper(c))
 
   return (
     <div className="w-full flex-1 flex flex-col items-center justify-center px-4 py-2 select-none">
@@ -60,7 +61,7 @@ export default function Board({
 
           // Geçmiş tahmin verisi
           const pastGuess = isPast ? guesses[rIndex] : null
-          const pastChars = pastGuess ? Array.from(pastGuess.guess).map(c => c.toUpperCase()) : []
+          const pastChars = pastGuess ? Array.from(pastGuess.guess).map(c => turkishUpper(c)) : []
           const pastMarks: Mark[] = pastGuess ? pastGuess.marks : []
 
           return (

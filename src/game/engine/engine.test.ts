@@ -233,6 +233,17 @@ describe('Türkçe normalizasyon', () => {
       // pos0 g=g → green, pos1 o≠ö → red, pos2 l=l → green, pos3 e=e → green
       expect(result).toEqual(['green', 'red', 'green', 'green'])
     })
+
+    it('normalize: i ve ı ayrı normalize edilir', () => {
+      expect(normalize('i')).toBe('i')
+      expect(normalize('ı')).toBe('ı')
+      expect(normalize('i')).not.toBe(normalize('ı'))
+    })
+
+    it('normalize: büyük I → ı, büyük İ → i', () => {
+      expect(normalize('I')).toBe('ı')
+      expect(normalize('İ')).toBe('i')
+    })
   })
 })
 

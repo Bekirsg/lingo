@@ -1,6 +1,7 @@
 import type { RoundState } from '../game/state'
 import { ROUND_CONFIGS } from '../game/engine'
 import { formatPoints } from './Hud'
+import { turkishUpper } from '../utils/turkish'
 
 interface WordResultModalProps {
   roundState: RoundState
@@ -60,8 +61,8 @@ export default function WordResultModal({ roundState, onContinue }: WordResultMo
             </span>
             <div className="mt-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
               <span className="text-xs text-slate-400 mr-2">Doğru Kelime:</span>
-              <span className="font-mono text-xl font-black text-white tracking-widest uppercase">
-                {currentWord}
+              <span className="font-mono text-xl font-black text-white tracking-widest">
+                {turkishUpper(currentWord)}
               </span>
             </div>
           </div>

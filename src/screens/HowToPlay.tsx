@@ -1,3 +1,6 @@
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
+
 interface HowToPlayProps {
   onBack: () => void
 }
@@ -8,7 +11,11 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
       {/* Üst bar */}
       <div className="flex items-center mb-6">
         <button
-          onClick={onBack}
+          onClick={() => {
+            playSound('key_press')
+            triggerHaptic('tap')
+            onBack()
+          }}
           className="text-[var(--color-accent)] text-2xl font-bold mr-3 active:scale-90 transition-transform"
           aria-label="Geri"
         >

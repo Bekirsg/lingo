@@ -162,6 +162,8 @@ export class GameController {
 
     this.state.usedWords.add(word)
 
+    const prevWon = (wordIndex > 1 && this.state.roundState) ? this.state.roundState.wordsWonInRound : 0
+
     this.state.roundState = {
       round,
       wordIndex,
@@ -171,6 +173,7 @@ export class GameController {
       currentInput: Array.from(word)[0], // ilk harf otomatik yazılı
       wordWon: false,
       wordLost: false,
+      wordsWonInRound: prevWon,
     }
   }
 
@@ -293,6 +296,7 @@ export class GameController {
     if (isCorrect) {
       this.clock.stop()
       rs.wordWon = true
+      rs.wordsWonInRound++
       const config = ROUND_CONFIGS[rs.round - 1]
       const points = config.pointsPerWord
       this.state.currentRoundPoints += points
@@ -476,29 +480,29 @@ export class GameController {
   /** Bonus sonuç kartından sonra tur özetine geç */
   dismissBonusResult(): void {
     if (this.state.screen !== 'bonus_result') return
-    const currentRound = this.state.roundState?.round ?? 1
-
-    if (currentRound < 3) {
-      this.state.screen = 'round_summary'
-    } else {
-      // 3. tur bitti -> 4. Tur giriş ekranına geç
-      this.state.screen = 'round4_intro'
-    }
+    // SPEC M7: 1–3. tur sonlarında bonus sonrası tur özet ekranı gösterilir
+    this.state.screen = 'round_summary'
     this.emitState()
   }
 
-  /** Tur özeti ekranından bir sonraki tura (2 veya 3) geçiş */
+  /** Tur özeti ekranından bir sonraki tura (2, 3) veya 4. Tur giriş ekranına geçiş */
   nextRound(): void {
     if (this.state.screen !== 'round_summary') return
     const currentRound = this.state.roundState?.round ?? 1
-    const nextR = (currentRound + 1) as 2 | 3
 
-    this.state.currentRoundPoints = 0
-    this.setupRoundWord(nextR, 1)
-    this.state.screen = 'countdown'
-    this.state.countdownValue = 3
-    this.state.countdownTarget = 'playing_round'
-    this.emitState()
+    if (currentRound < 3) {
+      const nextR = (currentRound + 1) as 2 | 3
+      this.state.currentRoundPoints = 0
+      this.setupRoundWord(nextR, 1)
+      this.state.screen = 'countdown'
+      this.state.countdownValue = 3
+      this.state.countdownTarget = 'playing_round'
+      this.emitState()
+    } else {
+      // 3. tur bitti -> 4. Tur giriş ekranına geç
+      this.state.screen = 'round4_intro'
+      this.emitState()
+    }
   }
 
   // ─── Bonus Yazma (BİL sonrası harf girme) ────────────────────────

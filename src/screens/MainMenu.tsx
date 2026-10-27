@@ -1,3 +1,6 @@
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
+
 interface MainMenuProps {
   onNavigate: (screen: 'game' | 'menu' | 'howtoplay' | 'highscore' | 'settings') => void
 }
@@ -33,7 +36,13 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
           <button
             key={item.label}
             disabled={item.disabled}
-            onClick={() => !item.disabled && onNavigate(item.screen)}
+            onClick={() => {
+              if (!item.disabled) {
+                playSound('key_press')
+                triggerHaptic('tap')
+                onNavigate(item.screen)
+              }
+            }}
             className={`
               w-full py-4 px-6 rounded-2xl text-lg font-bold
               transition-all duration-200 active:scale-95
@@ -57,7 +66,7 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
 
       {/* Alt bilgi */}
       <p className="mt-12 text-xs text-[var(--color-text-muted)]">
-        v0.4.0 — BEKİR-EREN M4
+        v0.7.0 — BEKİR-EREN M7
       </p>
     </div>
   )

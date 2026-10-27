@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
 
 interface CountdownOverlayProps {
   initialSeconds?: number
@@ -14,7 +16,11 @@ export default function CountdownOverlay({
   const [count, setCount] = useState(initialSeconds)
 
   useEffect(() => {
-    if (count <= 0) {
+    if (count > 0) {
+      playSound('countdown_tick')
+      triggerHaptic('countdown')
+    } else {
+      playSound('countdown_go')
       onComplete()
       return
     }

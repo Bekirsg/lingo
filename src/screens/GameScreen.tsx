@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { GameController, type GameState } from '../game/state'
-import { getKeyboardStatuses } from '../game/engine'
+import { getKeyboardStatuses, ROUND_CONFIGS } from '../game/engine'
 import { loadWordRepository, ensureBonusLoaded } from '../data/wordsLoader'
 import { getHighScore } from '../data/storage'
 import Hud from '../components/Hud'
@@ -16,6 +16,8 @@ import Round4IntroScreen from '../components/Round4IntroScreen'
 import Round4StageClearedModal from '../components/Round4StageClearedModal'
 import GameOverModal from '../components/GameOverModal'
 import { turkishUpper } from '../utils/turkish'
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
 
 interface GameScreenProps {
   onBackToMenu: () => void
@@ -111,6 +113,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const handleChar = useCallback(
     (char: string) => {
       if (!controller || isEvaluating) return
+      playSound('key_press')
+      triggerHaptic('tap')
       controller.typeLetter(char)
     },
     [controller, isEvaluating],
@@ -119,6 +123,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   // Sil tuşuna basıldığında
   const handleDelete = useCallback(() => {
     if (!controller || isEvaluating) return
+    playSound('key_press')
+    triggerHaptic('tap')
     controller.deleteLetter()
   }, [controller, isEvaluating])
 
@@ -172,6 +178,17 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       controller.startGuessTimer()
     }
   }, [controller, gameState?.screen])
+
+  // 4. tur kelime kaybı durumunda ses ve titreşim
+  const prevScreenRef = useRef(gameState?.screen)
+  useEffect(() => {
+    if (!gameState) return
+    if (gameState.screen === 'round4_word_lost' && prevScreenRef.current !== 'round4_word_lost') {
+      playSound('word_lost')
+      triggerHaptic('wrong')
+    }
+    prevScreenRef.current = gameState.screen
+  }, [gameState?.screen])
 
   if (loading || !controller || !gameState) {
     return (
@@ -371,10 +388,16 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         />
       )}
 
-      {/* Tur Özeti (1. ve 2. Tur Sonu - SPEC 4.7) */}
+      {/* Tur Özeti (1–3. Tur Sonu - SPEC 4.7 & M7) */}
       {gameState.screen === 'round_summary' && (
         <RoundSummaryModal
           round={gameState.roundState?.round ?? 1}
+          wordsWon={gameState.roundState?.wordsWonInRound ?? 0}
+          wordPoints={
+            (gameState.roundState?.wordsWonInRound ?? 0) *
+            (ROUND_CONFIGS[(gameState.roundState?.round ?? 1) - 1]?.pointsPerWord ?? 1000)
+          }
+          bonusPoints={gameState.bonusState?.won ? gameState.bonusState.frozenScore : 0}
           roundPoints={gameState.currentRoundPoints}
           treasury={gameState.treasury}
           onContinue={() => controller.nextRound()}

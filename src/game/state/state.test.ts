@@ -79,13 +79,12 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       expect(game.getState().screen).toBe('bonus_result')
       expect(game.getState().bonusState!.won).toBe(true)
 
-      // Bonus sonucunu geç
+      // Bonus sonucunu geç -> Tur özeti ekranı (1-3. turların hepsinde)
       game.dismissBonusResult()
+      expect(game.getState().screen).toBe('round_summary')
+      game.nextRound()
 
       if (r < 3) {
-        // Tur özeti ekranı
-        expect(game.getState().screen).toBe('round_summary')
-        game.nextRound()
         expect(game.getState().screen).toBe('countdown')
         game.tickCountdown(0)
       }
@@ -164,8 +163,8 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       game.pressBil()
       game.submitBonusAnswer(game.getState().bonusState!.word)
       game.dismissBonusResult()
+      game.nextRound()
       if (r < 3) {
-        game.nextRound()
         game.tickCountdown(0)
       }
     }
@@ -380,29 +379,45 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().round4State!.guesses).toHaveLength(0)
     expect(game.getClock().isRunning()).toBe(true)
     expect(game.getClock().getRemainingSeconds()).toBe(110) // 3 sn bekleme 120 sn'den düşmedi
+  })
 
-    // 5 yanlış geçerli tahmin yapınca da aynı şekilde round4_word_lost ekranı gelir
-    const secondFirstChar = Array.from(newWord)[0]
+  it('senaryo 5c: 4. turda 5 yanlış geçerli tahminle kayıp -> doğru kelime gösterilir, ana sayaç donar, 3 sn sonra yeni kelime gelir', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
+
+    game.devSkipToRound4(20_000)
+    game.startRound4()
+    game.tickCountdown(0)
+
+    const word = game.getState().round4State!.currentWord
+    const firstChar = Array.from(word)[0]
+
+    // 5 adet yanlış ama geçerli tahmin hazırla
     const validWrongGuesses = mockRepo
       .getWords(4)
-      .filter(w => Array.from(w)[0] === secondFirstChar && w !== newWord)
+      .filter(w => Array.from(w)[0] === firstChar && w !== word)
 
-    if (validWrongGuesses.length >= 2) {
-      for (let i = 0; i < 5; i++) {
-        game.submitRound4Guess(validWrongGuesses[i % validWrongGuesses.length])
-      }
+    expect(validWrongGuesses.length).toBeGreaterThanOrEqual(1)
 
-      // 5 hak bitti -> round4_word_lost ekranı, doğru kelime newWord
-      expect(game.getState().screen).toBe('round4_word_lost')
-      expect(game.getState().round4State!.lostWord).toBe(newWord)
-      expect(game.getState().round4State!.wordsAttemptedInStage).toBe(3)
-
-      // 3.5 sn sonra yeni kelimeye geçilir
-      mockTime += 3500
-      game.getWaitClock().check()
-      expect(game.getState().screen).toBe('round4_playing')
-      expect(game.getState().round4State!.guesses).toHaveLength(0)
+    for (let i = 0; i < 5; i++) {
+      game.submitRound4Guess(validWrongGuesses[i % validWrongGuesses.length])
     }
+
+    // 5 hak bitti -> round4_word_lost ekranı, doğru kelime lostWord olarak saklanır
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getState().round4State!.lostWord).toBe(word)
+    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+    expect(game.getClock().isRunning()).toBe(false) // ana sayaç dondu
+
+    // 3.5 sn sonra yeni kelimeye geçilir
+    mockTime += 3500
+    game.getWaitClock().check()
+    expect(game.getState().screen).toBe('round4_playing')
+    expect(game.getState().round4State!.guesses).toHaveLength(0)
+    expect(game.getClock().isRunning()).toBe(true) // sayaç devam eder
   })
 
   // ─── 6. Harf Yazma, Silme ve Kilitli İlk Harf Kontrolü ───────────

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import type { Clock } from '../game/clock'
+import { playSound } from '../audio/sound'
 
 interface TimerDisplayProps {
   clock: Clock
@@ -9,10 +10,11 @@ interface TimerDisplayProps {
 /**
  * Bağımsız çalışan süre bileşeni.
  * Sadece bu bileşen 100ms'de bir yeniden çizilir; tüm sayfa re-render olmaz!
- * SPEC 6.2: Köşede büyük, canlı geri sayım (son 3 saniyede kırmızı/pulse)
+ * SPEC 6.2: Köşede büyük, canlı geri sayım (son 3 saniyede kırmızı/pulse ve uyarı sesi)
  */
 export default function TimerDisplay({ clock, className = '' }: TimerDisplayProps) {
   const [seconds, setSeconds] = useState(() => Math.ceil(clock.getRemainingSeconds()))
+  const lastAlertedSecRef = useRef<number | null>(null)
 
   useEffect(() => {
     // 50ms aralıkla saatin kalan süresini kontrol et
@@ -23,6 +25,16 @@ export default function TimerDisplay({ clock, className = '' }: TimerDisplayProp
 
     return () => clearInterval(interval)
   }, [clock])
+
+  // Son 3 saniye uyarısı (3, 2, 1)
+  useEffect(() => {
+    if (seconds <= 3 && seconds > 0 && lastAlertedSecRef.current !== seconds) {
+      lastAlertedSecRef.current = seconds
+      playSound('time_warning')
+    } else if (seconds > 3) {
+      lastAlertedSecRef.current = null
+    }
+  }, [seconds])
 
   const isLow = seconds <= 3 && seconds > 0
   const isZero = seconds === 0

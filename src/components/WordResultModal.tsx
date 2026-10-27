@@ -1,7 +1,10 @@
+import { useEffect } from 'react'
 import type { RoundState } from '../game/state'
 import { ROUND_CONFIGS } from '../game/engine'
 import { formatPoints } from './Hud'
 import { turkishUpper } from '../utils/turkish'
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
 
 interface WordResultModalProps {
   roundState: RoundState
@@ -11,6 +14,16 @@ interface WordResultModalProps {
 export default function WordResultModal({ roundState, onContinue }: WordResultModalProps) {
   const { round, currentWord, wordWon, lossReason } = roundState
   const points = ROUND_CONFIGS[round - 1]?.pointsPerWord ?? 1000
+
+  useEffect(() => {
+    if (wordWon) {
+      playSound('word_won')
+      triggerHaptic('correct')
+    } else {
+      playSound(lossReason === 'invalid_word' ? 'invalid_word' : 'word_lost')
+      triggerHaptic('wrong')
+    }
+  }, [wordWon, lossReason])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
@@ -71,7 +84,11 @@ export default function WordResultModal({ roundState, onContinue }: WordResultMo
         {/* Devam Et Butonu */}
         <button
           type="button"
-          onClick={onContinue}
+          onClick={() => {
+            playSound('key_press')
+            triggerHaptic('tap')
+            onContinue()
+          }}
           className={`
             w-full py-4 px-6 rounded-2xl text-lg font-black tracking-wide
             text-white transition-all duration-200 active:scale-95 shadow-lg

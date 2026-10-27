@@ -7,6 +7,8 @@
  */
 
 import { formatPoints } from './Hud'
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
 
 interface Round4IntroScreenProps {
   treasury: number
@@ -66,7 +68,11 @@ export default function Round4IntroScreen({ treasury, onStart }: Round4IntroScre
         {/* Başla Butonu */}
         <button
           type="button"
-          onClick={onStart}
+          onClick={() => {
+            playSound('key_press')
+            triggerHaptic('tap')
+            onStart()
+          }}
           className="
             w-full py-4 px-6 rounded-2xl text-xl font-black tracking-wider
             text-white transition-all duration-200 active:scale-95 shadow-lg

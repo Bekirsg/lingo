@@ -6,10 +6,13 @@
  * Çekilme / kazancı alma seçeneği YOKTUR, devam etmek zorunludur.
  */
 
+import { useEffect } from 'react'
 import type { Round4State } from '../game/state'
 import type { Clock } from '../game/clock'
 import { round4FinalScore } from '../game/engine'
 import { formatPoints } from './Hud'
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
 
 interface Round4StageClearedModalProps {
   round4State: Round4State
@@ -24,6 +27,11 @@ export default function Round4StageClearedModal({
   clock,
   onContinue,
 }: Round4StageClearedModalProps) {
+  useEffect(() => {
+    playSound('stage_cleared')
+    triggerHaptic('correct')
+  }, [])
+
   const completedStage = round4State.lastCompletedStage ?? round4State.stage
   const currentReward = round4FinalScore(treasury, completedStage)
   const nextStage = completedStage + 1
@@ -85,7 +93,11 @@ export default function Round4StageClearedModal({
         {/* Devam Et Butonu — SPEC: Çekilme butonu YOKTUR */}
         <button
           type="button"
-          onClick={onContinue}
+          onClick={() => {
+            playSound('key_press')
+            triggerHaptic('tap')
+            onContinue()
+          }}
           className="
             w-full py-4 px-6 rounded-2xl text-lg font-black tracking-wide
             text-white transition-all duration-200 active:scale-95 shadow-lg

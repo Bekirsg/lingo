@@ -14,6 +14,8 @@ import BonusBoardRow from '../components/BonusBoardRow'
 import Keyboard from '../components/Keyboard'
 import { turkishUpper } from '../utils/turkish'
 import { formatPoints } from '../components/Hud'
+import { playSound } from '../audio/sound'
+import { triggerHaptic } from '../haptics/vibration'
 
 interface BonusScreenProps {
   state: GameState
@@ -57,15 +59,43 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
   const displayScore = isWriting || isResult ? bs.frozenScore : liveScore
   const displayRemaining = isResult ? 0 : liveRemaining
 
+  // ─── Bonus Harf Açılış Sesi ───────────────────────────────────
+  const prevRevealedRef = useRef(bs.revealedCount)
+  useEffect(() => {
+    if (bs.revealedCount > prevRevealedRef.current) {
+      playSound('bonus_reveal')
+    }
+    prevRevealedRef.current = bs.revealedCount
+  }, [bs.revealedCount])
+
+  // ─── Sonuç Ekranı Ses ve Titreşimi ────────────────────────────
+  const resultAnnouncedRef = useRef(false)
+  useEffect(() => {
+    if (isResult && !resultAnnouncedRef.current) {
+      resultAnnouncedRef.current = true
+      if (bs.won) {
+        playSound('word_won')
+        triggerHaptic('correct')
+      } else {
+        playSound('word_lost')
+        triggerHaptic('wrong')
+      }
+    }
+  }, [isResult, bs.won])
+
   // ─── Klavye İşleyicileri (Yazma Fazı) ─────────────────────────
 
   const handleChar = useCallback((char: string) => {
     if (!isWriting) return
+    playSound('key_press')
+    triggerHaptic('tap')
     controller.typeLetter(char)
   }, [controller, isWriting])
 
   const handleDelete = useCallback(() => {
     if (!isWriting) return
+    playSound('key_press')
+    triggerHaptic('tap')
     controller.deleteLetter()
   }, [controller, isWriting])
 
@@ -129,7 +159,11 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
 
           <button
             type="button"
-            onClick={() => controller.dismissBonusResult()}
+            onClick={() => {
+              playSound('key_press')
+              triggerHaptic('tap')
+              controller.dismissBonusResult()
+            }}
             className={`
               w-full py-4 px-6 rounded-2xl text-lg font-black tracking-wide
               text-white transition-all duration-200 active:scale-95 shadow-lg
@@ -232,7 +266,11 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
           <div className="flex justify-center px-4">
             <button
               type="button"
-              onClick={() => controller.pressBil()}
+              onClick={() => {
+                playSound('key_press')
+                triggerHaptic('tap')
+                controller.pressBil()
+              }}
               className="
                 w-full max-w-sm py-5 px-8 rounded-2xl
                 bg-gradient-to-r from-amber-500 to-amber-600

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { RoundState } from '../game/state'
 import type { Mark } from '../game/engine'
 import { turkishUpper } from '../utils/turkish'
+import { playSound } from '../audio/sound'
 
 interface BoardData {
   letterCount: number
@@ -48,14 +49,26 @@ export default function Board({
       const rowIndex = guesses.length - 1
       setAnimatingRow(rowIndex)
 
+      // Kademeli kutu çevirme ses efektleri (her harf çevrilişinde kısa flip sesi)
+      const flipTimers: ReturnType<typeof setTimeout>[] = []
+      for (let i = 0; i < letterCount; i++) {
+        const timer = setTimeout(() => {
+          playSound('tile_flip')
+        }, i * 85)
+        flipTimers.push(timer)
+      }
+
       // Kademeli kutu çevirme: (letterCount - 1) * 90ms + 300ms çevirme animasyonu <= 700ms
       const totalAnimationDuration = Math.min((letterCount - 1) * 90 + 350, 700)
-      const timer = setTimeout(() => {
+      const endTimer = setTimeout(() => {
         setAnimatingRow(null)
         onAnimationComplete?.()
       }, totalAnimationDuration)
+      flipTimers.push(endTimer)
 
-      return () => clearTimeout(timer)
+      return () => {
+        flipTimers.forEach(t => clearTimeout(t))
+      }
     }
   }, [isEvaluating, guesses.length, letterCount, onAnimationComplete])
 

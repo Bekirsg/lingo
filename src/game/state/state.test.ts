@@ -332,36 +332,22 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().roundState!.guesses[0].marks).toEqual(['red', 'red', 'red', 'red'])
   })
 
-  it('senaryo 5b: 4. turda geçersiz kelime veya 5 hak bitmesi -> duraklama YOK, yeni kelime anında gelir', () => {
+  it('senaryo 5b: 4. turda kayıpta (geçersiz kelime) doğru kelime gösterilir, ana sayaç donar, 3 sn sonra yeni kelime gelir', () => {
     let mockTime = 1000
     const game = new GameController({
       words: mockRepo,
       nowFn: () => mockTime,
     })
 
-    game.startNewGame()
-    game.tickCountdown(0)
-
-    // 1-3. turları tamamla
-    for (let r = 1; r <= 3; r++) {
-      for (let w = 1; w <= 5; w++) {
-        game.submitGuess(game.getState().roundState!.currentWord)
-        game.dismissWordResult()
-        if (w < 5) game.tickCountdown(0)
-      }
-      game.tickCountdown(0)
-      game.pressBil()
-      game.submitBonusAnswer(game.getState().bonusState!.word)
-      game.dismissBonusResult()
-      if (r < 3) {
-        game.nextRound()
-        game.tickCountdown(0)
-      }
-    }
-
+    game.devSkipToRound4(20_000)
     game.startRound4()
     game.tickCountdown(0)
     expect(game.getState().screen).toBe('round4_playing')
+
+    // 10 saniye geçsin
+    mockTime += 10_000
+    game.getClock().check()
+    expect(game.getClock().getRemainingSeconds()).toBe(110)
 
     const firstWord = game.getState().round4State!.currentWord
     const firstChar = Array.from(firstWord)[0]
@@ -370,17 +356,33 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     const invalidWord = firstChar + 'xyz'
     game.submitRound4Guess(invalidWord)
 
-    // SPEC 4.8: Duraklama YOK, cevap gösterilmez, anında YENİ bir 4 harfli kelime gelir!
-    expect(game.getState().screen).toBe('round4_playing')
-    expect(game.getState().round4State!.stage).toBe(4)
+    // Yeni kural: round4_word_lost ekranı, doğru kelime kaydedilir, tüm kutular kırmızı, ana sayaç donar
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getState().round4State!.lostWord).toBe(firstWord)
     expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+    expect(game.getState().round4State!.guesses[0].marks).toEqual(['red', 'red', 'red', 'red'])
+    expect(game.getClock().isRunning()).toBe(false) // ana sayaç durdu/dondu
+
+    // 2 saniye geçsin -> ana sayaç hâlâ 110 sn kalmalı
+    mockTime += 2000
+    game.getClock().check()
+    expect(game.getClock().getRemainingSeconds()).toBe(110)
+    expect(game.getState().screen).toBe('round4_word_lost')
+
+    // 3 sn bekleme dolsun (toplam 3.5 sn)
+    mockTime += 1500
+    game.getWaitClock().check()
+
+    // 3 sn sonra otomatik yeni kelime geldi, sayaç kaldığı yerden (110 sn) devam ediyor!
+    expect(game.getState().screen).toBe('round4_playing')
     const newWord = game.getState().round4State!.currentWord
     expect(newWord).not.toBe(firstWord)
     expect(game.getState().round4State!.guesses).toHaveLength(0)
+    expect(game.getClock().isRunning()).toBe(true)
+    expect(game.getClock().getRemainingSeconds()).toBe(110) // 3 sn bekleme 120 sn'den düşmedi
 
-    // 5 yanlış geçerli tahmin yapınca da aynı şekilde yeni kelime gelir
+    // 5 yanlış geçerli tahmin yapınca da aynı şekilde round4_word_lost ekranı gelir
     const secondFirstChar = Array.from(newWord)[0]
-    // 5 adet yanlış ama geçerli tahmin
     const validWrongGuesses = mockRepo
       .getWords(4)
       .filter(w => Array.from(w)[0] === secondFirstChar && w !== newWord)
@@ -390,9 +392,15 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
         game.submitRound4Guess(validWrongGuesses[i % validWrongGuesses.length])
       }
 
-      // 5 hak bitti -> duraklama YOK, 3. kelime anında geldi!
-      expect(game.getState().screen).toBe('round4_playing')
+      // 5 hak bitti -> round4_word_lost ekranı, doğru kelime newWord
+      expect(game.getState().screen).toBe('round4_word_lost')
+      expect(game.getState().round4State!.lostWord).toBe(newWord)
       expect(game.getState().round4State!.wordsAttemptedInStage).toBe(3)
+
+      // 3.5 sn sonra yeni kelimeye geçilir
+      mockTime += 3500
+      game.getWaitClock().check()
+      expect(game.getState().screen).toBe('round4_playing')
       expect(game.getState().round4State!.guesses).toHaveLength(0)
     }
   })
@@ -621,10 +629,14 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().bonusState!.userInput).toBe('k')
   })
 
-  // ─── 12. Regresyon: 4. turda kelime kaybında girdi kilidi açık kalır ──
+  // ─── 12. 4. Tur Kelime Kaybı, Sayaç Dondurma ve 3 sn Otomatik Geçiş ──
 
-  it('regresyon 12a: 4. turda geçersiz kelimeyle kayıp sonrası typeLetter çalışır', () => {
-    const game = new GameController({ words: mockRepo })
+  it('regresyon 12a: 4. turda kayıp sırasında giriş kilitlidir ve 3 sn sonra yeni kelimeye yazılabilir', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
     game.devSkipToRound4(20_000)
     game.startRound4()
     game.tickCountdown(0)
@@ -633,56 +645,86 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     const firstWord = game.getState().round4State!.currentWord
     const firstChar = Array.from(firstWord)[0]
 
-    // Geçersiz kelime gönder
+    // Geçersiz kelime gönder -> round4_word_lost
     game.submitRound4Guess(firstChar + 'xyz')
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getState().round4State!.lostWord).toBe(firstWord)
+
+    // Bekleme sırasında typeLetter hiçbir şey yapmamalı (giriş kilitli)
+    game.typeLetter('e')
+    expect(game.getState().round4State!.currentInput).toBe(firstChar)
+
+    // 3 sn bekleme dolsun
+    mockTime += 3500
+    game.getWaitClock().check()
 
     // Yeni kelime geldi, guesses sıfırlandı
     expect(game.getState().screen).toBe('round4_playing')
     expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
     expect(game.getState().round4State!.guesses).toHaveLength(0)
 
-    // Controller seviyesinde typeLetter çalışmalı (UI kilidi test edilemiyor ama controller testi yeterli)
-    const newWord = game.getState().round4State!.currentWord
-    const newFirstChar = Array.from(newWord)[0]
-
-    // input sadece ilk harften ibaret
-    expect(game.getState().round4State!.currentInput).toBe(newFirstChar)
-
-    // Harf yazmak state'i güncellemeli
+    // Artık yeni kelimeye harf yazılabilir
     game.typeLetter('E')
     expect(game.getState().round4State!.currentInput.length).toBeGreaterThan(1)
   })
 
-  it('regresyon 12b: 4. turda 5 yanlış tahminle kayıp sonrası typeLetter çalışır', () => {
-    const game = new GameController({ words: mockRepo })
+  it('regresyon 12b: 4. turda 3 sn bekleme sırasında duraklat/devam doğru çalışır', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
     game.devSkipToRound4(20_000)
     game.startRound4()
     game.tickCountdown(0)
 
+    // 20 sn geçsin (kalan 100 sn)
+    mockTime += 20_000
+    game.getClock().check()
+    expect(game.getClock().getRemainingSeconds()).toBe(100)
+
     const firstWord = game.getState().round4State!.currentWord
     const firstChar = Array.from(firstWord)[0]
 
-    // 5 adet geçerli ama yanlış tahmin
-    const wrongCandidates = mockRepo
-      .getWords(4)
-      .filter((w) => Array.from(w)[0] === firstChar && w !== firstWord)
+    // Kaybet
+    game.submitRound4Guess(firstChar + 'xyz')
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getClock().isRunning()).toBe(false) // ana sayaç dondu
 
-    for (let i = 0; i < 5; i++) {
-      game.submitRound4Guess(wrongCandidates[i % wrongCandidates.length])
-    }
+    // 1 sn bekleme geçti
+    mockTime += 1000
+    expect(game.getClock().getRemainingSeconds()).toBe(100)
 
-    // 5 hak bitti → yeni kelime geldi
+    // Oyunu duraklat (sekme gizlendi)
+    game.pauseGame()
+    expect(game.getState().screen).toBe('paused')
+    expect(game.getWaitClock().isPaused()).toBe(true)
+
+    // Arka planda 10 sn kalsın
+    mockTime += 10_000
+
+    // Oyuna geri dön
+    game.resumeGame()
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getClock().isRunning()).toBe(false) // ana sayaç hâlâ donuk kalmalı!
+    expect(game.getClock().getRemainingSeconds()).toBe(100)
+
+    // Kalan 2 sn bekleme tamamlanınca (toplam 2.5 sn daha)
+    mockTime += 2500
+    game.getWaitClock().check()
+
+    // Yeni kelime geldi, ana sayaç kaldığı yerden (100 sn) devam ediyor
     expect(game.getState().screen).toBe('round4_playing')
-    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
-    expect(game.getState().round4State!.guesses).toHaveLength(0)
-
-    // typeLetter hâlâ çalışmalı
-    game.typeLetter('A')
-    expect(game.getState().round4State!.currentInput.length).toBeGreaterThan(1)
+    expect(game.getClock().isRunning()).toBe(true)
+    expect(game.getClock().getRemainingSeconds()).toBe(100)
   })
 
-  it('regresyon 12c: 4. turda art arda iki kayıptan sonra typeLetter çalışır', () => {
-    const game = new GameController({ words: mockRepo })
+  it('regresyon 12c: 4. turda art arda iki kayıp senaryosu', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
     game.devSkipToRound4(20_000)
     game.startRound4()
     game.tickCountdown(0)
@@ -690,21 +732,37 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     // 1. kayıp: geçersiz kelime
     const firstChar1 = Array.from(game.getState().round4State!.currentWord)[0]
     game.submitRound4Guess(firstChar1 + 'xyz')
+    expect(game.getState().screen).toBe('round4_word_lost')
     expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
 
-    // 2. kayıp: geçersiz kelime (yeni kelimeyle)
+    // 3 sn bekle
+    mockTime += 3500
+    game.getWaitClock().check()
+    expect(game.getState().screen).toBe('round4_playing')
+
+    // 2. kayıp: yeni kelimeyle geçersiz kelime
     const firstChar2 = Array.from(game.getState().round4State!.currentWord)[0]
     game.submitRound4Guess(firstChar2 + 'xyz')
+    expect(game.getState().screen).toBe('round4_word_lost')
     expect(game.getState().round4State!.wordsAttemptedInStage).toBe(3)
+
+    // 3 sn daha bekle
+    mockTime += 3500
+    game.getWaitClock().check()
+    expect(game.getState().screen).toBe('round4_playing')
     expect(game.getState().round4State!.guesses).toHaveLength(0)
 
-    // typeLetter çalışmalı
+    // 3. kelimeye harf yazılabilir
     game.typeLetter('U')
     expect(game.getState().round4State!.currentInput.length).toBeGreaterThan(1)
   })
 
-  it('regresyon 12d: 4. turda kayıptan sonra doğru kelimeyle stage_cleared gelinir', () => {
-    const game = new GameController({ words: mockRepo })
+  it('regresyon 12d: 4. turda kayıptan sonra yeni kelimeyi bilip duraklama ekranına gelme', () => {
+    let mockTime = 1000
+    const game = new GameController({
+      words: mockRepo,
+      nowFn: () => mockTime,
+    })
     game.devSkipToRound4(20_000)
     game.startRound4()
     game.tickCountdown(0)
@@ -714,14 +772,20 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
 
     // Önce geçersiz kelimeyle kaybet
     game.submitRound4Guess(firstChar + 'xyz')
-    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+    expect(game.getState().screen).toBe('round4_word_lost')
 
-    // Şimdi yeni kelimeyi doğru bil
+    // 3 sn sonra yeni kelime gelir
+    mockTime += 3500
+    game.getWaitClock().check()
+    expect(game.getState().screen).toBe('round4_playing')
+
+    // Yeni kelimeyi doğru bil
     const newWord = game.getState().round4State!.currentWord
     game.submitRound4Guess(newWord)
 
-    // Duraklama ekranına gelindi
+    // Duraklama ekranına gelindi, sayaç dondu, etap tamamlandı
     expect(game.getState().screen).toBe('round4_stage_cleared')
     expect(game.getState().round4State!.lastCompletedStage).toBe(4)
+    expect(game.getClock().isRunning()).toBe(false)
   })
 })

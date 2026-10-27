@@ -16,6 +16,7 @@ export type GameScreen =
   | 'round_summary'            // Tur özeti (1. ve 2. tur sonu)
   | 'round4_intro'             // 4. tur (Büyük Final) giriş ekranı
   | 'round4_playing'           // 4. tur kelime tahmin tahtası (120 sn tek sayaç)
+  | 'round4_word_lost'         // 4. tur kelime kaybedildi (doğru cevap ~3 sn gösterilir, sayaç dondurulmuş)
   | 'round4_stage_cleared'     // 4. tur etap bilindi (duraklama ekranı)
   | 'game_over'                // Oyun sonu / Final skor ekranı
   | 'paused'                   // Duraklatıldı katmanı (arka plan / kullanıcı duraklatması)
@@ -79,6 +80,8 @@ export interface Round4State {
   currentInput: string
   /** Bu etapta kelime kaçıncı denemede (kaç kelime yandı) */
   wordsAttemptedInStage: number
+  /** round4_word_lost ekranında gösterilecek kaybedilen kelime */
+  lostWord?: string
 }
 
 export interface GameState {

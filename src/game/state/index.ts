@@ -42,6 +42,8 @@ export class GameController {
   private state: GameState
   private words: WordRepository
   private clock: Clock
+  /** 4. tur kelime kaybında ~3 sn bekleme için bağımsız küçük sayaç */
+  private waitClock: Clock
   private nowFn?: () => number
   private highScore: number
   private onStateChange?: (state: GameState) => void
@@ -53,6 +55,11 @@ export class GameController {
     this.onStateChange = options.onStateChange
 
     this.clock = new Clock({
+      nowFn: this.nowFn,
+    })
+
+    // 4. tur kelime kaybında ~3 sn bekleme için bağımsız küçük sayaç
+    this.waitClock = new Clock({
       nowFn: this.nowFn,
     })
 
@@ -79,6 +86,10 @@ export class GameController {
     return this.clock
   }
 
+  getWaitClock(): Clock {
+    return this.waitClock
+  }
+
   private emitState(): void {
     this.onStateChange?.(this.state)
   }
@@ -88,6 +99,7 @@ export class GameController {
   /** Yeni bir oyun başlatır (Ana menüden) */
   startNewGame(): void {
     this.clock.stop()
+    this.waitClock.stop()
     this.state = {
       screen: 'countdown',
       treasury: 0,
@@ -722,10 +734,17 @@ export class GameController {
     const isValid = this.words.isValidWord(guess, r4.stage)
 
     if (!isValid) {
-      // SPEC 4.8: Geçersiz kelime -> duraklama YOK, cevap gösterilmez!
-      // Anında aynı harf sayısında başka bir kelime gelir ve 5 yeni hak başlar.
+      // Yeni kural (değiştirildi): Geçersiz kelime -> tüm kutular kırmızı,
+      // doğru cevap ~3 sn gösterilir, ana sayaç DONDURULUR, bekleme sonrası yeni kelimeye geçilir.
+      this.clock.pause()
+      r4.lostWord = r4.currentWord
       r4.wordsAttemptedInStage++
-      this.setupRound4Word(r4.stage)
+      r4.guesses.push({
+        guess,
+        marks: Array(r4.stage).fill('red'),
+      })
+      this.state.screen = 'round4_word_lost'
+      this.waitClock.start(3, () => this.onRound4WordLostExpire())
       this.emitState()
       return
     }
@@ -756,14 +775,33 @@ export class GameController {
 
     // 5 hak bitti mi?
     if (r4.guesses.length >= 5) {
-      // SPEC 4.8: 5 hak bitti -> duraklama YOK, cevap gösterilmez, anında yeni kelime
+      // Yeni kural: 5 hak bitti -> doğru cevap ~3 sn gösterilir,
+      // ana sayaç DONDURULUR, bekleme sonrası yeni kelimeye geçilir.
+      this.clock.pause()
+      r4.lostWord = r4.currentWord
       r4.wordsAttemptedInStage++
-      this.setupRound4Word(r4.stage)
+      this.state.screen = 'round4_word_lost'
+      this.waitClock.start(3, () => this.onRound4WordLostExpire())
       this.emitState()
       return
     }
 
     r4.currentInput = Array.from(r4.currentWord)[0]
+    this.emitState()
+  }
+
+  /**
+   * 4. turda kelime kaybedilince ~3 sn bekleme sona erince (waitClock callback).
+   * Ana sayaç kaldığı yerden devam eder, aynı harf sayısında yeni kelime gelir.
+   */
+  private onRound4WordLostExpire(): void {
+    if (this.state.screen !== 'round4_word_lost' || !this.state.round4State) return
+    const r4 = this.state.round4State
+    r4.lostWord = undefined
+    this.setupRound4Word(r4.stage)
+    this.state.screen = 'round4_playing'
+    // Ana sayaç kaldığı yerden devam eder
+    this.clock.resume()
     this.emitState()
   }
 
@@ -789,7 +827,13 @@ export class GameController {
 
   /** 4. tur 120 saniyesi dolduğunda */
   onRound4Timeout(): void {
-    if (this.state.screen !== 'round4_playing' && this.state.screen !== 'round4_stage_cleared') return
+    if (
+      this.state.screen !== 'round4_playing' &&
+      this.state.screen !== 'round4_stage_cleared' &&
+      this.state.screen !== 'round4_word_lost'
+    ) return
+    // Bekleme sayacını da durdur
+    this.waitClock.stop()
     this.finishGame()
   }
 
@@ -815,6 +859,7 @@ export class GameController {
     this.state.previousScreen = this.state.screen
     this.state.screen = 'paused'
     this.clock.pause()
+    this.waitClock.pause()
     this.emitState()
   }
 
@@ -824,9 +869,19 @@ export class GameController {
       return
     }
 
-    this.state.screen = this.state.previousScreen
+    const prev = this.state.previousScreen
+    this.state.screen = prev
     this.state.previousScreen = undefined
-    this.clock.resume()
+
+    if (prev === 'round4_stage_cleared') {
+      // 4. tur etap duraklamasında ana sayaç donuk kalır
+    } else if (prev === 'round4_word_lost') {
+      // 3 sn kayıp bekleme sayacı devam eder, ana sayaç donuk kalır
+      this.waitClock.resume()
+    } else {
+      this.clock.resume()
+    }
+
     this.emitState()
   }
 }

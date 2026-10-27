@@ -205,7 +205,7 @@ Bonus sonrası **tur özet ekranı** gelir (4.7).
 - Sayaç, ilk 4 harfli kelime ekranda göründüğü anda (3-2-1 sonrası) başlar.
 - Etaplar sırasıyla **4 → 5 → 6 → 7 harfli**. Her etapta bir kelime çözülmesi gerekir. Her kelime için 5 tahmin hakkı vardır, ilk harf yine kilitli ve yeşildir.
 - **Bir kelime bilinirse:** oyun (ve sayaç) **donar**, bir **duraklama ekranı** açılır: kazanılan etap, o anki kazanç, kalan süre görünür ve **"Devam Et"** butonu vardır. Oyuncu istediği kadar bekleyebilir. **Çekilme / kazancı alma seçeneği yoktur, devam etmek zorunludur.** "Devam Et"e basınca sayaç kaldığı yerden akar, sonraki etabın kelimesi gelir. (7 harfli bilinirse oyun biter.)
-- **Bir kelime kaybedilirse** (geçersiz kelime veya 5 hak bitti): **duraklama YOK, doğru cevap gösterilmez**, **anında aynı harf sayısında başka bir kelime** gelir ve 5 yeni hak başlar. (Sayaç akmaya devam eder.)
+- **Bir kelime kaybedilirse** (geçersiz kelime veya 5 hak bitti): tüm kutular kırmızı kalır ve **doğru kelime** ekranda gösterilir. 120 sn sayaç bu sırada **donar** (donuk süre görünür kalır). Yaklaşık 3 saniye sonra **otomatik olarak** aynı harf sayısında yeni kelimeye geçilir (buton yoktur), sayaç kaldığı yerden devam eder (3 sn bekleme 120 sn'den düşmez). Bu bekleme sırasında giriş kilitlidir.
 - Tahmin renk animasyonu sırasında 120 sn sayacı **akmaya devam eder** (animasyon ≤ 700 ms).
 - **120 sn dolarsa** tur, hangi aşamada olursa olsun **anında** biter. Final skor = **son tamamlanan etabın kazancı**. Hiçbir etap tamamlanmadıysa **final skor 0**'dır (kasa yanar).
 
@@ -371,7 +371,7 @@ Bu veriler cihaza özeldir; başka telefonla paylaşılmaz. Okuma/yazma `try/cat
 - [ ] 10 sn dolunca kelime kaybedilir.
 - [ ] Her tahmin için 10 sn ayrı başlar ve her ekranda süre/tur/hak/kasa görünür.
 - [ ] Bonus: 3 sn okuma, sonra saniyede bir rastgele harf, puan 200'er düşer, BİL ile donar, 5 sn yazma, yanlış/süre dolunca 0.
-- [ ] 4. tur: 120 sn tek sayaç, kelime bilinince duraklama + Devam Et + kalan süre, kaybedilince duraklamasız yeni kelime, süre bitince son tamamlanan etabın kazancı (hiçbiri → 0).
+- [ ] 4. tur: 120 sn tek sayaç, kelime bilinince duraklama + Devam Et + kalan süre, kaybedilince 3 sn doğru kelime gösterimi + sayaç donması + 3 sn sonra otomatik yeni kelime, süre bitince son tamamlanan etabın kazancı (hiçbiri → 0).
 - [ ] Telefon kilitlenince / uygulama değişince oyun duruyor, dönünce "Devam Et" ile kaldığı yerden sürüyor.
 - [ ] Sistem klavyesi hiç açılmıyor; Türkçe harfler (Ğ Ü Ş İ Ö Ç ı) doğru çalışıyor.
 - [ ] Çevrimdışı (uçak modu) ilk yüklemeden sonra oyun açılıyor ve oynanıyor.

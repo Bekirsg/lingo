@@ -15,6 +15,7 @@ import RoundSummaryModal from '../components/RoundSummaryModal'
 import Round4IntroScreen from '../components/Round4IntroScreen'
 import Round4StageClearedModal from '../components/Round4StageClearedModal'
 import GameOverModal from '../components/GameOverModal'
+import { turkishUpper } from '../utils/turkish'
 
 interface GameScreenProps {
   onBackToMenu: () => void
@@ -91,7 +92,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   }, [])
 
   const isRound4 =
-    gameState?.screen === 'round4_playing' || gameState?.screen === 'round4_stage_cleared'
+    gameState?.screen === 'round4_playing' ||
+    gameState?.screen === 'round4_stage_cleared' ||
+    gameState?.screen === 'round4_word_lost'
   const rs = gameState?.roundState
   const r4 = gameState?.round4State
 
@@ -130,10 +133,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       const prevAttempt = r4.wordsAttemptedInStage
       controller.submitRound4Guess(guess)
 
-      // Geçersiz kelime veya 5 hak bittiğinde yeni kelime gelir -> input kilidi AÇIK kalmalı!
-      const latestR4 = controller.getState().round4State
-      if (latestR4 && latestR4.wordsAttemptedInStage > prevAttempt) {
-        // Kelime kaybedildi: isEvaluating ASLA true yapılmaz, anında yeni kelimeye geçilir
+      // Geçersiz kelime veya 5 hak bittiğinde kelime kaybedilir -> round4_word_lost ekranı
+      const latestState = controller.getState()
+      const latestR4 = latestState.round4State
+      if (latestState.screen === 'round4_word_lost' || (latestR4 && latestR4.wordsAttemptedInStage > prevAttempt)) {
+        setIsEvaluating(false)
         setIsShaking(true)
         setTimeout(() => setIsShaking(false), 500)
       } else {
@@ -238,7 +242,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   }
 
   const canSubmit = isRound4
-    ? Boolean(r4) && r4!.currentInput.length === r4!.stage && !isEvaluating
+    ? Boolean(r4) &&
+      r4!.currentInput.length === r4!.stage &&
+      !isEvaluating &&
+      gameState.screen === 'round4_playing'
     : Boolean(rs) &&
       rs!.currentInput.length === rs!.letterCount &&
       !rs!.wordWon &&
@@ -248,10 +255,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const isKeyboardDisabled =
     isEvaluating ||
     (isRound4
-      ? !r4 || gameState.screen === 'round4_stage_cleared'
+      ? !r4 ||
+        gameState.screen === 'round4_stage_cleared' ||
+        gameState.screen === 'round4_word_lost'
       : !rs || rs.wordWon || rs.wordLost)
 
-  const activeWord = isRound4 ? r4?.currentWord : rs?.currentWord
+  const activeWord = isRound4 ? (r4?.lostWord || r4?.currentWord) : rs?.currentWord
 
   return (
     <div className="flex-1 flex flex-col justify-between items-center bg-gradient-to-b from-[#0f0a2e] via-[#150d3d] to-[#0a0620] relative overflow-hidden select-none">
@@ -262,16 +271,34 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         onPause={() => controller.pauseGame()}
       />
 
+      {/* 4. Tur Kelime Kaybı Bildirimi (Doğru Cevap Gösterimi - ~3 sn Dondurulmuş) */}
+      {gameState.screen === 'round4_word_lost' && r4?.lostWord && (
+        <div className="w-full max-w-sm px-4 my-2 z-20 animate-fade-in">
+          <div className="bg-rose-950/90 border border-rose-500/60 rounded-2xl px-4 py-2.5 flex flex-col items-center justify-center shadow-lg shadow-rose-950/50 backdrop-blur-md text-center">
+            <span className="text-[11px] uppercase font-black tracking-wider text-rose-300">
+              ❌ KELİME KAYBEDİLDİ
+            </span>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-slate-400">Doğru Kelime:</span>
+              <span className="font-mono text-xl font-black text-white tracking-widest">
+                {turkishUpper(r4.lostWord)}
+              </span>
+            </div>
+            <span className="text-[10px] text-slate-400 mt-0.5">Yeni kelime hazırlanıyor...</span>
+          </div>
+        </div>
+      )}
+
       {/* Oyun Tahtası (5 satır x N harf) */}
       {isRound4 && r4 ? (
         <Board
           boardData={{
             letterCount: r4.stage,
-            currentWord: r4.currentWord,
+            currentWord: r4.lostWord || r4.currentWord,
             guesses: r4.guesses,
             currentInput: r4.currentInput,
             wordWon: false,
-            wordLost: false,
+            wordLost: gameState.screen === 'round4_word_lost',
           }}
           isEvaluating={isEvaluating}
           onAnimationComplete={handleAnimationComplete}

@@ -16,8 +16,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png', 'data/*.json'],
       manifest: {
-        name: 'BEKİR-EREN',
-        short_name: 'BEKİR-EREN',
+        name: 'LİNGO',
+        short_name: 'LİNGO',
         description: 'Türkçe Kelime Oyunu',
         display: 'standalone',
         orientation: 'portrait',

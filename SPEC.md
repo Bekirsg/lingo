@@ -1,4 +1,4 @@
-# BEKİR-EREN — Türkçe Kelime Oyunu (SPEC)
+# LİNGO — Türkçe Kelime Oyunu (SPEC)
 
 > Bu belge, Google Antigravity (AI kod ajanı) için tek doğru kaynaktır (single source of truth).
 > **Kural:** Bu belgede belirsiz, çelişkili ya da eksik bir nokta bulursan KURAL UYDURMA. İşi durdur, ilgili yere `TODO(SORU): ...` yaz ve kullanıcıya sor.
@@ -8,7 +8,7 @@
 
 ## 1. Proje Özeti
 
-- **Ad:** BEKİR-EREN (uygulama adı ve ana ekran simgesi etiketi). İkonda **"B-E"** yazar.
+- **Ad:** LİNGO (uygulama adı ve ana ekran simgesi etiketi). İkonda **"B-E"** yazar.
 - **Tür:** Tek oyunculu, çok aşamalı Türkçe kelime bulmaca oyunu (Wordle + Lingo karışımı).
 - **Platform:** Mobil öncelikli **PWA** (web uygulaması). Telefonda tarayıcıdan "Ana Ekrana Ekle" ile gerçek uygulama gibi kurulur ve tam ekran açılır.
 - **Oynanış:** İki kişi (kullanıcı + arkadaşı) kendi telefonlarında ayrı ayrı oynar. Online mod, hesap, sunucu, ortak skor tablosu **YOK**. Aynı anda oynamak gerekmez.
@@ -45,7 +45,7 @@
 ### 2.2 Önerilen klasör yapısı
 
 ```
-bekir-eren/
+lingo/
 ├─ SPEC.md
 ├─ DATA_SOURCES.md              # kelime/tanım kaynakları, sayılar, tarih (ajan yazar)
 ├─ scripts/
@@ -276,7 +276,7 @@ Kullanıcının elinde hazır liste yoktur. Ajan **güvenilir ve kapsamlı** kay
 
 ### 6.1 Ekran listesi
 
-1. **Açılış/Yükleme:** logo "BEKİR-EREN", kelime verisi yüklenirken ilerleme.
+1. **Açılış/Yükleme:** logo "LİNGO", kelime verisi yüklenirken ilerleme.
 2. **Ana Menü:** Oyna, Nasıl Oynanır, En Yüksek Skor, Ayarlar.
 3. **Nasıl Oynanır:** Kuralların kısa, görsel ve sade anlatımı (renk örnekleri, bonus ve 4. tur açıklaması).
 4. **Geri sayım (3-2-1):** Her kelime/tur başlangıcı öncesi.
@@ -331,9 +331,9 @@ Türkçe ve kolay okunur biçimde:
 
 ## 7. PWA Gereksinimleri
 
-- `manifest.webmanifest`: `name: "BEKİR-EREN"`, `short_name: "BEKİR-EREN"`, `display: "standalone"`, `orientation: "portrait"`, `start_url: "/"`, `scope: "/"`, koyu `theme_color` ve `background_color`.
+- `manifest.webmanifest`: `name: "LİNGO"`, `short_name: "LİNGO"`, `display: "standalone"`, `orientation: "portrait"`, `start_url: "/"`, `scope: "/"`, koyu `theme_color` ve `background_color`.
 - **İkonlar:** 192×192, 512×512, **maskable** 512×512, iOS için `apple-touch-icon` (180×180), favicon. Tasarım: koyu/gradyan zemin üzerinde büyük, net **"B-E"** yazısı. Betikle (SVG → PNG) üretilir.
-- iOS meta etiketleri: `apple-mobile-web-app-capable`, `apple-mobile-web-app-title="BEKİR-EREN"`, `apple-mobile-web-app-status-bar-style`.
+- iOS meta etiketleri: `apple-mobile-web-app-capable`, `apple-mobile-web-app-title="LİNGO"`, `apple-mobile-web-app-status-bar-style`.
 - `viewport-fit=cover`, zoom engelleme (`user-scalable=no` / `maximum-scale=1`).
 - **Service worker:** tüm statik dosyaları (JS, CSS, ikonlar, kelime JSON'ları) önbelleğe alır; ilk yüklemeden sonra çevrimdışı çalışır; yeni sürüm geldiğinde otomatik güncellenir.
 - Tarayıcı adres çubuğu görünmeden tam ekran açılmalı (standalone).
@@ -375,7 +375,7 @@ Bu veriler cihaza özeldir; başka telefonla paylaşılmaz. Okuma/yazma `try/cat
 - [ ] Telefon kilitlenince / uygulama değişince oyun duruyor, dönünce "Devam Et" ile kaldığı yerden sürüyor.
 - [ ] Sistem klavyesi hiç açılmıyor; Türkçe harfler (Ğ Ü Ş İ Ö Ç ı) doğru çalışıyor.
 - [ ] Çevrimdışı (uçak modu) ilk yüklemeden sonra oyun açılıyor ve oynanıyor.
-- [ ] Ana ekrana eklenince "BEKİR-EREN" adı ve "B-E" ikonu görünüyor, adres çubuğu yok.
+- [ ] Ana ekrana eklenince "LİNGO" adı ve "B-E" ikonu görünüyor, adres çubuğu yok.
 - [ ] Hiçbir oyunda aynı kelime ikinci kez gelmiyor (aynı oyun içinde).
 
 ---

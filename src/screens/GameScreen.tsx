@@ -93,10 +93,14 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     }
   }, [])
 
-  const isRound4 =
-    gameState?.screen === 'round4_playing' ||
-    gameState?.screen === 'round4_stage_cleared' ||
-    gameState?.screen === 'round4_word_lost'
+  const isRound4 = Boolean(
+    gameState?.round4State && (
+      gameState.screen === 'round4_playing' ||
+      gameState.screen === 'round4_stage_cleared' ||
+      gameState.screen === 'round4_word_lost' ||
+      (gameState.screen === 'paused' && gameState.previousScreen?.startsWith('round4'))
+    )
+  )
   const rs = gameState?.roundState
   const r4 = gameState?.round4State
 
@@ -202,11 +206,16 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   }
 
   // ─── Bonus Ekranları (okuma + yazma + sonuç) ─────────────────
-  if (
-    gameState.screen === 'bonus_reading' ||
-    gameState.screen === 'bonus_writing' ||
-    gameState.screen === 'bonus_result'
-  ) {
+  const isBonus = Boolean(
+    gameState.bonusState && (
+      gameState.screen === 'bonus_reading' ||
+      gameState.screen === 'bonus_writing' ||
+      gameState.screen === 'bonus_result' ||
+      (gameState.screen === 'paused' && gameState.previousScreen?.startsWith('bonus_'))
+    )
+  )
+
+  if (isBonus) {
     return (
       <>
         <BonusScreen
@@ -214,6 +223,14 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           controller={controller}
           clock={controller.getClock()}
         />
+
+        {/* Duraklatıldı Katmanı */}
+        {gameState.screen === 'paused' && (
+          <PausedOverlay
+            onResume={() => controller.resumeGame()}
+            onExit={onBackToMenu}
+          />
+        )}
 
         {/* Dev Debug: bonus kelimesini göster + atla kısayolları */}
         <DevDebugBar
@@ -226,13 +243,26 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   }
 
   // ─── 4. Tur Giriş Ekranı (SPEC 4.8) ──────────────────────────
-  if (gameState.screen === 'round4_intro') {
+  const isRound4Intro =
+    gameState.screen === 'round4_intro' ||
+    (gameState.screen === 'paused' && gameState.previousScreen === 'round4_intro')
+
+  if (isRound4Intro) {
     return (
       <>
         <Round4IntroScreen
           treasury={gameState.treasury}
           onStart={() => controller.startRound4()}
         />
+
+        {/* Duraklatıldı Katmanı */}
+        {gameState.screen === 'paused' && (
+          <PausedOverlay
+            onResume={() => controller.resumeGame()}
+            onExit={onBackToMenu}
+          />
+        )}
+
         <DevDebugBar
           controller={controller}
           screen={gameState.screen}
@@ -271,6 +301,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   const isKeyboardDisabled =
     isEvaluating ||
+    gameState.screen === 'paused' ||
     (isRound4
       ? !r4 ||
         gameState.screen === 'round4_stage_cleared' ||

@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN Oyun Motoru
+ * LİNGO Oyun Motoru
  * Saf fonksiyonlar — React'ten bağımsız, birim test ile doğrulanır.
  */
 

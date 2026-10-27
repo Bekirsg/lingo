@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN Zaman Servisi (Clock Service)
+ * LİNGO Zaman Servisi (Clock Service)
  *
  * SPEC Bölüm 2.1-3, 2.1-4:
  * - Tüm geri sayımlar performance.now() zaman damgasına dayanır (setInterval drift olmaz).

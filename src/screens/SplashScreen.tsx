@@ -28,10 +28,8 @@ export default function SplashScreen({ onReady }: SplashScreenProps) {
         {/* Logo */}
         <div className="relative">
           <div className="absolute -inset-8 bg-[var(--color-accent)] opacity-20 blur-3xl rounded-full" />
-          <h1 className="relative text-5xl font-black tracking-tight text-[var(--color-text-primary)] text-center">
-            BEKİR
-            <span className="text-[var(--color-accent)]">-</span>
-            EREN
+          <h1 className="relative text-5xl font-black tracking-widest text-[var(--color-text-primary)] text-center">
+            LİNGO
           </h1>
         </div>
 

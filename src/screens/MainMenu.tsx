@@ -19,10 +19,8 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
       <div className="mb-12">
         <div className="relative">
           <div className="absolute -inset-6 bg-[var(--color-accent)] opacity-15 blur-3xl rounded-full" />
-          <h1 className="relative text-5xl font-black tracking-tight text-[var(--color-text-primary)] text-center">
-            BEKİR
-            <span className="text-[var(--color-accent)]">-</span>
-            EREN
+          <h1 className="relative text-5xl font-black tracking-widest text-[var(--color-text-primary)] text-center">
+            LİNGO
           </h1>
         </div>
         <p className="mt-2 text-xs text-[var(--color-text-muted)] text-center tracking-widest uppercase">
@@ -66,7 +64,7 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
 
       {/* Alt bilgi */}
       <p className="mt-12 text-xs text-[var(--color-text-muted)]">
-        v0.7.0 — BEKİR-EREN M7
+        v0.7.0 — LİNGO M7
       </p>
     </div>
   )

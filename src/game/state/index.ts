@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN Oyun Durum Makinesi (State Machine)
+ * LİNGO Oyun Durum Makinesi (State Machine)
  *
  * SPEC Bölüm 2.1-2, Bölüm 4:
  * - Saf TypeScript ile yazılmış tam oyun durum yöneticisi.
@@ -643,6 +643,7 @@ export class GameController {
       this.state.countdownTarget = 'playing_round'
     } else {
       // 3. tur → 4. tur intro
+      this.state.roundState = undefined
       this.state.screen = 'round4_intro'
     }
     this.emitState()
@@ -654,6 +655,7 @@ export class GameController {
    */
   devSkipToRound4(treasury: number = 20000): void {
     this.clock.stop()
+    this.state.roundState = undefined
     this.state.treasury = treasury
     this.state.currentRoundPoints = 0
     this.state.screen = 'round4_intro'
@@ -688,6 +690,9 @@ export class GameController {
   /** 4. tur giriş ekranından "Başla"ya basıldığında */
   startRound4(): void {
     if (this.state.screen !== 'round4_intro') return
+
+    // 1–3. tur roundState'ini tamamen temizle ki 4. turda asla eski tahminler sızmasın
+    this.state.roundState = undefined
 
     this.state.round4State = {
       stage: 4,

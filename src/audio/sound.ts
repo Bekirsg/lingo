@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN WebAudio Ses Motoru
+ * LİNGO WebAudio Ses Motoru
  *
  * SPEC Bölüm 6.5:
  * - Telif/ağ/dosya sorunu olmaması için WebAudio ile kodla üretilen kısa efektler.

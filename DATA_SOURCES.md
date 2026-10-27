@@ -1,6 +1,6 @@
 # Kelime Verisi Kaynakları ve Doğrulama Raporu
 
-> Bu belge, BEKİR-EREN oyununda kullanılan kelime verilerinin kaynaklarını,
+> Bu belge, LİNGO oyununda kullanılan kelime verilerinin kaynaklarını,
 > uygulanan filtreleri ve doğrulama sonuçlarını belgelemektedir.
 
 ---

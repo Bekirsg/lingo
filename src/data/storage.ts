@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN Yerel Veri Yönetimi (localStorage)
+ * LİNGO Yerel Veri Yönetimi (localStorage)
  *
  * SPEC Bölüm 8:
  * - be:highscore -> En yüksek final skor

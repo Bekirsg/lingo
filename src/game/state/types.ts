@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN Oyun Durum Makinesi Tip Tanımları
+ * LİNGO Oyun Durum Makinesi Tip Tanımları
  * SPEC Bölüm 2.1-2, Bölüm 3, Bölüm 4, Bölüm 6.1
  */
 

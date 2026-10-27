@@ -20,7 +20,12 @@ export default function Hud({ state, clock, onPause }: HudProps) {
   const rs = state.roundState
   const r4 = state.round4State
   const isRound4 = Boolean(
-    r4 && (state.screen === 'round4_playing' || state.screen === 'round4_stage_cleared' || state.screen === 'round4_word_lost')
+    r4 && (
+      state.screen === 'round4_playing' ||
+      state.screen === 'round4_stage_cleared' ||
+      state.screen === 'round4_word_lost' ||
+      (state.screen === 'paused' && state.previousScreen?.startsWith('round4'))
+    )
   )
 
   if (!rs && !isRound4) return null

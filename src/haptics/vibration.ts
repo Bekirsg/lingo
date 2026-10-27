@@ -1,5 +1,5 @@
 /**
- * BEKİR-EREN Titreşim (Haptics) Motoru
+ * LİNGO Titreşim (Haptics) Motoru
  *
  * SPEC Bölüm 6.5:
  * - navigator.vibrate ile kısa desenler (doğru, yanlış, geri sayım, rekor).

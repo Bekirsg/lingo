@@ -176,7 +176,7 @@ export function bonusScoreAtTime(elapsedSeconds: number): number {
 export const BONUS_TOTAL_TIME = 10
 
 /** Bonus yazma süresi (BİL basıldıktan sonra) */
-export const BONUS_WRITE_TIME = 3
+export const BONUS_WRITE_TIME = 5
 
 // ─── 4. Tur Kazanç Tablosu ──────────────────────────────────────
 

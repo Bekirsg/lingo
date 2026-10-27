@@ -10,7 +10,6 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import type { GameState } from '../game/state'
 import { GameController } from '../game/state'
 import type { Clock } from '../game/clock'
-import { normalize } from '../game/engine'
 import BonusBoardRow from '../components/BonusBoardRow'
 import Keyboard from '../components/Keyboard'
 import { turkishUpper } from '../utils/turkish'
@@ -62,40 +61,17 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
 
   const handleChar = useCallback((char: string) => {
     if (!isWriting) return
-    controller.typeBonusLetter(char)
+    controller.typeLetter(char)
   }, [controller, isWriting])
 
   const handleDelete = useCallback(() => {
     if (!isWriting) return
-    controller.deleteBonusLetter()
+    controller.deleteLetter()
   }, [controller, isWriting])
 
   const handleSubmit = useCallback(() => {
     // Bonus'ta manuel gönder yok, kutular dolunca otomatik
   }, [])
-
-  // ─── Fiziksel Klavye Desteği (Yazma Fazı) ─────────────────────
-  useEffect(() => {
-    if (!isWriting) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
-
-      if (e.key === 'Backspace') {
-        e.preventDefault()
-        controller.deleteBonusLetter()
-      } else if (e.key.length === 1) {
-        const norm = normalize(e.key)
-        if (/^[a-zçğıöşü]$/.test(norm)) {
-          e.preventDefault()
-          controller.typeBonusLetter(e.key)
-        }
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [controller, isWriting])
 
   // ─── Sonuç Ekranı ─────────────────────────────────────────────
   if (isResult) {

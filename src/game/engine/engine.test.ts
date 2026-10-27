@@ -365,8 +365,8 @@ describe('Bonus puan zaman çizelgesi', () => {
       expect(BONUS_TOTAL_TIME).toBe(10)
     })
 
-    it('yazma süresi 3 saniye', () => {
-      expect(BONUS_WRITE_TIME).toBe(3)
+    it('yazma süresi 5 saniye', () => {
+      expect(BONUS_WRITE_TIME).toBe(5)
     })
   })
 })

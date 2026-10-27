@@ -38,6 +38,12 @@ export default function Board({
   const [animatingRow, setAnimatingRow] = useState<number | null>(null)
 
   useEffect(() => {
+    if (isEvaluating && guesses.length === 0) {
+      // Failsafe: 4. turda kelime kaybından hemen yeni kelime geldi (guesses sıfırlandı).
+      // Animasyon oynayacak satır yok; hemen tamamlandı sinyali gönder.
+      onAnimationComplete?.()
+      return
+    }
     if (isEvaluating && guesses.length > 0) {
       const rowIndex = guesses.length - 1
       setAnimatingRow(rowIndex)

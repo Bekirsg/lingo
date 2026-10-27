@@ -185,10 +185,10 @@ Toplam süre = 3 sn okuma + 7 sn harf açılması = **10 sn**. (Yani "6. saniyed
 
 **"BİL" butonu:**
 - Okuma süresi dahil bonus boyunca basılabilir. Okuma süresinde basılırsa puan 3000'dir.
-- Basıldığı an: harf açılması **durur**, anlık puan **donar**, 3 saniyelik **yazma süresi** başlar.
-- Yazma süresinde: tanım ekranda kalır, üstte **donmuş anlık puan** ve **kalan 3 sn geri sayımı** görünür.
+- Basıldığı an: harf açılması **durur**, anlık puan **donar**, 5 saniyelik **yazma süresi** başlar.
+- Yazma süresinde: tanım ekranda kalır, üstte **donmuş anlık puan** ve **kalan 5 sn geri sayımı** görünür.
 - **Açılan harfler (ilk harf dahil) kutuda kilitlidir; oyuncu sadece boş kutuları yazar** (imleç sıradaki boş kutuya atlar). Doğrulama için harfler doğru konumlarına yerleşir.
-- Tüm kutular dolunca otomatik gönderilir (veya "Gönder" tuşu). Doğru ise **donmuş puan** kasaya eklenir; yanlışsa veya 3 sn dolarsa **0 puan**. Her iki durumda doğru kelime gösterilir.
+- Tüm kutular dolunca otomatik gönderilir (veya "Gönder" tuşu). Doğru ise **donmuş puan** kasaya eklenir; yanlışsa veya 5 sn dolarsa **0 puan**. Her iki durumda doğru kelime gösterilir.
 - Yazılan kelimenin TDK'da olup olmadığı sorulmaz; sadece cevapla karşılaştırılır.
 - Oyuncu "BİL"e hiç basmazsa t = 10'da hak biter, kelime açılır, 0 puan.
 
@@ -298,7 +298,7 @@ Türkçe ve kolay okunur biçimde:
 - **Tahmin hakkı:** `Hak 2/5`
 - **Süre:** köşede büyük, canlı geri sayım (son 3 saniyede kırmızı/pulse)
 - **Kasa:** `Kasa: 12.000` (4. turda kazanılan etabın kazancı ve potansiyel hedef de gösterilir)
-- **Bonusta:** canlı düşen **anlık puan** ve süre; yazma fazında donmuş puan + 3 sn geri sayım
+- **Bonusta:** canlı düşen **anlık puan** ve süre; yazma fazında donmuş puan + 5 sn geri sayım
 - Sayılar binlik ayraçlı gösterilir (örn. `250.000`).
 
 ### 6.3 Tahta ve klavye
@@ -370,7 +370,7 @@ Bu veriler cihaza özeldir; başka telefonla paylaşılmaz. Okuma/yazma `try/cat
 - [ ] Geçersiz kelime → kelime anında kaybedilir, tüm kutular kırmızı, 1–3. turda doğru cevap gösterilir, "Devam Et" + 3 sn geri sayım.
 - [ ] 10 sn dolunca kelime kaybedilir.
 - [ ] Her tahmin için 10 sn ayrı başlar ve her ekranda süre/tur/hak/kasa görünür.
-- [ ] Bonus: 3 sn okuma, sonra saniyede bir rastgele harf, puan 200'er düşer, BİL ile donar, 3 sn yazma, yanlış/süre dolunca 0.
+- [ ] Bonus: 3 sn okuma, sonra saniyede bir rastgele harf, puan 200'er düşer, BİL ile donar, 5 sn yazma, yanlış/süre dolunca 0.
 - [ ] 4. tur: 120 sn tek sayaç, kelime bilinince duraklama + Devam Et + kalan süre, kaybedilince duraklamasız yeni kelime, süre bitince son tamamlanan etabın kazancı (hiçbiri → 0).
 - [ ] Telefon kilitlenince / uygulama değişince oyun duruyor, dönünce "Devam Et" ile kaldığı yerden sürüyor.
 - [ ] Sistem klavyesi hiç açılmıyor; Türkçe harfler (Ğ Ü Ş İ Ö Ç ı) doğru çalışıyor.

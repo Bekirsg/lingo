@@ -277,7 +277,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().treasury).toBe(7400)
   })
 
-  it('senaryo 4b: bonus soruda 3 sn yazma süresi dolarsa 0 puan alır', () => {
+  it('senaryo 4b: bonus soruda 5 sn yazma süresi dolarsa 0 puan alır', () => {
     let mockTime = 1000
     const game = new GameController({
       words: mockRepo,
@@ -299,8 +299,8 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     game.pressBil()
     expect(game.getState().screen).toBe('bonus_writing')
 
-    // 3 sn yazma süresi doldu
-    mockTime += 3500
+    // 5 sn yazma süresi doldu
+    mockTime += 5500
     game.getClock().check()
 
     expect(game.getState().screen).toBe('bonus_result')
@@ -551,6 +551,176 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
 
     // Dev kısayolu: devAutoSolveRound4
     game.devAutoSolveRound4()
+    expect(game.getState().screen).toBe('round4_stage_cleared')
+    expect(game.getState().round4State!.lastCompletedStage).toBe(4)
+  })
+
+  // ─── 11. Regresyon: bonus_writing fazında typeLetter/deleteLetter ────
+
+  it('regresyon 11a: typeLetter ve deleteLetter bonus_writing fazında çalışır', () => {
+    const game = new GameController({ words: mockRepo })
+    game.startNewGame()
+    game.tickCountdown(0)
+
+    // 5 kelimeyi bitir ve bonusa geç
+    for (let w = 1; w <= 5; w++) {
+      game.submitGuess(game.getState().roundState!.currentWord)
+      game.dismissWordResult()
+      if (w < 5) game.tickCountdown(0)
+    }
+    game.tickCountdown(0) // bonus countdown
+    expect(game.getState().screen).toBe('bonus_reading')
+
+    game.pressBil()
+    expect(game.getState().screen).toBe('bonus_writing')
+
+    const bs = game.getState().bonusState!
+    const emptyCount = 8 - (1 + bs.revealedCount) // lockedCount = 1 (ilk harf) + revealedCount
+
+    // typeLetter ile harf yazma
+    game.typeLetter('A')
+    expect(game.getState().bonusState!.userInput).toBe('a')
+
+    // Bir harf daha yaz
+    game.typeLetter('B')
+    expect(game.getState().bonusState!.userInput).toBe('ab')
+
+    // deleteLetter ile son harfi sil
+    game.deleteLetter()
+    expect(game.getState().bonusState!.userInput).toBe('a')
+
+    // Tekrar sil (0'a kadar silinebilir)
+    game.deleteLetter()
+    expect(game.getState().bonusState!.userInput).toBe('')
+
+    // Boş olunca daha fazla silme yok (negatife düşmez)
+    game.deleteLetter()
+    expect(game.getState().bonusState!.userInput).toBe('')
+
+    void emptyCount // sadece derleme kontrolü
+  })
+
+  it('regresyon 11b: bonus_writing fazında typeLetter ile harf iki kez yazılmaz', () => {
+    const game = new GameController({ words: mockRepo })
+    game.startNewGame()
+    game.tickCountdown(0)
+
+    for (let w = 1; w <= 5; w++) {
+      game.submitGuess(game.getState().roundState!.currentWord)
+      game.dismissWordResult()
+      if (w < 5) game.tickCountdown(0)
+    }
+    game.tickCountdown(0)
+
+    game.pressBil()
+    expect(game.getState().screen).toBe('bonus_writing')
+
+    // Tek typeLetter çağrısı → tek harf
+    game.typeLetter('K')
+    expect(game.getState().bonusState!.userInput).toHaveLength(1)
+    expect(game.getState().bonusState!.userInput).toBe('k')
+  })
+
+  // ─── 12. Regresyon: 4. turda kelime kaybında girdi kilidi açık kalır ──
+
+  it('regresyon 12a: 4. turda geçersiz kelimeyle kayıp sonrası typeLetter çalışır', () => {
+    const game = new GameController({ words: mockRepo })
+    game.devSkipToRound4(20_000)
+    game.startRound4()
+    game.tickCountdown(0)
+    expect(game.getState().screen).toBe('round4_playing')
+
+    const firstWord = game.getState().round4State!.currentWord
+    const firstChar = Array.from(firstWord)[0]
+
+    // Geçersiz kelime gönder
+    game.submitRound4Guess(firstChar + 'xyz')
+
+    // Yeni kelime geldi, guesses sıfırlandı
+    expect(game.getState().screen).toBe('round4_playing')
+    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+    expect(game.getState().round4State!.guesses).toHaveLength(0)
+
+    // Controller seviyesinde typeLetter çalışmalı (UI kilidi test edilemiyor ama controller testi yeterli)
+    const newWord = game.getState().round4State!.currentWord
+    const newFirstChar = Array.from(newWord)[0]
+
+    // input sadece ilk harften ibaret
+    expect(game.getState().round4State!.currentInput).toBe(newFirstChar)
+
+    // Harf yazmak state'i güncellemeli
+    game.typeLetter('E')
+    expect(game.getState().round4State!.currentInput.length).toBeGreaterThan(1)
+  })
+
+  it('regresyon 12b: 4. turda 5 yanlış tahminle kayıp sonrası typeLetter çalışır', () => {
+    const game = new GameController({ words: mockRepo })
+    game.devSkipToRound4(20_000)
+    game.startRound4()
+    game.tickCountdown(0)
+
+    const firstWord = game.getState().round4State!.currentWord
+    const firstChar = Array.from(firstWord)[0]
+
+    // 5 adet geçerli ama yanlış tahmin
+    const wrongCandidates = mockRepo
+      .getWords(4)
+      .filter((w) => Array.from(w)[0] === firstChar && w !== firstWord)
+
+    for (let i = 0; i < 5; i++) {
+      game.submitRound4Guess(wrongCandidates[i % wrongCandidates.length])
+    }
+
+    // 5 hak bitti → yeni kelime geldi
+    expect(game.getState().screen).toBe('round4_playing')
+    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+    expect(game.getState().round4State!.guesses).toHaveLength(0)
+
+    // typeLetter hâlâ çalışmalı
+    game.typeLetter('A')
+    expect(game.getState().round4State!.currentInput.length).toBeGreaterThan(1)
+  })
+
+  it('regresyon 12c: 4. turda art arda iki kayıptan sonra typeLetter çalışır', () => {
+    const game = new GameController({ words: mockRepo })
+    game.devSkipToRound4(20_000)
+    game.startRound4()
+    game.tickCountdown(0)
+
+    // 1. kayıp: geçersiz kelime
+    const firstChar1 = Array.from(game.getState().round4State!.currentWord)[0]
+    game.submitRound4Guess(firstChar1 + 'xyz')
+    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+
+    // 2. kayıp: geçersiz kelime (yeni kelimeyle)
+    const firstChar2 = Array.from(game.getState().round4State!.currentWord)[0]
+    game.submitRound4Guess(firstChar2 + 'xyz')
+    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(3)
+    expect(game.getState().round4State!.guesses).toHaveLength(0)
+
+    // typeLetter çalışmalı
+    game.typeLetter('U')
+    expect(game.getState().round4State!.currentInput.length).toBeGreaterThan(1)
+  })
+
+  it('regresyon 12d: 4. turda kayıptan sonra doğru kelimeyle stage_cleared gelinir', () => {
+    const game = new GameController({ words: mockRepo })
+    game.devSkipToRound4(20_000)
+    game.startRound4()
+    game.tickCountdown(0)
+
+    const firstWord = game.getState().round4State!.currentWord
+    const firstChar = Array.from(firstWord)[0]
+
+    // Önce geçersiz kelimeyle kaybet
+    game.submitRound4Guess(firstChar + 'xyz')
+    expect(game.getState().round4State!.wordsAttemptedInStage).toBe(2)
+
+    // Şimdi yeni kelimeyi doğru bil
+    const newWord = game.getState().round4State!.currentWord
+    game.submitRound4Guess(newWord)
+
+    // Duraklama ekranına gelindi
     expect(game.getState().screen).toBe('round4_stage_cleared')
     expect(game.getState().round4State!.lastCompletedStage).toBe(4)
   })

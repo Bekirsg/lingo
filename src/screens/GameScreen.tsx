@@ -127,15 +127,18 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       const guess = r4.currentInput
       if (guess.length !== r4.stage) return
 
-      setIsEvaluating(true)
       const prevAttempt = r4.wordsAttemptedInStage
       controller.submitRound4Guess(guess)
 
-      // Geçersiz kelime veya 5 hak bittiğinde yeni kelime gelir -> satırı salla
+      // Geçersiz kelime veya 5 hak bittiğinde yeni kelime gelir -> input kilidi AÇIK kalmalı!
       const latestR4 = controller.getState().round4State
       if (latestR4 && latestR4.wordsAttemptedInStage > prevAttempt) {
+        // Kelime kaybedildi: isEvaluating ASLA true yapılmaz, anında yeni kelimeye geçilir
         setIsShaking(true)
         setTimeout(() => setIsShaking(false), 500)
+      } else {
+        // Geçerli tahmin: animasyon oynayacak, isEvaluating true
+        setIsEvaluating(true)
       }
       return
     }

@@ -365,8 +365,8 @@ describe('Bonus puan zaman çizelgesi', () => {
       expect(BONUS_TOTAL_TIME).toBe(10)
     })
 
-    it('yazma süresi 5 saniye', () => {
-      expect(BONUS_WRITE_TIME).toBe(5)
+    it('yazma süresi 10 saniye', () => {
+      expect(BONUS_WRITE_TIME).toBe(10)
     })
   })
 })
@@ -483,7 +483,7 @@ describe('Tur yapılandırması (ROUND_CONFIGS)', () => {
   })
 
   it('sabitleri doğru', () => {
-    expect(GUESS_TIME_LIMIT).toBe(10)
+    expect(GUESS_TIME_LIMIT).toBe(15)
     expect(ROUND4_TIME_LIMIT).toBe(120)
     expect(MAX_GUESSES).toBe(5)
   })

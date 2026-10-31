@@ -177,7 +177,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const handleAnimationComplete = useCallback(() => {
     setIsEvaluating(false)
     if (controller && gameState?.screen === 'playing_round') {
-      // SPEC 4.4: 1–3. Turda animasyon bitince bir sonraki tahminin 10 sn'si başlar
+      // SPEC 4.4: 1–3. Turda animasyon bitince bir sonraki tahminin 15 sn'si başlar
       controller.startGuessTimer()
     }
   }, [controller, gameState?.screen])

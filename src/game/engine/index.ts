@@ -128,7 +128,7 @@ export function maxRoundPoints(round: 1 | 2 | 3): number {
 export const MAX_TREASURY = 39_000
 
 /** Her tahmin için süre sınırı (saniye) — 1–3. turlar */
-export const GUESS_TIME_LIMIT = 10
+export const GUESS_TIME_LIMIT = 15
 
 /** 4. tur toplam süre (saniye) */
 export const ROUND4_TIME_LIMIT = 120
@@ -176,7 +176,7 @@ export function bonusScoreAtTime(elapsedSeconds: number): number {
 export const BONUS_TOTAL_TIME = 10
 
 /** Bonus yazma süresi (BİL basıldıktan sonra) */
-export const BONUS_WRITE_TIME = 5
+export const BONUS_WRITE_TIME = 10
 
 // ─── 4. Tur Kazanç Tablosu ──────────────────────────────────────
 

@@ -236,7 +236,7 @@ export class GameController {
   }
 
   /**
-   * Tahmin süresini (10 sn) başlatır.
+   * Tahmin süresini (15 sn) başlatır.
    * Kutu çevirme animasyonu bittiğinde çağrılır.
    */
   startGuessTimer(): void {
@@ -411,7 +411,7 @@ export class GameController {
 
   /**
    * Bonus soruda "BİL" butonuna basıldığında.
-   * SPEC 4.6: Harf açılması durur, puan donar, 5 sn yazma süresi başlar.
+   * SPEC 4.6: Harf açılması durur, puan donar, 10 sn yazma süresi başlar.
    */
   pressBil(): void {
     if (this.state.screen !== 'bonus_reading' || !this.state.bonusState) return
@@ -422,13 +422,13 @@ export class GameController {
     bs.frozenScore = bs.currentScore
     this.state.screen = 'bonus_writing'
 
-    // 5 sn yazma süresi başlar
+    // 10 sn yazma süresi başlar
     this.clock.start(BONUS_WRITE_TIME, () => this.onBonusWriteTimeout())
     this.emitState()
   }
 
   /**
-   * Bonus soruda cevabı gönderir (5 sn yazma süresi içinde).
+   * Bonus soruda cevabı gönderir (10 sn yazma süresi içinde).
    */
   submitBonusAnswer(answerRaw: string): void {
     if (this.state.screen !== 'bonus_writing' || !this.state.bonusState) return
@@ -451,7 +451,7 @@ export class GameController {
     this.emitState()
   }
 
-  /** Bonus yazma süresi dolunca (5 sn) */
+  /** Bonus yazma süresi dolunca (10 sn) */
   onBonusWriteTimeout(): void {
     if (this.state.screen !== 'bonus_writing' || !this.state.bonusState) return
     const bs = this.state.bonusState

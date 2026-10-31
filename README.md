@@ -8,9 +8,9 @@ Türk televizyon klasiği Lingo formatında, TDK Güncel Türkçe Sözlük (GTS 
 
 - **1–3. Turlar:** 
   - Her turda 5 kelime (1. Tur: 4 harf, 2. Tur: 5 harf, 3. Tur: 6 harf).
-  - Her tahmin için 10 saniye süre ve 5 tahmin hakkı.
+  - Her tahmin için 15 saniye süre ve 5 tahmin hakkı.
   - Kelime bilindiğinde harf başına 100 puan; ilk harf daima açık ve yeşildir.
-  - Tur sonlarında 8 harfli **Bonus Soru**: 3 saniye okuma, her saniye rastgele bir harf açılır, puan 3.000'den 0'a doğru 200'er düşer. "BİL" tuşuna basıldığı anda puan donar ve **5 saniye** içinde kelimeyi yazma hakkı verilir.
+  - Tur sonlarında 8 harfli **Bonus Soru**: 3 saniye okuma, her saniye rastgele bir harf açılır, puan 3.000'den 0'a doğru 200'er düşer. "BİL" tuşuna basıldığı anda puan donar ve **10 saniye** içinde kelimeyi yazma hakkı verilir.
 - **4. Tur (Büyük Final):**
   - Toplam **120 saniye** tek sayaç!
   - Sırasıyla 4 → 5 → 6 → 7 harfli kelime etapları.

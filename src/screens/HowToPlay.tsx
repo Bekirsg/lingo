@@ -58,7 +58,7 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
           <ul className="list-disc list-inside space-y-1 mt-2">
             <li>Her kelime için <strong>5 tahmin hakkın</strong> var</li>
             <li>İlk harf her zaman verilir (kilitli ve yeşil)</li>
-            <li>Her tahmin için <strong>10 saniye</strong> süren var</li>
+            <li>Her tahmin için <strong>15 saniye</strong> süren var</li>
             <li>TDK'da olmayan kelime yazarsan kelimeyi <strong>kaybedersin</strong></li>
           </ul>
         </Section>
@@ -67,7 +67,7 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
         <Section title="⭐ Bonus Soru">
           Her turun sonunda 8 harfli bir kelimenin tanımı verilir. Harfler birer birer
           açılır ve puan 3.000'den düşer. <strong>BİL</strong> butonuna bastığın anda
-          puan donar ve kelimeyi yazmak için <strong>5 saniye</strong> süren olur! Doğru
+          puan donar ve kelimeyi yazmak için <strong>10 saniye</strong> süren olur! Doğru
           bilirsen donmuş puan kasana eklenir; yanlışta veya süre dolarsa 0 puan.
         </Section>
 

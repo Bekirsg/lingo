@@ -64,7 +64,7 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
 
       {/* Alt bilgi */}
       <p className="mt-12 text-xs text-[var(--color-text-muted)]">
-        v1.0.0
+        v1.0.1
       </p>
     </div>
   )

@@ -206,10 +206,10 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     game.tickCountdown(0)
     expect(game.getState().screen).toBe('playing_round')
 
-    // 3 saniye oynadı (kalan süre 7 sn)
+    // 3 saniye oynadı (kalan süre 12 sn)
     mockTime += 3000
     game.getClock().check()
-    expect(game.getClock().getRemainingSeconds()).toBe(7)
+    expect(game.getClock().getRemainingSeconds()).toBe(12)
 
     // Sekme arka plana atıldı / duraklatıldı
     game.pauseGame()
@@ -219,15 +219,15 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     // 1 saat arka planda kaldı
     mockTime += 3_600_000
     game.getClock().check()
-    expect(game.getClock().getRemainingSeconds()).toBe(7)
+    expect(game.getClock().getRemainingSeconds()).toBe(12)
 
     // Oyuncu döndü ve "Devam Et" dedi
     game.resumeGame()
     expect(game.getState().screen).toBe('playing_round')
-    expect(game.getClock().getRemainingSeconds()).toBe(7)
+    expect(game.getClock().getRemainingSeconds()).toBe(12)
 
-    // 7 saniye doldu -> süre biter
-    mockTime += 7000
+    // 12 saniye doldu -> süre biter
+    mockTime += 12000
     game.getClock().check()
     expect(game.getState().screen).toBe('word_result')
     expect(game.getState().roundState!.wordLost).toBe(true)
@@ -286,7 +286,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().treasury).toBe(7400)
   })
 
-  it('senaryo 4b: bonus soruda 5 sn yazma süresi dolarsa 0 puan alır', () => {
+  it('senaryo 4b: bonus soruda 10 sn yazma süresi dolarsa 0 puan alır', () => {
     let mockTime = 1000
     const game = new GameController({
       words: mockRepo,
@@ -308,8 +308,8 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     game.pressBil()
     expect(game.getState().screen).toBe('bonus_writing')
 
-    // 5 sn yazma süresi doldu
-    mockTime += 5500
+    // 10 sn yazma süresi doldu
+    mockTime += 10500
     game.getClock().check()
 
     expect(game.getState().screen).toBe('bonus_result')
@@ -457,7 +457,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
 
   // ─── 7. Animasyon Sonrası Tahmin Süresi Başlatma (startGuessTimer) ──
 
-  it('senaryo 7: animasyon sırasında 10 sn sayacı beklemede kalır, startGuessTimer ile başlar', () => {
+  it('senaryo 7: animasyon sırasında 15 sn sayacı beklemede kalır, startGuessTimer ile başlar', () => {
     let mockTime = 1000
     const game = new GameController({
       words: mockRepo,
@@ -482,7 +482,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     // Animasyon bitti sinyali geldi -> Sayaç başlar
     game.startGuessTimer()
     expect(game.getClock().isRunning()).toBe(true)
-    expect(game.getClock().getRemainingSeconds()).toBe(10)
+    expect(game.getClock().getRemainingSeconds()).toBe(15)
   })
 
   // ─── 8. 4. Tur Etap Kazançları & Süre Bitimi Senaryoları ─────────

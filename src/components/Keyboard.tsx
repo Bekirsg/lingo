@@ -77,12 +77,12 @@ export default function Keyboard({
 
   return (
     <div
-      className="w-full max-w-[430px] px-1 pb-4 pt-1 flex flex-col gap-1.5 select-none touch-manipulation"
+      className="w-full max-w-[430px] px-1 pb-2 sm:pb-3 pt-1 flex flex-col gap-1 sm:gap-1.5 select-none touch-manipulation shrink-0"
       role="region"
       aria-label="Türkçe ekran klavyesi"
     >
       {/* 1. Satır: Q W E R T Y U I O P Ğ Ü */}
-      <div className="flex justify-center gap-1 w-full">
+      <div className="flex justify-center gap-0.5 sm:gap-1 w-full">
         {ROW_1.map((char) => (
           <button
             key={char}
@@ -90,9 +90,9 @@ export default function Keyboard({
             disabled={disabled}
             onClick={() => onChar(char)}
             className={`
-              flex-1 h-12 rounded-lg text-sm sm:text-base font-bold
+              flex-1 h-11 sm:h-12 rounded-lg text-xs sm:text-base font-bold
               border transition-all duration-150 active:scale-90
-              flex items-center justify-center
+              flex items-center justify-center p-0 min-w-0
               ${getKeyClass(char)}
             `}
           >
@@ -102,7 +102,7 @@ export default function Keyboard({
       </div>
 
       {/* 2. Satır: A S D F G H J K L Ş İ */}
-      <div className="flex justify-center gap-1 w-full px-2">
+      <div className="flex justify-center gap-0.5 sm:gap-1 w-full px-1.5 sm:px-2">
         {ROW_2.map((char) => (
           <button
             key={char}
@@ -110,9 +110,9 @@ export default function Keyboard({
             disabled={disabled}
             onClick={() => onChar(char)}
             className={`
-              flex-1 h-12 rounded-lg text-sm sm:text-base font-bold
+              flex-1 h-11 sm:h-12 rounded-lg text-xs sm:text-base font-bold
               border transition-all duration-150 active:scale-90
-              flex items-center justify-center
+              flex items-center justify-center p-0 min-w-0
               ${getKeyClass(char)}
             `}
           >
@@ -122,15 +122,15 @@ export default function Keyboard({
       </div>
 
       {/* 3. Satır: GÖNDER Z X C V B N M Ö Ç SİL */}
-      <div className="flex justify-center gap-1 w-full">
+      <div className="flex justify-center gap-0.5 sm:gap-1 w-full">
         {/* GÖNDER Tuşu */}
         <button
           type="button"
           disabled={disabled || !canSubmit}
           onClick={onSubmit}
           className={`
-            px-2.5 h-12 rounded-lg text-xs font-black tracking-wider
-            border transition-all duration-150 active:scale-90
+            px-2 sm:px-2.5 h-11 sm:h-12 rounded-lg text-[11px] sm:text-xs font-black tracking-wider
+            border transition-all duration-150 active:scale-90 shrink-0
             flex items-center justify-center
             ${
               canSubmit
@@ -150,9 +150,9 @@ export default function Keyboard({
             disabled={disabled}
             onClick={() => onChar(char)}
             className={`
-              flex-1 h-12 rounded-lg text-sm sm:text-base font-bold
+              flex-1 h-11 sm:h-12 rounded-lg text-xs sm:text-base font-bold
               border transition-all duration-150 active:scale-90
-              flex items-center justify-center
+              flex items-center justify-center p-0 min-w-0
               ${getKeyClass(char)}
             `}
           >
@@ -166,7 +166,7 @@ export default function Keyboard({
           disabled={disabled}
           onClick={onDelete}
           className="
-            px-3 h-12 rounded-lg text-sm font-bold
+            px-2.5 sm:px-3 h-11 sm:h-12 rounded-lg text-sm font-bold shrink-0
             bg-slate-800/90 hover:bg-slate-700/90 border border-white/10 text-rose-300
             transition-all duration-150 active:scale-90
             flex items-center justify-center

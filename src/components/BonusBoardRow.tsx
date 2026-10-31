@@ -1,9 +1,12 @@
 /**
  * BonusBoardRow — 8 kutu tek satır (bonus soru tahtası)
  *
- * SPEC 4.6: Bu ekranda normal 5 satırlı tahmin tahtası yoktur,
- * sadece tek satır 8 kutu vardır. İlk kutuda ilk harf yeşil ve kilitli.
- * Açılan harfler de yeşil ve kilitli. Boş kutulara oyuncu yazar.
+ * SPEC 4.6 & M8:
+ * - 8 kutulu tek satır.
+ * - Mobil uyumlu: 320px'ten 430px+'a kadar kaydırmasız, kare kutular.
+ * - İlk kutu (index 0) kilitli ve yeşil.
+ * - Açılan harfler yeşil ve kilitli.
+ * - Boş kutulara kullanıcı yazar, aktif imleç vurgulu.
  */
 
 import type { BonusState } from '../game/state'
@@ -48,7 +51,7 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
 
   return (
     <div
-      className="flex justify-center gap-1.5 w-full max-w-[380px] px-2"
+      className="flex justify-center gap-1 sm:gap-1.5 w-full max-w-[380px] px-1.5 sm:px-2"
       role="row"
       aria-label="Bonus kelime kutuları"
     >
@@ -78,8 +81,9 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
           <div
             key={idx}
             className={`
-              w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center
-              rounded-xl text-lg sm:text-xl font-black
+              flex-1 min-w-0 max-w-[42px] sm:max-w-[46px] aspect-square
+              flex items-center justify-center
+              rounded-xl text-base sm:text-xl font-black
               border-2 transition-all duration-300
               ${bgClass}
             `}

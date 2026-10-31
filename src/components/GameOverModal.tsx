@@ -68,6 +68,15 @@ export default function GameOverModal({
       return
     }
 
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (prefersReduced) {
+      setAnimatedScore(finalScore)
+      return
+    }
+
     const duration = 1000
     const startVal = 0
     const targetVal = finalScore

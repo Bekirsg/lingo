@@ -233,11 +233,13 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         )}
 
         {/* Dev Debug: bonus kelimesini göster + atla kısayolları */}
-        <DevDebugBar
-          bonusWord={gameState.bonusState?.word}
-          controller={controller}
-          screen={gameState.screen}
-        />
+        {import.meta.env.DEV && (
+          <DevDebugBar
+            bonusWord={gameState.bonusState?.word}
+            controller={controller}
+            screen={gameState.screen}
+          />
+        )}
       </>
     )
   }
@@ -263,10 +265,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           />
         )}
 
-        <DevDebugBar
-          controller={controller}
-          screen={gameState.screen}
-        />
+        {import.meta.env.DEV && (
+          <DevDebugBar
+            controller={controller}
+            screen={gameState.screen}
+          />
+        )}
       </>
     )
   }
@@ -280,10 +284,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           onNewGame={() => controller.startNewGame()}
           onBackToMenu={onBackToMenu}
         />
-        <DevDebugBar
-          controller={controller}
-          screen={gameState.screen}
-        />
+        {import.meta.env.DEV && (
+          <DevDebugBar
+            controller={controller}
+            screen={gameState.screen}
+          />
+        )}
       </>
     )
   }
@@ -372,11 +378,13 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       />
 
       {/* Geliştirici Hata Ayıklama Paneli (Sadece DEV modunda) */}
-      <DevDebugBar
-        currentWord={activeWord}
-        controller={controller}
-        screen={gameState.screen}
-      />
+      {import.meta.env.DEV && (
+        <DevDebugBar
+          currentWord={activeWord}
+          controller={controller}
+          screen={gameState.screen}
+        />
+      )}
 
       {/* 3-2-1 Geri Sayım Katmanı */}
       {gameState.screen === 'countdown' && (

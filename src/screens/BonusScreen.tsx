@@ -1,9 +1,12 @@
 /**
  * BonusScreen — Bonus soru ekranı (okuma + yazma fazları)
  *
- * SPEC 4.6: Üstte canlı kalan süre ve canlı anlık puan; ortada tanım
- * (bonus boyunca ekranda kalır); altında 8 kutu; kutuların altında
- * büyük "BİL" butonu. İlk kutuda ilk harf yeşil ve kilitli.
+ * SPEC 4.6 & M8:
+ * - Üstte canlı kalan süre ve canlı anlık puan
+ * - Ortada tanım (tüm ekran boyutlarında kaydırmasız sığar)
+ * - 8 kutulu bonus tahtası (320px-430px tam uyumlu)
+ * - Okuma fazında BİL butonu, yazma fazında Türkçe klavye
+ * - İlk kutuda ilk harf yeşil ve kilitli
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react'
@@ -109,7 +112,7 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
         <div
           className={`
-            w-full max-w-sm rounded-3xl p-6 flex flex-col items-center text-center
+            w-full max-w-sm rounded-3xl p-5 sm:p-6 flex flex-col items-center text-center
             border shadow-2xl animate-scale-up
             ${bs.won
               ? 'bg-slate-900/95 border-emerald-500/50 shadow-emerald-500/20'
@@ -120,7 +123,7 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
           {/* İkon */}
           <div
             className={`
-              w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-3xl
+              w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 text-3xl
               border shadow-lg
               ${bs.won
                 ? 'bg-emerald-500/20 border-emerald-400 text-emerald-400 shadow-emerald-500/30 animate-bounce'
@@ -131,29 +134,29 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
             {bs.won ? '🎉' : '❌'}
           </div>
 
-          <h2 className="text-2xl font-black text-white mb-1">
+          <h2 className="text-xl sm:text-2xl font-black text-white mb-1">
             {bs.won ? 'Bonus Bildin!' : 'Bonus Kaçtı'}
           </h2>
 
           {bs.won ? (
-            <p className="text-emerald-400 font-bold text-lg mb-3">
+            <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
               +{formatPoints(bs.frozenScore)} PUAN
             </p>
           ) : (
-            <p className="text-rose-400 font-medium text-sm mb-2">
+            <p className="text-rose-400 font-medium text-xs sm:text-sm mb-2">
               {bs.answered ? 'Yanlış cevap veya süre doldu' : 'Süre doldu — 0 puan'}
             </p>
           )}
 
           {/* Doğru kelime her durumda gösterilir */}
-          <div className="mt-1 mb-4 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+          <div className="mt-1 mb-3 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
             <span className="text-xs text-slate-400 mr-2">Doğru Kelime:</span>
-            <span className="font-mono text-xl font-black text-white tracking-widest">
+            <span className="font-mono text-lg sm:text-xl font-black text-white tracking-widest">
               {turkishUpper(bs.word)}
             </span>
           </div>
 
-          <p className="text-xs text-slate-500 mb-4 italic">
+          <p className="text-xs text-slate-400 mb-4 italic max-w-xs">
             "{bs.definition}"
           </p>
 
@@ -165,7 +168,7 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
               controller.dismissBonusResult()
             }}
             className={`
-              w-full py-4 px-6 rounded-2xl text-lg font-black tracking-wide
+              w-full py-3.5 sm:py-4 px-6 rounded-2xl text-base sm:text-lg font-black tracking-wide
               text-white transition-all duration-200 active:scale-95 shadow-lg
               ${bs.won
                 ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/40 border border-emerald-400'
@@ -182,7 +185,6 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
 
   // ─── Okuma ve Yazma Fazları ────────────────────────────────────
 
-  // Yazma fazında boş kutu sayısı ve dolu sayısı (canSubmit hesabı)
   const lockedCount = 1 + bs.revealedCount
   const emptyCount = 8 - lockedCount
   const allFilled = isWriting && bs.userInput.length >= emptyCount
@@ -191,44 +193,42 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
     <div className="flex-1 flex flex-col items-center justify-between bg-gradient-to-b from-[#0f0a2e] via-[#150d3d] to-[#0a0620] relative overflow-hidden select-none">
 
       {/* ─── Üst Bar: Canlı Süre + Puan ───────────────────────── */}
-      <header className="w-full px-4 pt-4 pb-2 flex flex-col gap-3">
+      <header className="w-full px-3 sm:px-4 pt-2 sm:pt-3 pb-1 flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between">
-          {/* Tur / Bonus etiketi */}
-          <span className="px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md">
             ⭐ BONUS SORU
           </span>
 
-          {/* Kasa */}
           <div className="flex items-baseline gap-1 text-right">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">KASA:</span>
-            <span className="font-mono font-black text-emerald-400 text-sm">
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-400">KASA:</span>
+            <span className="font-mono font-black text-emerald-400 text-xs sm:text-sm">
               {formatPoints(state.treasury)}
             </span>
           </div>
         </div>
 
         {/* Canlı Süre ve Puan Göstergesi */}
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-4 sm:gap-6">
           {/* Süre */}
-          <div className={`flex items-center bg-black/40 px-3 py-1.5 rounded-xl border backdrop-blur-md shadow-inner ${
+          <div className={`flex items-center bg-black/40 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border backdrop-blur-md shadow-inner ${
             displayRemaining <= 3 && displayRemaining > 0
               ? 'border-red-500/40 animate-pulse'
               : 'border-white/10'
           }`}>
-            <span className={`font-mono font-black text-2xl leading-none tabular-nums ${
+            <span className={`font-mono font-black text-xl sm:text-2xl leading-none tabular-nums ${
               displayRemaining <= 3 && displayRemaining > 0 ? 'text-red-400' : 'text-amber-400'
             }`}>
-              {isWriting ? displayRemaining : displayRemaining}
+              {displayRemaining}
             </span>
             <span className="text-xs ml-0.5 opacity-70 font-sans text-slate-400">sn</span>
           </div>
 
           {/* Anlık Puan */}
           <div className="flex flex-col items-center">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-500">
               {isWriting ? 'DONMUŞ PUAN' : 'ANLIK PUAN'}
             </span>
-            <span className={`font-mono font-black text-2xl leading-tight tabular-nums ${
+            <span className={`font-mono font-black text-xl sm:text-2xl leading-tight tabular-nums ${
               displayScore >= 2000
                 ? 'text-emerald-400'
                 : displayScore >= 1000
@@ -244,24 +244,24 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
       </header>
 
       {/* ─── Tanım ────────────────────────────────────────────── */}
-      <div className="flex-shrink-0 w-full max-w-sm px-4 py-3">
-        <div className="bg-white/5 rounded-2xl border border-white/10 px-5 py-4 backdrop-blur-md shadow-inner">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-1">
+      <div className="w-full max-w-sm px-3 sm:px-4 py-1.5 sm:py-2 shrink-0">
+        <div className="bg-white/5 rounded-2xl border border-white/10 px-4 py-2.5 sm:px-5 sm:py-3.5 backdrop-blur-md shadow-inner">
+          <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-0.5">
             Tanım
           </p>
-          <p className="text-base sm:text-lg font-medium text-white leading-relaxed">
+          <p className="text-sm sm:text-base font-medium text-white leading-snug sm:leading-relaxed">
             {bs.definition}
           </p>
         </div>
       </div>
 
       {/* ─── 8 Kutu (Tek Satır) ───────────────────────────────── */}
-      <div className="flex-shrink-0 w-full flex justify-center py-3">
+      <div className="w-full flex justify-center py-1 sm:py-2 shrink-0">
         <BonusBoardRow bonusState={bs} isWriting={isWriting} />
       </div>
 
       {/* ─── BİL Butonu (Okuma fazında) / Klavye (Yazma fazında) ─ */}
-      <div className="flex-shrink-0 w-full pb-4">
+      <div className="w-full pb-2 sm:pb-3 shrink-0">
         {isReading && (
           <div className="flex justify-center px-4">
             <button
@@ -272,10 +272,10 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
                 controller.pressBil()
               }}
               className="
-                w-full max-w-sm py-5 px-8 rounded-2xl
+                w-full max-w-sm py-4 sm:py-5 px-6 sm:px-8 rounded-2xl
                 bg-gradient-to-r from-amber-500 to-amber-600
                 hover:from-amber-400 hover:to-amber-500
-                text-slate-950 text-2xl font-black tracking-wider
+                text-slate-950 text-xl sm:text-2xl font-black tracking-wider
                 shadow-xl shadow-amber-500/30 border border-amber-400
                 transition-all duration-200 active:scale-95
                 animate-pulse

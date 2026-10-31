@@ -607,84 +607,6 @@ export class GameController {
     this.submitBonusAnswer(fullAnswer)
   }
 
-  // ─── Dev-Only Kısayollar (Yalnızca Geliştirme Modu) ─────────────
-
-  /**
-   * Mevcut turda kalan kelimeleri atlayıp doğrudan bonusa gider.
-   * Sadece geliştirme modunda (import.meta.env.DEV) çağrılmalıdır.
-   */
-  devSkipToBonus(): void {
-    if (this.state.screen !== 'playing_round' && this.state.screen !== 'word_result' && this.state.screen !== 'countdown') return
-    if (!this.state.roundState) return
-
-    this.clock.stop()
-    // Bonus soruyu hazırla
-    this.setupBonusQuestion()
-    this.state.screen = 'countdown'
-    this.state.countdownValue = 3
-    this.state.countdownTarget = 'bonus_reading'
-    this.emitState()
-  }
-
-  /**
-   * Mevcut turu atlayıp sonraki tura geçer (bonus dahil atlar).
-   * Sadece geliştirme modunda (import.meta.env.DEV) çağrılmalıdır.
-   */
-  devSkipToNextRound(): void {
-    const currentRound = this.state.roundState?.round ?? 1
-
-    this.clock.stop()
-    if (currentRound < 3) {
-      const nextR = (currentRound + 1) as 2 | 3
-      this.state.currentRoundPoints = 0
-      this.setupRoundWord(nextR, 1)
-      this.state.screen = 'countdown'
-      this.state.countdownValue = 3
-      this.state.countdownTarget = 'playing_round'
-    } else {
-      // 3. tur → 4. tur intro
-      this.state.roundState = undefined
-      this.state.screen = 'round4_intro'
-    }
-    this.emitState()
-  }
-
-  /**
-   * Doğrudan 4. tura atlar (belirtilen kasa ile).
-   * Sadece geliştirme modunda çağrılmalıdır.
-   */
-  devSkipToRound4(treasury: number = 20000): void {
-    this.clock.stop()
-    this.state.roundState = undefined
-    this.state.treasury = treasury
-    this.state.currentRoundPoints = 0
-    this.state.screen = 'round4_intro'
-    this.emitState()
-  }
-
-  /**
-   * 4. turda kalan süreyi 10 saniyeye düşürür.
-   * Sadece geliştirme modunda çağrılmalıdır.
-   */
-  devSetRound4Time(seconds: number): void {
-    if (this.state.screen !== 'round4_playing') return
-    // Saati durdur ve yeniden başlat (kısa süreyle)
-    this.clock.stop()
-    this.clock.start(seconds, () => this.onRound4Timeout())
-    this.emitState()
-  }
-
-  /**
-   * 4. turda mevcut kelimeyi otomatik bildir.
-   * Sadece geliştirme modunda çağrılmalıdır.
-   */
-  devAutoSolveRound4(): void {
-    if (this.state.screen !== 'round4_playing' || !this.state.round4State) return
-    const word = this.state.round4State.currentWord
-    this.state.round4State.currentInput = word
-    this.submitRound4Guess(word)
-  }
-
   // ─── 4. Tur (Büyük Final) Akışı (SPEC Bölüm 4.8) ───────────────────
 
   /** 4. tur giriş ekranından "Başla"ya basıldığında */
@@ -894,3 +816,69 @@ export class GameController {
     this.emitState()
   }
 }
+
+// ─── Geliştirici Kısayolları (Sadece DEV modunda prototipe eklenir; prod build'de 0 byte kalır) ───
+export interface GameController {
+  devSkipToBonus(): void
+  devSkipToNextRound(): void
+  devSkipToRound4(treasury?: number): void
+  devSetRound4Time(seconds: number): void
+  devAutoSolveRound4(): void
+}
+
+if (import.meta.env.DEV) {
+  const proto = GameController.prototype as any
+
+  proto.devSkipToBonus = function (this: any) {
+    if (this.state.screen !== 'playing_round' && this.state.screen !== 'word_result' && this.state.screen !== 'countdown') return
+    if (!this.state.roundState) return
+
+    this.clock.stop()
+    this.setupBonusQuestion()
+    this.state.screen = 'countdown'
+    this.state.countdownValue = 3
+    this.state.countdownTarget = 'bonus_reading'
+    this.emitState()
+  }
+
+  proto.devSkipToNextRound = function (this: any) {
+    const currentRound = this.state.roundState?.round ?? 1
+    this.clock.stop()
+    if (currentRound < 3) {
+      const nextR = (currentRound + 1) as 2 | 3
+      this.state.currentRoundPoints = 0
+      this.setupRoundWord(nextR, 1)
+      this.state.screen = 'countdown'
+      this.state.countdownValue = 3
+      this.state.countdownTarget = 'playing_round'
+    } else {
+      this.state.roundState = undefined
+      this.state.screen = 'round4_intro'
+    }
+    this.emitState()
+  }
+
+  proto.devSkipToRound4 = function (this: any, treasury = 20000) {
+    this.clock.stop()
+    this.state.roundState = undefined
+    this.state.treasury = treasury
+    this.state.currentRoundPoints = 0
+    this.state.screen = 'round4_intro'
+    this.emitState()
+  }
+
+  proto.devSetRound4Time = function (this: any, seconds: number) {
+    if (this.state.screen !== 'round4_playing') return
+    this.clock.stop()
+    this.clock.start(seconds, () => this.onRound4Timeout())
+    this.emitState()
+  }
+
+  proto.devAutoSolveRound4 = function (this: any) {
+    if (this.state.screen !== 'round4_playing' || !this.state.round4State) return
+    const word = this.state.round4State.currentWord
+    this.state.round4State.currentInput = word
+    this.submitRound4Guess(word)
+  }
+}
+

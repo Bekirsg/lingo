@@ -43,6 +43,15 @@ export default function RoundSummaryModal({
     playSound('stage_cleared')
     triggerHaptic('correct')
 
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (prefersReduced) {
+      setAnimatedTreasury(treasury)
+      return
+    }
+
     // 0'dan treasury değerine akıcı sayma animasyonu
     const duration = 800
     const startVal = Math.max(0, treasury - roundPoints)

@@ -41,7 +41,6 @@ export default function Board({
   useEffect(() => {
     if (isEvaluating && guesses.length === 0) {
       // Failsafe: 4. turda kelime kaybından hemen yeni kelime geldi (guesses sıfırlandı).
-      // Animasyon oynayacak satır yok; hemen tamamlandı sinyali gönder.
       onAnimationComplete?.()
       return
     }
@@ -79,10 +78,18 @@ export default function Board({
   const lockedFirstChar = turkishUpper(Array.from(currentWord)[0] ?? '')
   const currentChars = Array.from(currentInput).map(c => turkishUpper(c))
 
+  // Harf sayısına göre dinamik boşluk ve maksimum genişlik (özellikle 7 harfli mobil uyumu)
+  const isWideStage = letterCount >= 7
+  const boardMaxW = isWideStage ? 'max-w-[370px]' : 'max-w-[340px]'
+  const rowGap = isWideStage ? 'gap-1 sm:gap-2' : 'gap-1.5 sm:gap-2'
+  const colGap = isWideStage ? 'gap-1 sm:gap-1.5' : 'gap-1.5 sm:gap-2'
+  const fontClass = isWideStage ? 'text-lg sm:text-2xl' : 'text-xl sm:text-2xl'
+  const roundedClass = isWideStage ? 'rounded-lg sm:rounded-xl' : 'rounded-xl'
+
   return (
-    <div className="w-full flex-1 flex flex-col items-center justify-center px-4 py-2 select-none">
+    <div className="w-full flex-1 flex flex-col items-center justify-center px-2 sm:px-4 py-1 sm:py-2 select-none overflow-hidden">
       <div
-        className="w-full max-w-[360px] flex flex-col gap-2"
+        className={`w-full ${boardMaxW} flex flex-col ${rowGap}`}
         role="grid"
         aria-label="Kelime tahmin tahtası"
       >
@@ -99,7 +106,7 @@ export default function Board({
           return (
             <div
               key={rIndex}
-              className={`grid gap-2 w-full transition-transform duration-200 ${
+              className={`grid ${colGap} w-full transition-transform duration-200 ${
                 isActive && isShaking ? 'animate-shake' : ''
               }`}
               style={{
@@ -160,9 +167,9 @@ export default function Board({
                       aspectRatio: '1 / 1',
                     }}
                     className={`
-                      flex items-center justify-center rounded-xl text-xl sm:text-2xl font-black
-                      border-2 transition-all duration-300 transform
-                      ${bgClass} ${glowClass}
+                      flex items-center justify-center font-black
+                      border-2 transition-all duration-300 transform min-w-0
+                      ${roundedClass} ${fontClass} ${bgClass} ${glowClass}
                       ${isRowAnimating ? 'animate-flip' : ''}
                     `}
                     role="gridcell"

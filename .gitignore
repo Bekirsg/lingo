@@ -26,5 +26,10 @@ dist-ssr
 # Raw TDK data (büyük dosyalar, repoya dahil değil)
 scripts/raw-data/
 
-# Binaries
+# Environment
+.env
+.env.*
+
+# Binaries & executables
 cloudflared.exe
+*.exe

@@ -1,5 +1,5 @@
 /**
- * LİNGO (B-E) ikonlarını SVG'den PNG'ye dönüştürür.
+ * LİNGO (BSG) ikonlarını SVG'den PNG'ye dönüştürür.
  * Kullanım: node scripts/generate-icons.mjs
  * Bağımlılık: sharp
  */

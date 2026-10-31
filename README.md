@@ -127,7 +127,7 @@ Site HTTPS bağlantısı üzerinden açıldıktan sonra:
 - **Android (Chrome):**
   1. Sağ üstteki `⋮` (üç nokta) menüsüne dokunun.
   2. **"Uygulamayı yükle"** veya **"Ana ekrana ekle"** seçeneğine dokunun.
-  3. Ana ekranda "B-E" logolu **LİNGO** uygulaması belirecek, tarayıcı çubuğu olmadan tam ekran açılacaktır.
+  3. Ana ekranda "BSG" logolu **LİNGO** uygulaması belirecek, tarayıcı çubuğu olmadan tam ekran açılacaktır.
 
 - **iOS / iPhone (Safari):**
   1. Safari'nin alt çubuğundaki **Paylaş** (kare içinden yukarı ok) düğmesine dokunun.
@@ -136,7 +136,28 @@ Site HTTPS bağlantısı üzerinden açıldıktan sonra:
 
 ---
 
-## 🔒 Güvenlik ve Geliştirici Araçları (Dev Tools)
+## 📚 Kelime Verisi ve Yeniden Üretim (Data Pipeline)
 
-- `import.meta.env.DEV` koruması altındaki geliştirici araçları (sol üstteki 🛠️ paneli, 4. tura atlama, otomatik çözme, cevap görme vb.) **üretim derlemesinde (`npm run build`) Vite tarafından tamamen ağaç budamaya (tree-shaking) uğrar ve bundle'dan silinir**.
-- Üretim kodunda hiçbir dev aracı, kısayolu veya cevap sızdıran düğme bulunmaz.
+Oyun için TDK GTS (12. baskı) ve TDK İmla Kılavuzu tabanlı 23.700+ kelimelik temizlenmiş ve doğrulanmış veri havuzları `public/data/` dizininde kullanıma hazır olarak bulunmaktadır.
+
+Ham veriler ~100 MB büyüklüğünde olduğu için git deposuna dahil edilmemiştir (`.gitignore`). Kelime listesini sıfırdan yeniden üretmek isterseniz:
+
+1. `scripts/raw-data/` klasörünü oluşturun:
+   ```bash
+   mkdir -p scripts/raw-data
+   ```
+2. Açık kaynaklı ham veri setlerini indirin:
+   - **TDK GTS v12:** [ogun/guncel-turkce-sozluk](https://github.com/ogun/guncel-turkce-sozluk) deposundan `sozluk/v12/v12.gts.json.tar.gz` dosyasını açıp `scripts/raw-data/gts.json` olarak kaydedin.
+   - **TDK İmla Kılavuzu:** [emrahcom/turkce_kelimeler](https://github.com/emrahcom/turkce_kelimeler) deposundan `imla_kilavuzu.txt` dosyasını `scripts/raw-data/imla-kilavuzu.txt` olarak kaydedin.
+3. Filtreleme ve doğrulama betiğini çalıştırın:
+   ```bash
+   node scripts/build-wordlist.mjs
+   ```
+4. Ayrıntılı filtre kuralları, istatistikler ve çapraz doğrulama raporu için [`DATA_SOURCES.md`](DATA_SOURCES.md) dosyasını inceleyebilirsiniz.
+
+---
+
+## 🔒 Güvenlik ve Kod Temizliği
+
+- Projede hiçbir dev aracı, test paneli, hile butonu veya cevap sızdıran kısayol bulunmamaktadır.
+- Tüm testler, durum makinesi ve istemci kodu saf ve bağımsız olarak çalışır; harici gizli anahtar veya ortam değişkeni gerektirmez.

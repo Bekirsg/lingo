@@ -13,6 +13,26 @@ const mockRepo = createWordRepository({
   ],
 })
 
+function skipToRound4ForTest(game: GameController, treasury = 20_000) {
+  const g = game as any
+  g.clock.stop()
+  g.state.roundState = undefined
+  g.state.treasury = treasury
+  g.state.currentRoundPoints = 0
+  g.state.screen = 'round4_intro'
+  g.emitState()
+}
+
+function skipToBonusForTest(game: GameController) {
+  const g = game as any
+  g.clock.stop()
+  g.setupBonusQuestion()
+  g.state.screen = 'countdown'
+  g.state.countdownValue = 3
+  g.state.countdownTarget = 'bonus_reading'
+  g.emitState()
+}
+
 describe('Duraklat/Devam ve Renk Güvenliği Regresyon Testleri', () => {
   it('Senaryo A (4. Tur Normal Oyun): Gönderilmemiş harfler duraklat/devam sonrası asla renklenmez, klavye ve tahta nötr kalır', () => {
     let mockTime = 1000
@@ -22,7 +42,7 @@ describe('Duraklat/Devam ve Renk Güvenliği Regresyon Testleri', () => {
     })
 
     // 4. tura atla
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     expect(game.getState().screen).toBe('round4_intro')
 
     // 1-3. tur roundState'inin temizlendiğini doğrula
@@ -86,7 +106,7 @@ describe('Duraklat/Devam ve Renk Güvenliği Regresyon Testleri', () => {
       nowFn: () => mockTime,
     })
 
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -125,7 +145,7 @@ describe('Duraklat/Devam ve Renk Güvenliği Regresyon Testleri', () => {
       nowFn: () => mockTime,
     })
 
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -208,7 +228,7 @@ describe('Duraklat/Devam ve Renk Güvenliği Regresyon Testleri', () => {
     game.tickCountdown(0)
     expect(game.getState().screen).toBe('playing_round')
 
-    game.devSkipToBonus()
+    skipToBonusForTest(game)
     game.tickCountdown(0)
     expect(game.getState().screen).toBe('bonus_reading')
 

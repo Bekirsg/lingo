@@ -9,7 +9,6 @@ import Keyboard from '../components/Keyboard'
 import WordResultModal from '../components/WordResultModal'
 import CountdownOverlay from '../components/CountdownOverlay'
 import PausedOverlay from '../components/PausedOverlay'
-import DevDebugBar from '../components/DevDebugBar'
 import BonusScreen from './BonusScreen'
 import RoundSummaryModal from '../components/RoundSummaryModal'
 import Round4IntroScreen from '../components/Round4IntroScreen'
@@ -231,15 +230,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             onExit={onBackToMenu}
           />
         )}
-
-        {/* Dev Debug: bonus kelimesini göster + atla kısayolları */}
-        {import.meta.env.DEV && (
-          <DevDebugBar
-            bonusWord={gameState.bonusState?.word}
-            controller={controller}
-            screen={gameState.screen}
-          />
-        )}
       </>
     )
   }
@@ -264,13 +254,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             onExit={onBackToMenu}
           />
         )}
-
-        {import.meta.env.DEV && (
-          <DevDebugBar
-            controller={controller}
-            screen={gameState.screen}
-          />
-        )}
       </>
     )
   }
@@ -278,19 +261,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   // ─── Oyun Sonu / Final Skor Ekranı (SPEC 4.9) ─────────────────
   if (gameState.screen === 'game_over') {
     return (
-      <>
-        <GameOverModal
-          state={gameState}
-          onNewGame={() => controller.startNewGame()}
-          onBackToMenu={onBackToMenu}
-        />
-        {import.meta.env.DEV && (
-          <DevDebugBar
-            controller={controller}
-            screen={gameState.screen}
-          />
-        )}
-      </>
+      <GameOverModal
+        state={gameState}
+        onNewGame={() => controller.startNewGame()}
+        onBackToMenu={onBackToMenu}
+      />
     )
   }
 
@@ -313,8 +288,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         gameState.screen === 'round4_stage_cleared' ||
         gameState.screen === 'round4_word_lost'
       : !rs || rs.wordWon || rs.wordLost)
-
-  const activeWord = isRound4 ? (r4?.lostWord || r4?.currentWord) : rs?.currentWord
 
   return (
     <div className="flex-1 flex flex-col justify-between items-center bg-gradient-to-b from-[#0f0a2e] via-[#150d3d] to-[#0a0620] relative overflow-hidden select-none">
@@ -376,15 +349,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         canSubmit={canSubmit}
         disabled={isKeyboardDisabled}
       />
-
-      {/* Geliştirici Hata Ayıklama Paneli (Sadece DEV modunda) */}
-      {import.meta.env.DEV && (
-        <DevDebugBar
-          currentWord={activeWord}
-          controller={controller}
-          screen={gameState.screen}
-        />
-      )}
 
       {/* 3-2-1 Geri Sayım Katmanı */}
       {gameState.screen === 'countdown' && (

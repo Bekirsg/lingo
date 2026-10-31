@@ -7,6 +7,6 @@
   </defs>
   <!-- Tam dolgu zemin (maskable ikonlar için yuvarlak köşe yok; OS kendi maskesini uygular) -->
   <rect width="512" height="512" fill="url(#bg)"/>
-  <!-- Güvenli alan (%80 iç daire, r=204.8px) içine tam ortalanmış net B-E logosu -->
-  <text x="256" y="278" text-anchor="middle" dominant-baseline="central" font-family="-apple-system, BlinkMacSystemFont, Arial Black, Arial, sans-serif" font-weight="900" font-size="140" fill="#a78bfa" letter-spacing="2">B-E</text>
+  <!-- Güvenli alan (%80 iç daire, r=204.8px) içine tam ortalanmış net BSG logosu -->
+  <text x="256" y="256" text-anchor="middle" dominant-baseline="central" font-family="Arial Black, Arial, -apple-system, sans-serif" font-weight="900" font-size="135" fill="#a78bfa" letter-spacing="2">BSG</text>
 </svg>

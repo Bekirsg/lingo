@@ -17,6 +17,16 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     ],
   })
 
+  function skipToRound4ForTest(game: GameController, treasury = 20_000) {
+    const g = game as any
+    g.clock.stop()
+    g.state.roundState = undefined
+    g.state.treasury = treasury
+    g.state.currentRoundPoints = 0
+    g.state.screen = 'round4_intro'
+    g.emitState()
+  }
+
   // ─── 1. Mükemmel Oyun Simülasyonu (Maksimum Skor = 328.000) ──────
 
   it('senaryo 1: mükemmel oyun -> maksimum skor 250.000 + 2×39.000 = 328.000', () => {
@@ -338,7 +348,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       nowFn: () => mockTime,
     })
 
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
     expect(game.getState().screen).toBe('round4_playing')
@@ -388,7 +398,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       nowFn: () => mockTime,
     })
 
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -485,7 +495,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     })
 
     // 20.000 kasa ile doğrudan 4. tura atla
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     expect(game.getState().screen).toBe('round4_intro')
     expect(game.getState().treasury).toBe(20_000)
 
@@ -527,7 +537,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     })
 
     // 15.000 kasa ile doğrudan 4. tura atla
-    game.devSkipToRound4(15_000)
+    skipToRound4ForTest(game, 15_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -549,9 +559,9 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().finalScore).toBe(30_000)
   })
 
-  it('senaryo 10: 4. turda dev kısayolları ve harf yazma/silme kontrolleri', () => {
+  it('senaryo 10: 4. turda harf yazma, silme ve doğru kelimeyi bilme kontrolleri', () => {
     const game = new GameController({ words: mockRepo })
-    game.devSkipToRound4(10_000)
+    skipToRound4ForTest(game, 10_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -568,12 +578,8 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     game.deleteLetter()
     expect(game.getState().round4State!.currentInput).toBe(firstChar)
 
-    // Dev kısayolu: devSetRound4Time
-    game.devSetRound4Time(10)
-    expect(Math.ceil(game.getClock().getRemainingSeconds())).toBe(10)
-
-    // Dev kısayolu: devAutoSolveRound4
-    game.devAutoSolveRound4()
+    // Doğru kelimeyi bil
+    game.submitRound4Guess(r4.currentWord)
     expect(game.getState().screen).toBe('round4_stage_cleared')
     expect(game.getState().round4State!.lastCompletedStage).toBe(4)
   })
@@ -652,7 +658,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       words: mockRepo,
       nowFn: () => mockTime,
     })
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
     expect(game.getState().screen).toBe('round4_playing')
@@ -689,7 +695,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       words: mockRepo,
       nowFn: () => mockTime,
     })
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -740,7 +746,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       words: mockRepo,
       nowFn: () => mockTime,
     })
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
 
@@ -778,7 +784,7 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
       words: mockRepo,
       nowFn: () => mockTime,
     })
-    game.devSkipToRound4(20_000)
+    skipToRound4ForTest(game, 20_000)
     game.startRound4()
     game.tickCountdown(0)
 

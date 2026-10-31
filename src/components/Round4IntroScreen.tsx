@@ -43,7 +43,13 @@ export default function Round4IntroScreen({ treasury, onStart }: Round4IntroScre
           <div className="flex items-start gap-2">
             <span className="text-amber-400 font-black text-sm mt-0.5">📈</span>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Etaplar: <span className="font-bold text-white">4→5→6→7 harfli</span>. Her bilinirse kazanç artar. 7 harfli bilirsen <span className="font-bold text-emerald-400">250.000 + 2K</span>!
+              Etaplar: <span className="font-bold text-white">4→5→6→7 harfli</span>. Kelime bilinince sayaç donar, duraklama ekranı gelir. 7 harflide <span className="font-bold text-emerald-400">250.000 + 2K</span>!
+            </p>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-amber-400 font-black text-sm mt-0.5">💡</span>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Kelime kaybedilirse doğru cevap gösterilir, sayaç <span className="font-bold text-white">~3 sn donar</span> ve yeni kelimeye geçilir.
             </p>
           </div>
           <div className="flex items-start gap-2">

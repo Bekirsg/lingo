@@ -66,13 +66,19 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
         {/* Bonus */}
         <Section title="⭐ Bonus Soru">
           Her turun sonunda 8 harfli bir kelimenin tanımı verilir. Harfler birer birer
-          açılır, ne kadar erken bilirsen o kadar çok puan! (Maks. 3.000)
+          açılır ve puan 3.000'den düşer. <strong>BİL</strong> butonuna bastığın anda
+          puan donar ve kelimeyi yazmak için <strong>5 saniye</strong> süren olur! Doğru
+          bilirsen donmuş puan kasana eklenir; yanlışta veya süre dolarsa 0 puan.
         </Section>
 
         {/* Final */}
         <Section title="🏆 4. Tur — Büyük Final">
-          120 saniye içinde sırasıyla 4, 5, 6 ve 7 harfli kelimeleri bil. Tüm etapları
-          bitirirsen kasanın 2 katı + 250.000 puan kazanırsın!
+          Toplam <strong>120 saniye</strong> tek sayaçla sırasıyla 4, 5, 6 ve 7 harfli kelimeleri çöz.
+          Kelime bilinince sayaç donar ve duraklama ekranı açılır. Kelime kaybedilirse doğru cevap
+          gösterilip sayaç <strong>~3 saniye donar</strong> ve otomatik yeni kelimeye geçilir.
+          Kazanç kasanın <strong>yerine geçer</strong>; süre dolduğunda hiçbir etap tamamlanmamışsa{' '}
+          <strong className="text-red-400">0 puan</strong> (kasa yanar). 7 harfli etabı bitirirsen{' '}
+          <strong className="text-emerald-400">250.000 + 2×Kasa</strong> kazanırsın!
         </Section>
       </div>
     </div>

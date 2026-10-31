@@ -8,7 +8,7 @@
 
 ## 1. Proje Özeti
 
-- **Ad:** LİNGO (uygulama adı ve ana ekran simgesi etiketi). İkonda **"B-E"** yazar.
+- **Ad:** LİNGO (uygulama adı ve ana ekran simgesi etiketi). İkonda **"BSG"** yazar.
 - **Tür:** Tek oyunculu, çok aşamalı Türkçe kelime bulmaca oyunu (Wordle + Lingo karışımı).
 - **Platform:** Mobil öncelikli **PWA** (web uygulaması). Telefonda tarayıcıdan "Ana Ekrana Ekle" ile gerçek uygulama gibi kurulur ve tam ekran açılır.
 - **Oynanış:** İki kişi (kullanıcı + arkadaşı) kendi telefonlarında ayrı ayrı oynar. Online mod, hesap, sunucu, ortak skor tablosu **YOK**. Aynı anda oynamak gerekmez.
@@ -50,7 +50,7 @@ lingo/
 ├─ DATA_SOURCES.md              # kelime/tanım kaynakları, sayılar, tarih (ajan yazar)
 ├─ scripts/
 │  ├─ build-wordlist.*          # ham veriden temiz JSON üretir
-│  └─ generate-icons.*          # B-E ikonlarını üretir
+│  └─ generate-icons.*          # BSG ikonlarını üretir
 ├─ public/
 │  ├─ data/words-4.json ... words-7.json
 │  ├─ data/bonus-8.json         # [{ "w": "kelimesi", "d": "tanım" }]
@@ -332,7 +332,7 @@ Türkçe ve kolay okunur biçimde:
 ## 7. PWA Gereksinimleri
 
 - `manifest.webmanifest`: `name: "LİNGO"`, `short_name: "LİNGO"`, `display: "standalone"`, `orientation: "portrait"`, `start_url: "/"`, `scope: "/"`, koyu `theme_color` ve `background_color`.
-- **İkonlar:** 192×192, 512×512, **maskable** 512×512, iOS için `apple-touch-icon` (180×180), favicon. Tasarım: koyu/gradyan zemin üzerinde büyük, net **"B-E"** yazısı. Betikle (SVG → PNG) üretilir.
+- **İkonlar:** 192×192, 512×512, **maskable** 512×512, iOS için `apple-touch-icon` (180×180), favicon. Tasarım: koyu/gradyan zemin üzerinde büyük, net **"BSG"** yazısı. Betikle (SVG → PNG) üretilir.
 - iOS meta etiketleri: `apple-mobile-web-app-capable`, `apple-mobile-web-app-title="LİNGO"`, `apple-mobile-web-app-status-bar-style`.
 - `viewport-fit=cover`, zoom engelleme (`user-scalable=no` / `maximum-scale=1`).
 - **Service worker:** tüm statik dosyaları (JS, CSS, ikonlar, kelime JSON'ları) önbelleğe alır; ilk yüklemeden sonra çevrimdışı çalışır; yeni sürüm geldiğinde otomatik güncellenir.
@@ -375,7 +375,7 @@ Bu veriler cihaza özeldir; başka telefonla paylaşılmaz. Okuma/yazma `try/cat
 - [ ] Telefon kilitlenince / uygulama değişince oyun duruyor, dönünce "Devam Et" ile kaldığı yerden sürüyor.
 - [ ] Sistem klavyesi hiç açılmıyor; Türkçe harfler (Ğ Ü Ş İ Ö Ç ı) doğru çalışıyor.
 - [ ] Çevrimdışı (uçak modu) ilk yüklemeden sonra oyun açılıyor ve oynanıyor.
-- [ ] Ana ekrana eklenince "LİNGO" adı ve "B-E" ikonu görünüyor, adres çubuğu yok.
+- [ ] Ana ekrana eklenince "LİNGO" adı ve "BSG" ikonu görünüyor, adres çubuğu yok.
 - [ ] Hiçbir oyunda aynı kelime ikinci kez gelmiyor (aynı oyun içinde).
 
 ---

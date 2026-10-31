@@ -53,6 +53,13 @@ describe('PWA, Manifest ve Üretim Güvenliği Doğrulaması (M8)', () => {
       expect(fs.existsSync(path.join(publicDir, file))).toBe(true)
     }
 
+    const iconSvg = fs.readFileSync(path.join(publicDir, 'icons/icon.svg'), 'utf-8')
+    const iconMaskableSvg = fs.readFileSync(path.join(publicDir, 'icons/icon-maskable.svg'), 'utf-8')
+    expect(iconSvg).toContain('>BSG<')
+    expect(iconMaskableSvg).toContain('>BSG<')
+    expect(iconSvg).not.toContain('B-E')
+    expect(iconMaskableSvg).not.toContain('B-E')
+
     const dataFiles = [
       'data/words-4.json',
       'data/words-5.json',

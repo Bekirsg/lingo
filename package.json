@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "verify:preview": "node scripts/verify-preview.mjs",
+    "export:levels": "node scripts/export-level-sheet.mjs",
+    "build:levels": "node scripts/build-levels.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

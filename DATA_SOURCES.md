@@ -110,3 +110,54 @@
 1. **İmla Kılavuzu'ndaki encoding:** Dosya Latin-1/Windows-1254 gibi encoding ile saklanmış olabilir, bazı özel karakterler doğru okunmayabilir. Çapraz doğrulama oranları bu durumdan az etkilenmiş olabilir.
 2. **GTS'ye özgü kelimeler (%5-12):** Güncel Türkçe Sözlük, İmla Kılavuzu'ndan daha kapsamlıdır — ek kelimeler TDK sözlüğünde mevcuttur.
 3. **Bonus tanım sızdırma filtresi:** İlk 5 harf bazlı kontrol bazen fazla agresif olabilir (geçerli tanımları eleyebilir). 8.957 kelimeden 3.811'i (%42,5) tanımlı kaldı — yeterli havuz.
+
+---
+
+## LİNGO v2 — Kelime Seviyelendirme (CEFR) Raporu (V2-M2)
+
+> Bu bölüm, SPEC-v2 Bölüm 4.7–4.9 kapsamında yürütülen otomatik ve kanıta dayalı
+> CEFR seviyelendirme sürecini, kullanılan harici derlemleri ve kalite kapısı sonuçlarını belgeler.
+
+### 1. Seviyelendirmede Kullanılan Kaynaklar
+
+1. **TDK Güncel Türkçe Sözlük (GTS v12):** Madde başları, tanımlar, anlam sayıları ve TDK özellikleri (`eskimiş`, `ağızlardan`, `tıp`, `biyoloji`, `fizik`, `hukuk`, `felsefe` vb.).
+2. **OpenSubtitles 2018 Türkçe Sıklık Derlemi (`hermitdave/FrequencyWords`):** 50.000 kelimelik konuşma/altyazı derlemi sıklık sırası ve kullanım sayısı.
+3. **Zemberek-NLP Sıklık Listesi (`ahmetaa/zemberek-nlp`):** 10.000 kelimelik yazılı Türkçe (gazete, edebiyat, makale) sıklık sıralaması.
+4. **Azer Core Vocabulary (`azer/most-common-turkish-words`):** 1.000 kelimelik çekirdek sözcük tabanı.
+5. **CEFR / Yunus Emre Enstitüsü "Yedi İklim Türkçe" Müfredatı:** A1, A2, B1, B2 tematik sözcük hazinesi çapaları (aile, renkler, sayılar, yiyecekler, ev, vücut, giyim, ulaşım, temel fiiller ve kavramlar).
+
+### 2. Seviye Eşlemesi ve Karar İstatistiği
+
+- **Kolay:** CEFR A1 ve A2 (temel günlük yaşam sözcükleri)
+- **Orta:** CEFR B1 ve B2 (orta düzey, iş/okul/medya dili, yaygın soyut kavramlar)
+- **Zor:** CEFR C1, C2 ve "ÜST" (nadir, eskimiş, ağız, uzmanlık terimi, edebî/resmî sözcükler)
+
+| Karar Türü | Kelime Sayısı | Oran |
+|---|---|---|
+| **Kaynaklı (Resmi Çapa / Çekirdek CEFR)** | 1.113 | %4,7 |
+| **Kanıta Dayalı Çıkarım (Derlem + TDK Filtreleri)** | 22.604 | %95,3 |
+| **Toplam Kelime** | **23.717** | **%100,0** |
+
+### 3. Harf Başına Seviye Dağılımı
+
+| Harf Sayısı | Kolay (A1–A2) | Orta (B1–B2) | Zor (C1+ / Üst) | Toplam | Asgari Sınır | Durum |
+|---|---|---|---|---|---|---|
+| **4 harfli** | 448 | 374 | 1.227 | 2.049 | ≥ 30 | ✅ Uygun |
+| **5 harfli** | 667 | 767 | 4.015 | 5.449 | ≥ 30 | ✅ Uygun |
+| **6 harfli** | 364 | 664 | 5.005 | 6.033 | ≥ 30 | ✅ Uygun |
+| **7 harfli** | 248 | 618 | 7.051 | 7.917 | ≥ 30 | ✅ Uygun |
+| **8 harfli (bonus)** | 102 | 278 | 1.889 | 2.269 | ≥ 10 | ✅ Uygun |
+| **GENEL TOPLAM** | **1.829 (%7,7)** | **2.701 (%11,4)** | **19.187 (%80,9)** | **23.717** | — | ✅ Uygun |
+
+*Not: Çalışma anında havuzlar iç içedir: havuz(Kolay) = Kolay, havuz(Orta) = Kolay ∪ Orta, havuz(Zor) = Tüm kelimeler.*
+
+### 4. Kalite Kapıları Sonuçları (SPEC-v2 Bölüm 4.8)
+
+1. **Kapı 1 — Kaynak Kapsama Raporu:** ✅ GEÇTİ (1.113 kaynaklı, 22.604 çıkarımlı, 23.717 kelime tam kapsam).
+2. **Kapı 2 — Aday Kümesi Geri Çağırma (Recall):** ✅ GEÇTİ (%100,00 — hedef: ≥ %99).
+3. **Kapı 3 — Otomatik-Zor Kontrolü:** ✅ GEÇTİ (%0,33 hata — 300 kelimelik tabakalı örneklemde hedef: ≤ %1,0).
+4. **Kapı 4 — Geçişler Arası Uyum (Agreement):** ✅ GEÇTİ (%100,00 — bağımsız Pass 1 ve Pass 2 arasında hedef: ≥ %90).
+5. **Kapı 5 — Havuz Asgari Sınırları:** ✅ GEÇTİ (Tüm harf sayıları 4–7 harflide en az 248 kelimeyle [sınır: 30], bonusta 102 kelimeyle [sınır: 10] karşılandı).
+6. **Kapı 6 — Denetim Örneği:** ✅ GEÇTİ (`data-src/denetim-ornegi.csv` içinde 50 Kolay, 50 Orta, 50 Zor [25 sınırda] olmak üzere 150 kelimelik tabakalı örnek üretildi).
+7. **Kapı 7 — build-levels Raporu:** ✅ GEÇTİ (`npm run build:levels` 0 hata ve 0 uyarı ile `public/data/levels-4..8.json` dosyalarını üretti).
+

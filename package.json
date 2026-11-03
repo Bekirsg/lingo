@@ -10,6 +10,7 @@
     "verify:preview": "node scripts/verify-preview.mjs",
     "export:levels": "node scripts/export-level-sheet.mjs",
     "build:levels": "node scripts/build-levels.mjs",
+    "leveling:gates": "node scripts/leveling/quality-gates.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

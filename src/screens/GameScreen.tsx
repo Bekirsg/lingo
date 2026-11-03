@@ -131,6 +131,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     controller.deleteLetter()
   }, [controller, isEvaluating])
 
+  // PAS butonuna basıldığında (SPEC-v2 Bölüm 10)
+  const handlePass = useCallback(() => {
+    if (!controller || isEvaluating) return
+    controller.passWord()
+  }, [controller, isEvaluating])
+
   // Tahmin gönderildiğinde
   const handleSubmit = useCallback(() => {
     if (!controller || isEvaluating) return
@@ -346,6 +352,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         onChar={handleChar}
         onDelete={handleDelete}
         onSubmit={handleSubmit}
+        onPass={handlePass}
+        hasPass={true}
         canSubmit={canSubmit}
         disabled={isKeyboardDisabled}
       />

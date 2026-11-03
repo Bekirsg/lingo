@@ -41,6 +41,11 @@ describe('M2 Veri Doğrulama Testi (public/data/ dosyaları)', () => {
         }
       })
 
+      it(`SPEC-v2 Bölüm 9.1: words-${len}.json içinde kesinlikle q, w, x harfi bulunmamalı`, () => {
+        const qwxWords = words.filter(w => /[qwx]/.test(w))
+        expect(qwxWords).toHaveLength(0)
+      })
+
       it(`tekrar eden kelime olmamalı (duplicate yok)`, () => {
         const uniqueSet = new Set(words)
         expect(uniqueSet.size).toBe(words.length)
@@ -73,6 +78,11 @@ describe('M2 Veri Doğrulama Testi (public/data/ dosyaları)', () => {
       for (const item of bonusList) {
         expect(VALID_CHARS.test(item.w), `Geçersiz harf: "${item.w}"`).toBe(true)
       }
+    })
+
+    it('SPEC-v2 Bölüm 9.1: bonus-8.json içinde kesinlikle q, w, x harfi bulunmamalı', () => {
+      const qwxBonus = bonusList.filter(item => /[qwx]/.test(item.w))
+      expect(qwxBonus).toHaveLength(0)
     })
 
     it('bonus kelimelerde tekrar olmamalı', () => {

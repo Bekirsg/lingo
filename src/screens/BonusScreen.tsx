@@ -293,6 +293,7 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
             onDelete={handleDelete}
             onSubmit={handleSubmit}
             canSubmit={allFilled}
+            hasPass={false}
             disabled={bs.answered}
           />
         )}

@@ -339,6 +339,39 @@ export class GameController {
   }
 
   /**
+   * SPEC-v2 Bölüm 10: PAS eylemi
+   * 1–3. turda kelime kaybedilir (neden: 'pass', 0 puan, sonuç kartı -> Devam Et -> 3-2-1).
+   * 4. turda kelime kaybedilir (doğru cevap ~3 sn gösterilir, sayaç donar, yeni kelime).
+   * Bonus modunda veya uygunsuz ekranlarda yok sayılır.
+   */
+  passWord(): boolean {
+    if (this.state.screen === 'playing_round' && this.state.roundState) {
+      const rs = this.state.roundState
+      if (rs.wordWon || rs.wordLost) return false
+
+      this.clock.stop()
+      rs.wordLost = true
+      rs.lossReason = 'pass'
+      this.state.screen = 'word_result'
+      this.emitState()
+      return true
+    }
+
+    if (this.state.screen === 'round4_playing' && this.state.round4State) {
+      const r4 = this.state.round4State
+      this.clock.pause()
+      r4.lostWord = r4.currentWord
+      r4.wordsAttemptedInStage++
+      this.state.screen = 'round4_word_lost'
+      this.waitClock.start(3, () => this.onRound4WordLostExpire())
+      this.emitState()
+      return true
+    }
+
+    return false
+  }
+
+  /**
    * Sonuç kartından "Devam Et" butonuna basıldığında çağrılır.
    * SPEC 4.5: 3 saniyelik geri sayım (3-2-1) çıkar, sonra yeni kelimeye geçer.
    */

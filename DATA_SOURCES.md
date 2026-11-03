@@ -115,16 +115,43 @@
 
 ## LİNGO v2 — Kelime Seviyelendirme (CEFR) Raporu (V2-M2)
 
-> Bu bölüm, SPEC-v2 Bölüm 4.7–4.9 kapsamında yürütülen otomatik ve kanıta dayalı
-> CEFR seviyelendirme sürecini, kullanılan harici derlemleri ve kalite kapısı sonuçlarını belgeler.
+> **Önemli Beyan (Kaynak Dürüstlüğü):** 
+> Resmi ve makine tarafından doğrudan okunabilir bir CEFR sözcük listesi (Yunus Emre Enstitüsü / TÖMER resmi açık veri seti vb.) bulunamamıştır. 
+> Bu nedenle **seviyeler frekans + yapay zekâ çıkarımıdır, resmi CEFR listesi doğrudan kullanılmamıştır**. 
+> Seviyelendirme; altyazı/yazılı dil derlem sıklıkları, TDK GTS v12 etiketleri ve CEFR A1-B2 tematik müfredat rubric'leri esas alınarak oluşturulan kural ve çıkarım motoruyla yapılmıştır.
 
-### 1. Seviyelendirmede Kullanılan Kaynaklar
+> **Gizlilik ve Telif Notu:**
+> `data-src/level-evidence.jsonl` dosyası TDK tanımlarını ve ayrıntılı sözlük verilerini içerdiğinden, telif ve kullanım hakları gereği **GitHub deposu kesinlikle özel (private) kalmalıdır**.
 
-1. **TDK Güncel Türkçe Sözlük (GTS v12):** Madde başları, tanımlar, anlam sayıları ve TDK özellikleri (`eskimiş`, `ağızlardan`, `tıp`, `biyoloji`, `fizik`, `hukuk`, `felsefe` vb.).
-2. **OpenSubtitles 2018 Türkçe Sıklık Derlemi (`hermitdave/FrequencyWords`):** 50.000 kelimelik konuşma/altyazı derlemi sıklık sırası ve kullanım sayısı.
-3. **Zemberek-NLP Sıklık Listesi (`ahmetaa/zemberek-nlp`):** 10.000 kelimelik yazılı Türkçe (gazete, edebiyat, makale) sıklık sıralaması.
-4. **Azer Core Vocabulary (`azer/most-common-turkish-words`):** 1.000 kelimelik çekirdek sözcük tabanı.
-5. **CEFR / Yunus Emre Enstitüsü "Yedi İklim Türkçe" Müfredatı:** A1, A2, B1, B2 tematik sözcük hazinesi çapaları (aile, renkler, sayılar, yiyecekler, ev, vücut, giyim, ulaşım, temel fiiller ve kavramlar).
+### 1. Seviyelendirmede Kullanılan Kaynaklar, Lisanslar ve Durum
+
+1. **TDK Güncel Türkçe Sözlük (GTS v12):**
+   - **Adres:** [github.com/ogun/guncel-turkce-sozluk](https://github.com/ogun/guncel-turkce-sozluk)
+   - **İndirme Tarihi:** 2026-10-17
+   - **Lisans:** Açık kaynak proje / TDK kamuya açık çevrimiçi sözlük verisi (Telif uyarısı: ticari kullanım ve yeniden dağıtım kısıtlı olabilir; depo özel kalmalıdır).
+   - **Kullanım:** Madde başları, tanımlar, anlam sayıları ve TDK etiketleri (`eskimiş`, `ağızlardan`, `tıp`, `biyoloji`, `fizik`, `hukuk`, `felsefe` vb.).
+
+2. **OpenSubtitles 2018 Türkçe Sıklık Derlemi (`hermitdave/FrequencyWords`):**
+   - **Adres:** [github.com/hermitdave/FrequencyWords/tree/master/content/2018/tr](https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/tr)
+   - **İndirme Tarihi:** 2026-10-18
+   - **Lisans:** MIT / CC-BY (Derlem verisi kamuya açık).
+   - **Kullanım:** 50.000 kelimelik konuşma/altyazı sıklık sırası ve yüzey biçim kullanım sayısı.
+
+3. **Zemberek-NLP Sıklık Listesi (`ahmetaa/zemberek-nlp`):**
+   - **Adres:** [github.com/ahmetaa/zemberek-nlp](https://github.com/ahmetaa/zemberek-nlp)
+   - **İndirme Tarihi:** 2026-10-18
+   - **Lisans:** Apache 2.0.
+   - **Kullanım:** 10.000 kelimelik yazılı Türkçe (gazete, edebiyat, makale) sıklık sıralaması ve kök/lemma frekansı.
+
+4. **Azer Core Vocabulary (`azer/most-common-turkish-words`):**
+   - **Adres:** [github.com/azer/most-common-turkish-words](https://github.com/azer/most-common-turkish-words)
+   - **İndirme Tarihi:** 2026-10-18
+   - **Lisans:** Belirtilmemiş (Unlicensed / Kamu malı GitHub deposu; lisansı belirsiz).
+   - **Kullanım:** 1.000 kelimelik en temel Türkçe çekirdek kelime kontrolü.
+
+5. **CEFR Çapa Seti (Core Kolay Anchors - 1.113 kelime):**
+   - **Kaynak:** Yunus Emre Enstitüsü "Yedi İklim Türkçe" A1-A2 tematik alanları (aile, renkler, sayılar, yiyecekler, ev, vücut, giyim, somut eşyalar, temel fiiller) referans alınarak yapay zekâ destekli derlenen 1.113 kelimelik çekirdek çapa seti (`scripts/leveling/constants.mjs`).
+   - **Not:** Kapı 2'deki %100 geri çağırma (recall), aday kümesinin doğrudan bu 1.113 kelimeyi içermesi nedeniyle matematiksel olarak daireseldir (circular). Bağımsız doğrulama Kapı 3 ve Kapı 6 ile sağlanmıştır.
 
 ### 2. Seviye Eşlemesi ve Karar İstatistiği
 

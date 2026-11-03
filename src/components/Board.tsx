@@ -78,9 +78,16 @@ export default function Board({
   const lockedFirstChar = turkishUpper(Array.from(currentWord)[0] ?? '')
   const currentChars = Array.from(currentInput).map(c => turkishUpper(c))
 
-  // Harf sayısına göre dinamik boşluk ve maksimum genişlik (özellikle 7 harfli mobil uyumu)
+  // Harf sayısına göre dinamik boşluk ve maksimum genişlik (özellikle dar ekranlarda dikey taşmayı önleme)
   const isWideStage = letterCount >= 7
-  const boardMaxW = isWideStage ? 'max-w-[370px]' : 'max-w-[340px]'
+  const boardMaxW =
+    letterCount === 4
+      ? 'max-w-[240px] sm:max-w-[280px]'
+      : letterCount === 5
+        ? 'max-w-[290px] sm:max-w-[320px]'
+        : isWideStage
+          ? 'max-w-[370px]'
+          : 'max-w-[340px]'
   const rowGap = isWideStage ? 'gap-1 sm:gap-2' : 'gap-1.5 sm:gap-2'
   const colGap = isWideStage ? 'gap-1 sm:gap-1.5' : 'gap-1.5 sm:gap-2'
   const fontClass = isWideStage ? 'text-lg sm:text-2xl' : 'text-xl sm:text-2xl'

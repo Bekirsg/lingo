@@ -43,7 +43,7 @@ export interface RoundState {
   /** Kelime kaybedildi mi? */
   wordLost: boolean
   /** Kelime kaybetme nedeni */
-  lossReason?: 'invalid_word' | 'time_out' | 'max_attempts'
+  lossReason?: 'invalid_word' | 'time_out' | 'max_attempts' | 'pass'
   /** Bu turda bilinen toplam kelime sayısı (0..5) */
   wordsWonInRound: number
 }

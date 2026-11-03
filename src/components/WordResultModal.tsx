@@ -70,7 +70,9 @@ export default function WordResultModal({ roundState, onContinue }: WordResultMo
                 ? 'Geçersiz Kelime (Sözlükte Yok)'
                 : lossReason === 'time_out'
                   ? 'Süre Doldu'
-                  : '5 Tahmin Hakkı Bitti'}
+                  : lossReason === 'pass'
+                    ? 'PAS Geçildi'
+                    : '5 Tahmin Hakkı Bitti'}
             </span>
             <div className="mt-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
               <span className="text-xs text-slate-400 mr-2">Doğru Kelime:</span>

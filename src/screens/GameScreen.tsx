@@ -112,22 +112,18 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     return getKeyboardStatuses(rs.guesses)
   }, [isRound4, r4, rs])
 
-  // Harf tuşuna basıldığında
+  // Harf tuşuna basıldığında (Ses ve titreşim Keyboard içinde tek sefer çalınır)
   const handleChar = useCallback(
     (char: string) => {
       if (!controller || isEvaluating) return
-      playSound('key_press')
-      triggerHaptic('tap')
       controller.typeLetter(char)
     },
     [controller, isEvaluating],
   )
 
-  // Sil tuşuna basıldığında
+  // Sil tuşuna basıldığında (Ses ve titreşim Keyboard içinde tek sefer çalınır)
   const handleDelete = useCallback(() => {
     if (!controller || isEvaluating) return
-    playSound('key_press')
-    triggerHaptic('tap')
     controller.deleteLetter()
   }, [controller, isEvaluating])
 

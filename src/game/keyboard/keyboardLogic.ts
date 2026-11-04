@@ -1,40 +1,57 @@
 /**
- * LİNGO v2 Klavye Mantığı (Saf Fonksiyonlar)
+ * LİNGO v2 Klavye ve Tahta Boyutlandırma Mantığı (Saf Fonksiyonlar)
  *
- * SPEC-v2 Bölüm 9, 10, 11.1 (madde 11-12):
- * - 29 harfli Türkçe düzen (Q, W, X yok).
+ * SPEC-v2 Bölüm 9, 10 (Rev. 3):
+ * - 29 harfli Türkçe Q düzen (Q, W, X yok).
  * - Satır 1 (10): E R T Y U I O P Ğ Ü
- * - Satır 2 (10): A S D F G H J K L Ş
- * - Satır 3 (9): İ Z C V B N M Ö Ç
- * - Alt eylem satırı: [PAS][SİL][GÖNDER] (ACTION_ROW tek sabit).
- * - resolveKeyAtPoint: tuş içi ve en yakın tuş çözümleme.
- * - gestureReducer: pointerdown, pointermove, pointerup, pointercancel yönetimi.
- * - deleteRepeatSchedule: basılı tutunca kademeli silme zamanlayıcısı.
- * - keyStates: yeşil > sarı > kırmızı öncelikli klavye renk durumu.
+ * - Satır 2 (11): A S D F G H J K L Ş İ
+ * - Satır 3 (10): [GÖNDER] Z C V B N M Ö Ç [SİL]
+ * - PAS klavye satırında DEĞİL; klavyenin üstünde sağa yaslı bağımsız düğmedir.
+ * - COMMIT_ON = 'down' (harf basılınca anında yazılır).
+ * - SHOW_PREVIEW_BUBBLE = false (balon kapalı, anında basılı efekti).
+ * - calculateTileSize: ekrana göre dinamik kutu boyutu hesabı.
  */
 
 import type { Mark } from '../engine'
 import type { GuessAttempt } from '../state/types'
 
-export const KEYBOARD_ROW_1 = ['E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Ğ', 'Ü'] as const
-export const KEYBOARD_ROW_2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ş'] as const
-export const KEYBOARD_ROW_3 = ['İ', 'Z', 'C', 'V', 'B', 'N', 'M', 'Ö', 'Ç'] as const
+/**
+ * Klavye Düzeni Sabiti (Tek yerden değiştirilebilir)
+ */
+export const KEY_LAYOUT = {
+  row1: ['E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Ğ', 'Ü'] as const,
+  row2: ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ş', 'İ'] as const,
+  row3Letters: ['Z', 'C', 'V', 'B', 'N', 'M', 'Ö', 'Ç'] as const,
+}
 
-export interface ActionKeyConfig {
-  id: 'PAS' | 'DELETE' | 'SUBMIT'
+export type CommitMode = 'down' | 'up'
+
+/** Harfin basınca mı kalkınca mı yazılacağını belirler (Varsayılan: 'down') */
+export const COMMIT_ON: CommitMode = 'down'
+
+/** Önizleme balonunun gösterilip gösterilmeyeceğini belirler (Varsayılan: false) */
+export const SHOW_PREVIEW_BUBBLE: boolean = false
+
+export interface KeyItem {
+  id: string
   label: string
+  isAction: boolean
   weight: number
 }
 
 /**
- * SPEC-v2 Bölüm 9.1:
- * Alt eylem satırı tek bir sabitte tutulur.
- * Sıralama ve ağırlıklar: [PAS][SİL][GÖNDER] ≈ 1 : 1.3 : 1.7
+ * 3. Satır Öğeleri: [GÖNDER] Z C V B N M Ö Ç [SİL]
+ * GÖNDER ~2 birim, SİL ~1.5 birim genişlikte
  */
-export const ACTION_ROW: ActionKeyConfig[] = [
-  { id: 'PAS', label: 'PAS', weight: 1.0 },
-  { id: 'DELETE', label: 'SİL', weight: 1.3 },
-  { id: 'SUBMIT', label: 'GÖNDER', weight: 1.7 },
+export const ROW_3_ITEMS: KeyItem[] = [
+  { id: 'SUBMIT', label: 'GÖNDER', isAction: true, weight: 2.0 },
+  ...KEY_LAYOUT.row3Letters.map((char) => ({
+    id: char,
+    label: char,
+    isAction: false,
+    weight: 1.0,
+  })),
+  { id: 'DELETE', label: 'SİL', isAction: true, weight: 1.5 },
 ]
 
 export interface KeyRect {
@@ -58,15 +75,14 @@ export function getCharForLetterKey(keyId: string): string {
 
 /**
  * Verilen (x, y) noktasındaki tuşu çözer.
- * 1. Eğer nokta bir tuşun içindeyse doğrudan o tuş döner.
- * 2. Tuşlar arası boşluktaysa, maxDistance sınırında en yakın tuş döner.
- * 3. Klavye sınırlarının çok dışındaysa null döner (iptal).
+ * - Kenar tuşları ekran sınırına kadar genişletilmiş hit toleransına sahiptir.
+ * - Tuşlar arası boşluklarda en yakın tuş seçilir.
  */
 export function resolveKeyAtPoint(
   rects: KeyRect[],
   x: number,
   y: number,
-  maxDistance: number = 40,
+  maxDistance: number = 36,
 ): string | null {
   if (rects.length === 0) return null
 
@@ -104,6 +120,7 @@ export interface PointerTrack {
   startKeyId: string
   currentKeyId: string | null
   isAction: boolean
+  hasCommitted: boolean
 }
 
 export interface GestureState {
@@ -121,7 +138,6 @@ export type KeyboardAction =
   | { type: 'DELETE_START' }
   | { type: 'DELETE_STOP' }
   | { type: 'SUBMIT' }
-  | { type: 'PASS' }
 
 export interface GestureResult {
   nextState: GestureState
@@ -134,27 +150,45 @@ export function createInitialGestureState(): GestureState {
 
 /**
  * Çoklu dokunma (multi-pointer) hareket azaltıcı fonksiyonu.
+ * COMMIT_ON = 'down' modunda basınca anında harfi commit eder.
  */
-export function gestureReducer(state: GestureState, event: GestureEvent): GestureResult {
+export function gestureReducer(
+  state: GestureState,
+  event: GestureEvent,
+  mode: CommitMode = COMMIT_ON,
+): GestureResult {
   const nextPointers = { ...state.pointers }
 
   switch (event.type) {
     case 'POINTER_DOWN': {
+      const isAction = Boolean(event.isAction)
+      let committed = false
+      let action: KeyboardAction | undefined
+
+      if (event.keyId === 'DELETE') {
+        action = { type: 'DELETE_START' }
+      } else if (!isAction && mode === 'down') {
+        // COMMIT_ON === 'down' -> anında harf yazılır
+        committed = true
+        action = {
+          type: 'CHAR',
+          char: getCharForLetterKey(event.keyId),
+          keyId: event.keyId,
+        }
+      }
+
       nextPointers[event.pointerId] = {
         pointerId: event.pointerId,
         startKeyId: event.keyId,
         currentKeyId: event.keyId,
-        isAction: Boolean(event.isAction),
+        isAction,
+        hasCommitted: committed,
       }
 
-      if (event.keyId === 'DELETE') {
-        return {
-          nextState: { pointers: nextPointers },
-          action: { type: 'DELETE_START' },
-        }
+      return {
+        nextState: { pointers: nextPointers },
+        action,
       }
-
-      return { nextState: { pointers: nextPointers } }
     }
 
     case 'POINTER_MOVE': {
@@ -166,6 +200,7 @@ export function gestureReducer(state: GestureState, event: GestureEvent): Gestur
         currentKeyId: event.keyId,
       }
 
+      // mode === 'down' iken kaydırınca ek harf yazılmaz (hasCommitted: true)
       return { nextState: { pointers: nextPointers } }
     }
 
@@ -192,16 +227,8 @@ export function gestureReducer(state: GestureState, event: GestureEvent): Gestur
         return { nextState }
       }
 
-      // PAS: parmak hâlâ aynı tuşun üzerindeyse çalışır
-      if (existing.startKeyId === 'PAS') {
-        if (existing.currentKeyId === 'PAS') {
-          return { nextState, action: { type: 'PASS' } }
-        }
-        return { nextState }
-      }
-
-      // Harf tuşu: parmak kalktığında bulunduğu tuştan girilir
-      if (existing.currentKeyId && !existing.isAction) {
+      // mode === 'up' iken parmak kalktığında bulunduğu tuştan girilir
+      if (mode === 'up' && !existing.hasCommitted && existing.currentKeyId && !existing.isAction) {
         const char = getCharForLetterKey(existing.currentKeyId)
         return {
           nextState,
@@ -230,9 +257,7 @@ export function gestureReducer(state: GestureState, event: GestureEvent): Gestur
 }
 
 /**
- * SPEC-v2 Bölüm 9.3 madde 5:
- * SİL: basılı tutulunca ~400 ms sonra tekrarlı siler (~80 ms aralık, ~1 sn sonra ~50 ms).
- * Parmak kalkınca, pointercancel'da, duraklamada ve visibilitychange'de durur.
+ * SİL: basılı tutulunca 400 ms sonra tekrarlı siler (80 ms aralık, 1 sn sonra 50 ms).
  */
 export interface RepeatScheduleController {
   start: () => void
@@ -306,7 +331,6 @@ export function createDeleteRepeatSchedule(
 }
 
 /**
- * SPEC-v2 Bölüm 9.1:
  * Tuş renkleri bilinen harf durumunu yansıtır (yeşil > sarı > kırmızı önceliği).
  */
 export function computeKeyStates(guesses: GuessAttempt[]): Record<string, Mark> {
@@ -330,4 +354,52 @@ export function computeKeyStates(guesses: GuessAttempt[]): Record<string, Mark> 
   }
 
   return statuses
+}
+
+/**
+ * Tahta Kutu Boyutu Hesabı (Saf Fonksiyon)
+ *
+ * SPEC-v2 Bölüm 9 (Rev. 3):
+ * Kutu boyutu = min(kullanılabilir genişlik / sütun sayısı, kullanılabilir yükseklik / 5)
+ * Kareler kare, üst sınır ~64 px.
+ */
+export interface BoardSizeInput {
+  availableWidth: number
+  availableHeight: number
+  letterCount: number
+  rowCount?: number
+  maxTileSize?: number
+  minTileSize?: number
+  gapX?: number
+  gapY?: number
+  paddingX?: number
+  paddingY?: number
+}
+
+export interface BoardSizeOutput {
+  tileSize: number
+  boardWidth: number
+  boardHeight: number
+}
+
+export function calculateTileSize(input: BoardSizeInput): BoardSizeOutput {
+  const rowCount = input.rowCount ?? 5
+  const maxTileSize = input.maxTileSize ?? 64
+  const minTileSize = input.minTileSize ?? 28
+  const gapX = input.gapX ?? 6
+  const gapY = input.gapY ?? 6
+  const paddingX = input.paddingX ?? 16
+  const paddingY = input.paddingY ?? 8
+
+  const usableWidth = Math.max(0, input.availableWidth - paddingX - (input.letterCount - 1) * gapX)
+  const usableHeight = Math.max(0, input.availableHeight - paddingY - (rowCount - 1) * gapY)
+
+  const maxFromWidth = Math.floor(usableWidth / input.letterCount)
+  const maxFromHeight = Math.floor(usableHeight / rowCount)
+
+  const tileSize = Math.max(minTileSize, Math.min(maxTileSize, maxFromWidth, maxFromHeight))
+  const boardWidth = input.letterCount * tileSize + (input.letterCount - 1) * gapX
+  const boardHeight = rowCount * tileSize + (rowCount - 1) * gapY
+
+  return { tileSize, boardWidth, boardHeight }
 }

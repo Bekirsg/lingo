@@ -90,15 +90,11 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
 
   const handleChar = useCallback((char: string) => {
     if (!isWriting) return
-    playSound('key_press')
-    triggerHaptic('tap')
     controller.typeLetter(char)
   }, [controller, isWriting])
 
   const handleDelete = useCallback(() => {
     if (!isWriting) return
-    playSound('key_press')
-    triggerHaptic('tap')
     controller.deleteLetter()
   }, [controller, isWriting])
 

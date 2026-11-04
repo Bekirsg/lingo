@@ -323,60 +323,60 @@ Yazma hatası (kota dolu, devre dışı depolama) oyunu asla bozmamalı; sessizc
 ### 8.4 Gizlilik
 Tüm veri sadece o telefonda durur. Sunucu, hesap, ağ isteği veya paylaşım yoktur.
 
-## 9. Klavye (yeniden tasarım)
+## 9. Klavye (yeniden tasarım - Rev. 3)
 
-Amaç: daha az yanlış basış, bakmadan yazılabilirlik, süre baskısı altında hız. Sistem klavyesi hâlâ ASLA açılmaz (`<input>` yok, düğmeler `<button>`).
+Amaç: daha az yanlış basış, bakmadan yazılabilirlik, standart Türkçe Q klavye hafızasına tam uyum, süre baskısı altında hız. Sistem klavyesi hâlâ ASLA açılmaz (`<input>` yok, düğmeler `<button>`).
 
-### 9.1 Düzen (29 Türkçe harf; Q, W, X yok)
-- Satır 1 (10): E R T Y U I O P Ğ Ü
-- Satır 2 (10): A S D F G H J K L Ş
-- Satır 3 (9): İ Z C V B N M Ö Ç
-- Satır 4 (aksiyon): PAS · SİL · GÖNDER yan yana, harf tuşlarından ayrı geniş bir alt sıra. Sıralama ve genişlik oranları tek bir sabitte (`ACTION_ROW`) tutulur; başlangıç önerisi: `[PAS][SİL][GÖNDER]`, ağırlıklar ≈ 1 : 1.3 : 1.7. Ajan, V2-M3'te kısa bir ergonomi analizi yapar (başparmak erişimi, en sık kullanılan tuşların yeri, yanlışlıkla PAS/GÖNDER riski), kararı `docs/KLAVYE-ANALIZ.md` dosyasına yazar. Sıralamanın sonradan değişmesi tek satırlık değişiklik olmalıdır.
-- "I" tuşu `ı`, "İ" tuşu `i` yazar. Q/W/X harfleri kelime havuzunda zaten bulunmaz (şu anki filtre `[a-zçğıöşü]`); ajan bunu words-4…7.json ve bonus-8.json üzerinde test eder. Fiziksel klavyede q/w/x yok sayılır.
-- Tuş renkleri bilinen harf durumunu yansıtır (yeşil > sarı > kırmızı önceliği). Mevcut oyunun renk jetonları korunur (gri eklenmez).
+### 9.1 Düzen (29 Türkçe harf; Q, W, X yok, 3 satır tam genişlik)
+- **Satır 1 (10 harf):** E R T Y U I O P Ğ Ü
+- **Satır 2 (11 harf):** A S D F G H J K L Ş İ (İ harfi Q klavyedeki gibi 2. satırın sonundadır)
+- **Satır 3 (10 eleman):** [GÖNDER] Z C V B N M Ö Ç [SİL]  
+  Tüm harfler Q klavyedeki satırında ve soldan sağa aynı sıradadır (yalnızca Q, W, X çıkarılmıştır). GÖNDER en solda (~2 birim genişlik, mor), SİL en sağda (~1.5 birim genişlik, kırmızımsı). Eski 4. satır kaldırılmıştır.
+- **PAS Butonu:** PAS klavye satırında DEĞİLDİR. Klavyenin hemen üstünde, sağa yaslı küçük bağımsız bir düğmedir (~64×36 px görsel, ≥44 px yükseklikte dokunma alanı, harf tuşlarından en az 8 px ayrık). Klavye dokunma çözümlemesine (`resolveKeyAtPoint`) dahil edilmez; kazaen kayma ile basılamaz. Bonusta aynı yerde soluk/pasif kalır (`opacity-40 pointer-events-none`).
+- "I" tuşu `ı`, "İ" tuşu `i` yazar. Q/W/X harfleri kelime havuzunda zaten bulunmaz. Fiziksel klavyede q/w/x yok sayılır.
+- Tuş renkleri bilinen harf durumunu yansıtır (yeşil > sarı > kırmızı önceliği). Mevcut oyunun renk jetonları korunur.
 
-### 9.2 Boyut ve yerleşim
-- Tuş yüksekliği ≈ `clamp(44px, 6.6dvh, 56px)`; boş dikey alan önce klavyeye (üst sınır 56 px), kalanı tahtaya gider. Izgara–klavye arası ve klavye altı boşluk gereksiz bırakılmaz.
-- Yatay boşluk (padding) en az 6 px; ekran kenarına yapışık tuş yok (kenar tuşları Ğ, Ü, Ç, SİL vb. daha güvenli konumda). Alt güvenli alan (safe-area-inset-bottom) hesaba katılır.
-- **Not (gerçekçi hedef):** 10 tuşlu satırda 360 px genişlikte tuş genişliği ≈ 31 px olur; 44 px genişlik fiziksel olarak mümkün değildir. Bu yüzden hedef: genişlik ≥ 30 px, yükseklik ≥ 44 px (uygun ekranlarda ≥ 50 px) + etkin dokunma alanı tuş+boşluk (aşağıda). Ajan 320×568, 360×640, 375×667, 390×844, 412×915, 430×932 için ölçümlü bir tablo çıkarır.
-- Kaydırma gerektirmeyen ekran korunur: HUD + tahta + klavye 320×568'de sığmalı.
+### 9.2 Boyut ve Tahta Yerleşimi (Rev. 3 Dinamik Kutu Boyutlandırması)
+- **Tuş Yüksekliği:** 50–54 px hedef (`clamp(46px, 6.8dvh, 56px)`), alt sınır 46 px, tuş arası boşluk ~5 px. Kenar tuşlarının (E, A, GÖNDER solda; Ü, İ, SİL sağda) dokunma alanı ekran kenarına kadar uzatılmıştır.
+- **Dinamik Tahta Boyutlandırması:** Sabit `max-w` sınırları kaldırılmıştır. Kutu boyutu saf fonksiyonla (`calculateTileSize`) dinamik hesaplanır:  
+  `kutu boyutu = min(kullanılabilir genişlik / sütun sayısı, kullanılabilir yükseklik / 5)` (üst sınır 64 px, kareler kare).
+- 393×852 civarında 4 harfli kutular v1'deki gibi büyük (64 px) olur; 320×568 dar ekranda dahi kaydırmasız tam sığar (eski TODO(SORU) maddesi bu dinamik çözümle geçersiz sayılmıştır).
 
-### 9.3 Etkileşim (Pointer Events)
-1. **Önizleme balonu:** Harf tuşuna basılınca harf, parmağın üstünde büyük bir balonda görünür (ekran dışına taşmaz; dokunmayı engellemez, `pointer-events: none`).
-2. **Parmak kalkınca yazılır:** harf `pointerup` anında, parmağın o anda üzerinde bulunduğu tuştan girilir. Yanlış tuşa basan oyuncu parmağını kaydırıp doğru tuşta bırakabilir (`pointermove` ile vurgulanan tuş ve balon güncellenir). Klavye alanı dışında bırakılırsa veya `pointercancel` olursa iptal.
-3. **Ölü alan yok:** Tuşlar arası boşluğa dokunma en yakın tuşa atanır (tuş dikdörtgenleri boşluğun yarısı kadar genişletilmiş hit alanı; tuş dikdörtgenleri önbelleğe alınır, her harekette yerleşim ölçümü yapılmaz).
-4. **Çoklu dokunma:** Her `pointerId` bağımsız işlenir (iki başparmakla hızlı yazma).
-5. **SİL:** `pointerdown`'da hemen siler; basılı tutulunca ~400 ms sonra tekrarlı siler (~80 ms aralık, ~1 sn sonra ~50 ms). Parmak kalkınca, `pointercancel`'da, duraklamada ve `visibilitychange`'de durur (zamanlayıcı sızıntısı olmamalı).
-5. **GÖNDER ve PAS:** `pointerup`'ta ve parmak hâlâ aynı tuşun üzerindeyse çalışır (yanlışlıkla tetiklenme azalır). GÖNDER tüm kutular dolmadan pasiftir (mevcut kural). PAS iki aşamalıdır (Bölüm 10.2).
-6. **Geri bildirim:** harf tuşunda `pointerdown`'da çok kısa titreşim (~8–12 ms; Ayarlar'daki titreşim anahtarına bağlı, destek yoksa sessizce atla) ve mevcut tuş sesi (Ayarlar'daki ses anahtarına bağlı).
-7. **Tarayıcı davranışları kapalı:** `touch-action: none` (klavye alanında), `user-select: none`, `-webkit-touch-callout: none`, `contextmenu` engelli, tıklama vurgusu kapalı, çift dokunma zoom'u kapalı.
-8. **Performans:** Önizleme balonu ve tuş vurgusu izole küçük bir bileşende; `pointermove` tüm tahtayı yeniden çizdirmez. Animasyonlar yalnızca `transform`/`opacity`.
+### 9.3 Etkileşim (Pointer Events - Rev. 3)
+1. **Basınca Yazılır (COMMIT_ON = 'down'):** Harf tuşuna basıldığı anda (`pointerdown`) harf kutuya anında yazılır, gecikme yoktur.
+2. **Önizleme Balonu Yok (SHOW_PREVIEW_BUBBLE = false):** İki kez basılmış hissi vermemesi için balon kaldırılmıştır; yerine tuşta anında basılı görünümü verilir.
+3. **Kaydır-Bırak:** Varsayılan olarak kapalıdır (parmak basılıyken kaydırılsa bile ek harf yazılmaz). İstenirse `COMMIT_ON = 'up'` sabitiyle geri açılabilir.
+4. **Çoklu Dokunma (Multi-touch):** İki başparmakla bağımsız yazma tam desteklenir.
+5. **SİL:** `pointerdown` anında ilk silmeyi yapar; basılı tutulunca 400 ms sonra tekrarlı siler (80 ms aralık, 1 sn sonra 50 ms). Parmak kalkınca durur.
+6. **GÖNDER:** Yanlışlıkla basmayı önlemek için parmak hâlâ aynı tuşun üzerindeyken `pointerup` anında çalışır. Tüm kutular dolmadan pasiftir.
+7. **Tek Sefer Ses ve Titreşim:** Tuş sesi ve titreşim yalnızca `pointerdown`'da tek bir kez tetiklenir (parmak kalktığında ses/titreşim yoktur; çift tıklama hissi giderilmiştir).
+8. **Tarayıcı davranışları kapalı:** `touch-action: none`, `user-select: none`, `-webkit-touch-callout: none`, `contextmenu` engelli.
 
-### 9.4 Mantık ve DOM ayrımı
-Jest/Vitest ile test edilebilsin diye hareket mantığı saf fonksiyonlarda tutulur: `resolveKeyAtPoint(rects, x, y)` (en yakın tuş), `gestureReducer` (down/move/up/cancel, çoklu pointer), `deleteRepeatSchedule`, `keyStates(guesses)` (harf renk önceliği). DOM katmanı ince bir sarmalayıcıdır.
+### 9.4 Mantık ve DOM Ayrımı
+Jest/Vitest ile test edilebilsin diye hareket ve boyut mantığı saf fonksiyonlarda tutulur: `KEY_LAYOUT`, `ROW_3_ITEMS`, `calculateTileSize`, `resolveKeyAtPoint`, `gestureReducer`, `createDeleteRepeatSchedule`, `computeKeyStates`.
 
 ### 9.5 Opsiyonel (kullanıcı onayı olmadan YAPMA)
 - Tuş boyutu ayarı (Normal / Büyük).
-- Sistem klavyesini kullanma seçeneği (önerilmez: "sistem klavyesi hiç açılmaz" kuralıyla ve ekran yerleşimiyle çelişir; yapılacaksa önce kullanıcıya sor).
+- Sistem klavyesini kullanma seçeneği.
 
 ## 10. PAS
 
 ### 10.1 Davranış
-PAS, oyuncunun bildiği kelimeyi bırakıp doğru cevabı görerek hızlıca sonraki soruya geçmesini sağlar. Sözlükte olmayan kelime yazmak zorunda kalmadan kelime değiştirilir. Sanki kelime bilinememiş gibi işlenir, **yeni bir görsel/kural icat edilmez**: mevcut "kelime kaybedildi" akışı kullanılır.
+PAS, oyuncunun bilmediği kelimeyi bırakıp doğru cevabı görerek hızlıca sonraki soruya geçmesini sağlar. Sözlükte olmayan kelime yazmak zorunda kalmadan kelime değiştirilir. Sanki kelime bilinememiş gibi işlenir, **yeni bir görsel/kural icat edilmez**: mevcut "kelime kaybedildi" akışı kullanılır.
 
 | Bağlam | PAS sonucu |
 |---|---|
-| Yarışma 1–3. tur | Kelime kaybedilir (neden: `pass`), 0 puan. Sonuç kartında doğru cevap gösterilir → "Devam Et" → 3-2-1 → sonraki kelime (4.5 akışı). |
+| Yarışma 1–3. tur | Kelime kaybedilir (neden: `pass`), 0 puan. Sonuç kartında doğru cevap gösterilir → "Devam Et" → 3-2-1 → sonraki kelime. |
 | Yarışma 4. tur (final) | Kelime kaybedilir. Doğru cevap gösterilir, ~3 sn donuk süre (mevcut final kayıp akışı), sonra aynı harf sayısında yeni kelime ve 5 yeni hak. Süre sayacı donuk süreden sonra akar. |
-| Bonus (8 harfli) | PAS yoktur (BİL ve zaman çizelgesi aynı). |
+| Bonus (8 harfli) | PAS yoktur (buton soluk/pasif kalır, düzen kaymaz). |
 | Çalışma | Kelime kaybedilir; cevap kartı → Devam Et → 3-2-1. |
 | Hatalarımla çalış | Çalışma gibi; ayrıca kelimenin ardışık doğru sayacı 0'a sıfırlanır. |
 
 - PAS yalnızca tahta aktifken kullanılabilir; renk animasyonu (≤ 700 ms) sırasında ve sonuç kartı/duraklama/geri sayım ekranlarında yok sayılır.
 - Analiz: Kelime kaçırılmış sayılır (`lossReasons.pass`, `missedWords`). Tahmin sayaçlarını etkilemez.
 
-### 10.2 Yanlışlıkla basmaya karşı iki aşamalı PAS (varsayım)
-İlk dokunuşta tuş "PAS?" olur (vurgulu); 2 sn içinde ikinci dokunuş PAS'ı uygular. Başka bir tuşa basılırsa veya 2 sn geçerse ilk aşama sıfırlanır. Süre bu sırada akmaya devam eder.
+### 10.2 Yanlışlıkla basmaya karşı iki aşamalı PAS
+İlk dokunuşta tuş "PAS?" olur (kehribar vurgulu); 2 sn içinde ikinci dokunuş PAS'ı uygular. Başka bir tuşa basılırsa veya 2 sn geçerse ilk aşama sıfırlanır. Süre bu sırada akmaya devam eder. Klavyenin üzerinde sağa yaslı bağımsız konumdadır.
 
 ### 10.3 HUD ve metin
 HUD'da değişiklik yok. "Nasıl Oynanır" ekranında PAS açıklanır.

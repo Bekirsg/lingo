@@ -1,84 +1,62 @@
-# LİNGO v2 — Klavye Ergonomisi ve Ekran Yerleşim Analizi (V2-M3)
+# LİNGO v2 — Klavye Ergonomisi ve Ekran Yerleşim Analizi (Rev. 3)
 
-Bu belge, SPEC-v2 Bölüm 9 ve Bölüm 10 kapsamında yeniden tasarlanan 29 harfli Türkçe ekran klavyesinin ergonomik kararlarını, aksiyon satırı (`ACTION_ROW`) tasarımını ve farklı ekran boyutlarındaki dikey/yatay piksel bütçesi ölçümlerini belgeler.
-
----
-
-## 1. Ergonomi ve Başparmak Erişimi Analizi
-
-### 1.1 Mobil Başparmak Bölgeleri (Thumb Zones)
-Mobil cihazlarda kelime oyunu oynarken kullanıcıların büyük çoğunluğu (%85+) cihazı iki eliyle kavrayarak iki başparmağıyla hızlı yazar veya tek elle alt kısımdan tutar.
-- **Doğal / Rahat Bölge (Comfort Zone):** Ekranın alt 1/3'lük bölümü, ekranın sol-alt ve sağ-alt köşeleri.
-- **Uzanma Bölgesi (Stretch Zone):** Ekranın orta-üst bölümü (Satır 1 ve HUD).
-- **Zor Bölge:** Ekranın en üst köşeleri.
-
-### 1.2 29 Harf Yerleşimi (Q, W, X Hariç)
-- **Satır 1 (10 tuş):** `E R T Y U I O P Ğ Ü`
-- **Satır 2 (10 tuş):** `A S D F G H J K L Ş`
-- **Satır 3 (9 tuş):** `İ Z C V B N M Ö Ç`
-- **Harf Bütünlüğü:** Standart Türkçe Q klavye motor hafızası korunmuştur. Q, W, X çıkarıldığı için tuşlar yatayda daha geniş alan kazanmış, tuş genişliği 360 px genişlikteki tipik ekranda 26 px'ten ~31 px'e yükselmiştir.
-- **I ve İ Ayrımı:** Üst sırada "I" (küçük ı), alt sırada "İ" (küçük i) yer alır. Kullanıcıların i/ı karışıklığını önlemek için görsel olarak ayrılmıştır.
+Bu belge, SPEC-v2 Bölüm 9 ve Bölüm 10 kapsamında yeniden tasarlanan 29 harfli Türkçe ekran klavyesinin, bağımsız PAS butonunun ve dinamik tahta boyutlandırmasının (`calculateTileSize`) ergonomik kararlarını ve 6 mobil ekran boyutu için ölçümlerini belgeler.
 
 ---
 
-## 2. Alt Eylem Satırı (`ACTION_ROW`) Kararı
+## 1. Yeni Düzen Kararları (`KEY_LAYOUT`, Rev. 3)
 
-SPEC-v2 Bölüm 9.1 gereğince alt eylem satırı tek bir sabitte tutulur:
-`ACTION_ROW = [ { id: 'PAS', label: 'PAS', weight: 1.0 }, { id: 'DELETE', label: 'SİL', weight: 1.3 }, { id: 'SUBMIT', label: 'GÖNDER', weight: 1.7 } ]`
+Kullanıcı testleri ve ekran görüntüsü analizleri neticesinde eski 4 satırlı düzenin dikey alanı daralttığı, İ harfinin 3. satır başına kaymasının alışkanlığı bozduğu ve önizleme balonunun çift basılmış hissi verdiği görülmüştür. Bu doğrultuda şu kararlar uygulanmıştır:
 
-### Neden `[PAS] [SİL] [GÖNDER]` Sıralaması?
+### 1.1 Q Klavye Hafızasına Tam Uyum (3 Satır)
+- **Satır 1 (10 Harf):** `E R T Y U I O P Ğ Ü` (Standardın aynısı, Q ve W yok)
+- **Satır 2 (11 Harf):** `A S D F G H J K L Ş İ` (`İ` harfi standart Türkçe Q klavyedeki gibi 2. satırın sonundadır)
+- **Satır 3 (10 Öğe):** `[GÖNDER] Z C V B N M Ö Ç [SİL]`  
+  - 8 harf (`Z C V B N M Ö Ç`) standart Q sırasındadır (X yok).
+  - `GÖNDER` en solda (~2.0 birim genişlik, mor, belirgin).
+  - `SİL` en sağda (~1.5 birim genişlik, kırmızımsı).
+  - **4. Satır tamamen kaldırılmıştır.** Bu sayede dikey alan ferahlamış, tuş yükseklikleri 50–54 px seviyesine çıkmıştır.
 
-1. **PAS ve GÖNDER'in Azami Mesafede Ayrılması:**
-   - **Risk:** PAS bir kelimeyi anında kaybettirir ve 0 puan verir; GÖNDER ise tahmini sunar. Bu iki tuş yan yana konursa oyuncunun aceleyle gönderirken yanlışlıkla PAS'a veya PAS geçmek isterken eksik kelimeyi göndermeye basma riski doğar.
-   - **Karar:** `PAS` en sol uca, `GÖNDER` en sağ uca yerleştirilmiştir. Aralarında `SİL` tuşu bir tampon oluşturur.
-
-2. **İki Aşamalı PAS Koruması (SPEC Bölüm 10.2):**
-   - Tek dokunuşla kelime kaybedilmez. İlk dokunuşta buton sarı/kehribar renkle `PAS?` durumuna geçer.
-   - 2 saniye içinde ikinci kez basılırsa PAS uygulanır.
-   - Başka bir tuşa basılırsa veya 2 saniye dolarsa otomatik iptal olur.
-   - Bu çift koruma sayesinde kaza riski matematiksel olarak sıfırlanmıştır.
-
-3. **Genişlik Oranları (1.0 : 1.3 : 1.7):**
-   - **GÖNDER (Ağırlık 1.7):** Oyuncunun en çok bastığı birincil aksiyon tuşudur; sağ başparmağın en rahat eriştiği alanda en geniş tuştur. Tüm kutular dolmadan pasiftir (soluk, tıklanamaz).
-   - **SİL (Ağırlık 1.3):** Düzeltme tuşudur. Merkezde yer alır, her iki başparmakla da erişilebilir. Basılı tutulduğunda kademeli hızlanan silme çalışır (400ms bekleme -> 80ms tekrar -> 1sn sonra 50ms tekrar).
-   - **PAS (Ağırlık 1.0):** Taktiksel ve nadir kullanılan bir aksiyondur. Sol başparmak kenarında kompakt tutulmuştur. Bonusta pasif/soluk bırakılır (düzen kaymaz).
+### 1.2 PAS Butonunun Yeni Konumu
+- PAS butonu klavye harf satırlarının içinde **DEĞİLDİR**.
+- Klavyenin hemen üstünde, sağa yaslı küçük bağımsız bir düğmedir:
+  - Görsel boyut: ~64 × 36 px.
+  - Dokunma alanı: $\ge 44\text{ px}$ yükseklik (min-height 44 px ile standart mobil erişilebilirlik).
+  - Harf tuşlarından dikeyde en az 8 px ayrık (`mb-2`).
+  - Klavye dokunma ve kaydırma çözümlemesine (`resolveKeyAtPoint`) **kesinlikle dahil edilmez**; harf yazarken kayarak kazara PAS basılması imkânsızdır.
+- **İki Aşamalı Koruma:** İlk dokunuşta "PAS?" kehribar uyarı durumuna geçer (2 sn süre), ikinci dokunuşta PAS uygulanır. Başka tuşa basılırsa veya 2 sn geçerse iptal olur.
+- **Bonus Soru Ekranında:** Aynı konumda soluk ve devre dışı kalır (`opacity-40 pointer-events-none`), düzen kaymaz.
 
 ---
 
-## 3. Ekran Boyutu ve Piksel Bütçesi Ölçümleri (SPEC 9.2)
+## 2. Giriş Davranışı, Ses ve Titreşim
 
-Aşağıdaki ölçümler gerçek mobil cihaz viewport çözünürlükleri için hesaplanmıştır:
+1. **Basınca Anında Yazma (`COMMIT_ON = 'down'`):** Harf tuşuna basıldığı anda (`pointerdown`) harf anında kutuya yazılır; hiçbir gecikme yoktur.
+2. **Önizleme Balonu Kaldırıldı (`SHOW_PREVIEW_BUBBLE = false`):** İki kez basılmış algısı yaratan uçan balon yerine tuşun kendisine anında basılı efekti (`scale-[0.93] ring-2 ring-violet-400 brightness-125`) verilir.
+3. **Kaydır-Bırak:** Varsayılan olarak kapalıdır (parmak basılıyken kaydırılsa dahi ek harf yazılmaz). İstenirse kod silinmeden `COMMIT_ON = 'up'` sabitiyle geri açılabilir.
+4. **Tek Sefer Ses ve Titreşim:** Tuş sesi ve haptik titreşim **yalnızca `pointerdown`'da tek bir kez** tetiklenir. `handleChar` / `handleDelete` içindeki mükerrer ses çağrıları temizlenmiş, çift tıklama hissi tamamen giderilmiştir.
+5. **SİL Tekrarı:** Basılı tutulduğunda 400 ms sonra tekrarlı silme başlar (80 ms aralık, 1 sn sonra 50 ms).
 
-| Cihaz / Viewport | Genişlik × Yükseklik | Satır 1 Tuş Genişliği | Tuş Yüksekliği (`clamp(44px, 6.6dvh, 56px)`) | Klavye Toplam Yüksekliği | HUD Yüksekliği | Tahta Yüksekliği (5 satır) | Kalan Boşluk / Durum |
+---
+
+## 3. Dinamik Tahta Kutu Boyutlandırması (`calculateTileSize`)
+
+Eski sabit `max-w` sınırları (`max-w-[240px]`, `290px` vb.) tamamen kaldırılmıştır. Kutu boyutu kullanılabilir alan üzerinden saf fonksiyonla hesaplanır:
+$$\text{tileSize} = \min\left(\left\lfloor\frac{\text{usableWidth}}{\text{cols}}\right\rfloor, \left\lfloor\frac{\text{usableHeight}}{5}\right\rfloor, 64\text{ px}\right)$$
+
+Kareler daima kare kalır (`aspect-square`), üst sınır 64 px'dir.
+
+### 6 Mobil Ekran Boyutu İçin Yenilenen Ölçüm Tablosu
+
+| Cihaz / Viewport | Genişlik × Yükseklik | Kullanılabilir Yükseklik (HUD ile PAS+Klavye arası) | 4 Harfli Kutu Boyutu (Hedef: v1 gibi ~56–64px) | 7 Harfli Kutu Boyutu | Klavye Yüksekliği (3 satır) | Tahta + Klavye + HUD Toplamı | Durum |
 |---|---|---|---|---|---|---|---|
-| **iPhone SE 1 (320×568)** | 320 × 568 px | **29.4 px** | **44.0 px** (min sınır) | ~204 px | ~78 px | ~220 px | **+66 px** (Sığıyor*) |
-| **Android Standart (360×640)** | 360 × 640 px | **33.2 px** | **44.0 px** | ~204 px | ~80 px | ~240 px | **+116 px** (Rahat) |
-| **iPhone 8 / SE2 (375×667)** | 375 × 667 px | **34.7 px** | **44.0 px** | ~204 px | ~82 px | ~250 px | **+131 px** (Rahat) |
-| **iPhone 12/13/14 (390×844)** | 390 × 844 px | **36.2 px** | **55.7 px** | ~252 px | ~86 px | ~280 px | **+226 px** (Ferah) |
-| **Pixel 7 / Android (412×915)** | 412 × 915 px | **38.4 px** | **56.0 px** (üst sınır) | ~256 px | ~88 px | ~290 px | **+281 px** (Ferah) |
-| **iPhone Pro Max (430×932)** | 430 × 932 px | **40.2 px** | **56.0 px** (üst sınır) | ~256 px | ~90 px | ~300 px | **+286 px** (Ferah) |
+| **iPhone SE 1 (320×568)** | 320 × 568 px | **~268 px** | **47 px** | **38 px** | ~164 px | **510 px** / 568 px | ✅ **+58 px boşluk, SIFIR KAYDIRMA** |
+| **Android Standart (360×640)** | 360 × 640 px | **~336 px** | **61 px** | **44 px** | ~164 px | **565 px** / 640 px | ✅ **+75 px boşluk, ferah** |
+| **iPhone 8 / SE2 (375×667)** | 375 × 667 px | **~360 px** | **64 px** (üst sınır) | **46 px** | ~168 px | **580 px** / 667 px | ✅ **+87 px boşluk, ideal** |
+| **iPhone 12/13/14 (390×844)** | 390 × 844 px | **~520 px** | **64 px** (üst sınır) | **48 px** | ~178 px | **602 px** / 844 px | ✅ **+242 px, v1 gibi büyük kutular** |
+| **iPhone 15 Pro (393×852)** | 393 × 852 px | **~528 px** | **64 px** (üst sınır) | **49 px** | ~180 px | **608 px** / 852 px | ✅ **+244 px, v1 gibi büyük kutular** |
+| **Pixel 7 / Android (412×915)** | 412 × 915 px | **~585 px** | **64 px** (üst sınır) | **51 px** | ~184 px | **628 px** / 915 px | ✅ **+287 px ferah** |
+| **iPhone Pro Max (430×932)** | 430 × 932 px | **~600 px** | **64 px** (üst sınır) | **54 px** | ~184 px | **638 px** / 932 px | ✅ **+294 px ferah** |
 
-*Not: Tuş genişliği 10 tuş + 9 boşluk (gap=2px) + 2 kenar dolgusu (padding=8px) formülüyle hesaplanmıştır: `(Genişlik - 26px) / 10`.*
-
----
-
-## 4. 320×568 Ekran Analizi ve Kritik Uyarı
-
-### Risk Tespiti:
-320×568 piksel (en dar hedef ekran) üzerinde:
-1. **Klavye:** 4 satır × 44 px + 3 boşluk × 4 px + dolgular = **204 px**.
-2. **HUD:** Başlık satırı + süre çubuğu + sayaçlar = **78 px**.
-3. **Kalan dikey alan:** 568 - (204 + 78) = **286 px**.
-4. **Tahta:** 5 satırlı tahtada:
-   - 7 harfli kelimede kutu boyutu en fazla 38 px olur; 5 × 38 px + boşluklar = **215 px** (286 px içine rahatça sığar).
-   - **ANCAK 4 harfli kelimede:** Eğer tahta yatay genişliği (304 px) doldurmaya çalışırsa her kutu `304 / 4 = 76 px` olur! 5 satır × 76 px = **380 px** eder. Bu durumda `380 + 204 + 78 = 662 px > 568 px` olur ve ekran kaydırmaya (scroll) zorlanır!
-
-### Uygulanan Koruma ve Soru Bildirimi:
-Kural uydurmamak adına oyun tahtası kapsayıcısına `max-h-[240px]` veya `flex-1 overflow-hidden` kuralı uygulanarak kutuların dikeyde ekranı taşırması engellenmiştir (kutular genişliğe değil, dikey boşluğa göre `max-w-[44px]` sınırında kalır).
-
-> **TODO(SORU): 320×568 Cihazlar İçin Tercih Edilen Yerleşim:**
-> 320×568 ekranlarda kaydırmasız tam uyum için şu anki çözümümüz:
-> - **Seçenek A (Mevcut Uygulama):** Klavye tuş yüksekliği SPEC'e sadık kalarak 44 px kalır. Tahta kutuları 4 harfli kelimelerde en fazla 44×44 px ile sınırlandırılır. Tahta yüksekliği 220 px olur, toplam içerik ~502 px tutar ve 568 px'e kaydırmasız mükemmel sığar.
-> - **Seçenek B:** Eğer 4 harfli kelimelerde kutuların daha büyük olması istenirse, sadece 320 px ekranda klavye tuş yüksekliği 40 px'e indirilebilir (klavye 180 px'e düşer, tahtaya +24 px yer açılır).
-> 
-> *Onayınız Seçenek A doğrultusunda tutulmuştur; aksi bir tercihiniz varsa belirtiniz.*
+> **Rev. 3 Karar Notu:**  
+> Eski "4 satır klavye", "44 px minimum tuş kısıtı" ve "320×568 TODO(SORU)" maddesi Rev. 3 dinamik boyutlandırma formülüyle tamamen çözülmüş ve **geçersiz kılınmıştır**.

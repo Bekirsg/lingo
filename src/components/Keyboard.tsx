@@ -2,10 +2,10 @@ import { useEffect, useCallback, useState, useRef } from 'react'
 import type { Mark } from '../game/engine'
 import { normalize } from '../game/engine'
 import {
-  KEYBOARD_ROW_1,
-  KEYBOARD_ROW_2,
-  KEYBOARD_ROW_3,
-  ACTION_ROW,
+  KEY_LAYOUT,
+  ROW_3_ITEMS,
+  COMMIT_ON,
+  SHOW_PREVIEW_BUBBLE,
   getCharForLetterKey,
   resolveKeyAtPoint,
   gestureReducer,
@@ -53,15 +53,17 @@ export default function Keyboard({
   const [isPassConfirming, setIsPassConfirming] = useState(false)
   const passTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Önizleme balonu (SPEC-v2 Bölüm 9.3 madde 1)
+  // Aktif basılı tuşlar (anında transition'sız basılı görünümü için)
+  const [activeKeyIds, setActiveKeyIds] = useState<Record<number, string>>({})
+
+  // Önizleme balonu (SHOW_PREVIEW_BUBBLE sabiti true yapıldığında devreye girer)
   const [preview, setPreview] = useState<PreviewBalloonState | null>(null)
-  const activeHighlightedKeyRef = useRef<string | null>(null)
 
   // Klavye DOM referansı ve önbelleklenen tuş dikdörtgenleri
   const containerRef = useRef<HTMLDivElement>(null)
   const keyRectsCacheRef = useRef<KeyRect[]>([])
 
-  // Hareket durum makinesi (saf fonksiyon tabanlı)
+  // Hareket durum makinesi
   const gestureStateRef = useRef<GestureState>(createInitialGestureState())
   const repeatScheduleRef = useRef<RepeatScheduleController | null>(null)
 
@@ -74,7 +76,7 @@ export default function Keyboard({
     setIsPassConfirming(false)
   }, [])
 
-  // SİL tekrarlayıcı zamanlayıcıyı oluştur ve bağla
+  // SİL tekrarlayıcı zamanlayıcı (basılı tutunca kademeli silme)
   useEffect(() => {
     repeatScheduleRef.current = createDeleteRepeatSchedule(() => {
       if (!disabled) {
@@ -112,17 +114,23 @@ export default function Keyboard({
         e.preventDefault()
         resetPassConfirm()
         if (canSubmit) {
+          playSound('key_press')
+          triggerHaptic('tap')
           onSubmit()
         }
       } else if (e.key === 'Backspace') {
         e.preventDefault()
         resetPassConfirm()
+        playSound('key_press')
+        triggerHaptic('tap')
         onDelete()
       } else if (e.key.length === 1) {
         resetPassConfirm()
         const norm = normalize(e.key)
         if (/^[a-zçğıöşü]$/.test(norm)) {
           e.preventDefault()
+          playSound('key_press')
+          triggerHaptic('tap')
           onChar(norm)
         }
       }
@@ -135,11 +143,12 @@ export default function Keyboard({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleKeyDown])
 
-  // Görünürlük değiştiğinde veya pencere bulanıklaştığında zamanlayıcıları durdur
+  // Görünürlük değiştiğinde veya bulanıklaşmada zamanlayıcı ve basılı durumları temizle
   useEffect(() => {
     const handleVisibilityOrBlur = () => {
       repeatScheduleRef.current?.stop()
       setPreview(null)
+      setActiveKeyIds({})
       gestureStateRef.current = createInitialGestureState()
     }
 
@@ -151,22 +160,36 @@ export default function Keyboard({
     }
   }, [])
 
-  // Tuş dikdörtgenlerini önbellekle
+  // Tuş dikdörtgenlerini önbellekle ve kenar/boşluk toleranslarını ekle
   const updateKeyRectsCache = useCallback(() => {
     if (!containerRef.current) return
+    const containerRect = containerRef.current.getBoundingClientRect()
     const buttons = containerRef.current.querySelectorAll<HTMLButtonElement>('button[data-key]')
     const rects: KeyRect[] = []
+
     buttons.forEach((btn) => {
       const keyId = btn.getAttribute('data-key')
       if (!keyId) return
       const r = btn.getBoundingClientRect()
+
+      // Kenar tuşlarının dokunma alanını ekran kenarına kadar uzat
+      const isLeftEdge = keyId === 'E' || keyId === 'A' || keyId === 'SUBMIT'
+      const isRightEdge = keyId === 'Ü' || keyId === 'İ' || keyId === 'DELETE'
+
+      const x = isLeftEdge ? Math.min(r.left, containerRect.left) : r.left
+      const width = isLeftEdge
+        ? r.right - (isLeftEdge ? Math.min(r.left, containerRect.left) : r.left)
+        : isRightEdge
+          ? Math.max(r.right, containerRect.right) - r.left
+          : r.width
+
       rects.push({
         id: keyId,
-        x: r.left,
-        y: r.top,
-        width: r.width,
-        height: r.height,
-        isAction: keyId === 'PAS' || keyId === 'DELETE' || keyId === 'SUBMIT',
+        x,
+        y: r.top - 3, // Dikeyde satırlar arası boşluğun yarısı kadar tolerans
+        width,
+        height: r.height + 6,
+        isAction: keyId === 'DELETE' || keyId === 'SUBMIT',
       })
     })
     keyRectsCacheRef.current = rects
@@ -177,7 +200,6 @@ export default function Keyboard({
     if (!hasPass || !onPass || disabled) return
 
     if (!isPassConfirming) {
-      // 1. Aşama: "PAS?" vurgusu ve 2 sn sayaç
       playSound('key_press')
       triggerHaptic('tap')
       setIsPassConfirming(true)
@@ -187,15 +209,17 @@ export default function Keyboard({
         passTimerRef.current = null
       }, 2000)
     } else {
-      // 2. Aşama: 2 sn içinde ikinci dokunuş -> PAS uygulanır
       resetPassConfirm()
+      playSound('key_press')
+      triggerHaptic('tap')
       onPass()
     }
   }, [hasPass, onPass, disabled, isPassConfirming, resetPassConfirm])
 
-  // Önizleme balonunu güncelle
+  // Önizleme balonu (opsiyonel)
   const showPreviewForKey = useCallback((keyId: string) => {
-    if (keyId === 'PAS' || keyId === 'DELETE' || keyId === 'SUBMIT') {
+    if (!SHOW_PREVIEW_BUBBLE) return
+    if (keyId === 'DELETE' || keyId === 'SUBMIT') {
       setPreview(null)
       return
     }
@@ -224,25 +248,31 @@ export default function Keyboard({
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (disabled) return
 
-    // Dokunma yakalamayı başlat
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
     } catch {
-      // Bazı tarayıcılarda desteklenmeyebilir
+      // Tarayıcı yakalama hatasında sessizce geç
     }
 
     updateKeyRectsCache()
     const keyId = resolveKeyAtPoint(keyRectsCacheRef.current, e.clientX, e.clientY)
     if (!keyId) return
 
-    const isAction = keyId === 'PAS' || keyId === 'DELETE' || keyId === 'SUBMIT'
-    const result = gestureReducer(gestureStateRef.current, {
-      type: 'POINTER_DOWN',
-      pointerId: e.pointerId,
-      keyId,
-      isAction,
-    })
+    const isAction = keyId === 'DELETE' || keyId === 'SUBMIT'
+    const result = gestureReducer(
+      gestureStateRef.current,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: e.pointerId,
+        keyId,
+        isAction,
+      },
+      COMMIT_ON,
+    )
     gestureStateRef.current = result.nextState
+
+    // Görsel aktif durum
+    setActiveKeyIds((prev) => ({ ...prev, [e.pointerId]: keyId }))
 
     if (result.action?.type === 'DELETE_START') {
       resetPassConfirm()
@@ -250,12 +280,14 @@ export default function Keyboard({
       triggerHaptic('tap')
       onDelete()
       repeatScheduleRef.current?.start()
-    } else if (!isAction) {
+    } else if (result.action?.type === 'CHAR') {
       resetPassConfirm()
       playSound('key_press')
       triggerHaptic('tap')
-      activeHighlightedKeyRef.current = keyId
-      showPreviewForKey(keyId)
+      onChar(result.action.char)
+      if (SHOW_PREVIEW_BUBBLE) showPreviewForKey(keyId)
+    } else if (keyId === 'SUBMIT') {
+      resetPassConfirm()
     }
   }
 
@@ -265,21 +297,30 @@ export default function Keyboard({
     if (!tracked) return
 
     const keyId = resolveKeyAtPoint(keyRectsCacheRef.current, e.clientX, e.clientY)
-    const result = gestureReducer(gestureStateRef.current, {
-      type: 'POINTER_MOVE',
-      pointerId: e.pointerId,
-      keyId,
-    })
+    const result = gestureReducer(
+      gestureStateRef.current,
+      {
+        type: 'POINTER_MOVE',
+        pointerId: e.pointerId,
+        keyId,
+      },
+      COMMIT_ON,
+    )
     gestureStateRef.current = result.nextState
 
-    if (!tracked.isAction) {
-      if (keyId && keyId !== activeHighlightedKeyRef.current) {
-        activeHighlightedKeyRef.current = keyId
-        showPreviewForKey(keyId)
-      } else if (!keyId) {
-        activeHighlightedKeyRef.current = null
-        setPreview(null)
-      }
+    // Basılı görseli güncelle
+    if (keyId !== activeKeyIds[e.pointerId]) {
+      setActiveKeyIds((prev) => {
+        if (keyId) return { ...prev, [e.pointerId]: keyId }
+        const next = { ...prev }
+        delete next[e.pointerId]
+        return next
+      })
+    }
+
+    if (SHOW_PREVIEW_BUBBLE && !tracked.isAction) {
+      if (keyId) showPreviewForKey(keyId)
+      else setPreview(null)
     }
   }
 
@@ -293,14 +334,23 @@ export default function Keyboard({
     }
 
     const tracked = gestureStateRef.current.pointers[e.pointerId]
-    const result = gestureReducer(gestureStateRef.current, {
-      type: 'POINTER_UP',
-      pointerId: e.pointerId,
-    })
+    const result = gestureReducer(
+      gestureStateRef.current,
+      {
+        type: 'POINTER_UP',
+        pointerId: e.pointerId,
+      },
+      COMMIT_ON,
+    )
     gestureStateRef.current = result.nextState
 
+    // Basılı durumu temizle
+    setActiveKeyIds((prev) => {
+      const next = { ...prev }
+      delete next[e.pointerId]
+      return next
+    })
     setPreview(null)
-    activeHighlightedKeyRef.current = null
 
     if (tracked?.startKeyId === 'DELETE') {
       repeatScheduleRef.current?.stop()
@@ -310,7 +360,10 @@ export default function Keyboard({
 
     switch (result.action.type) {
       case 'CHAR':
+        // COMMIT_ON === 'up' modunda çalışır
         resetPassConfirm()
+        playSound('key_press')
+        triggerHaptic('tap')
         onChar(result.action.char)
         break
       case 'SUBMIT':
@@ -320,9 +373,6 @@ export default function Keyboard({
           triggerHaptic('tap')
           onSubmit()
         }
-        break
-      case 'PASS':
-        handlePassPress()
         break
       case 'DELETE_STOP':
         repeatScheduleRef.current?.stop()
@@ -339,13 +389,21 @@ export default function Keyboard({
       // Sessizce geç
     }
 
-    gestureReducer(gestureStateRef.current, {
-      type: 'POINTER_CANCEL',
-      pointerId: e.pointerId,
-    })
+    gestureReducer(
+      gestureStateRef.current,
+      {
+        type: 'POINTER_CANCEL',
+        pointerId: e.pointerId,
+      },
+      COMMIT_ON,
+    )
     repeatScheduleRef.current?.stop()
+    setActiveKeyIds((prev) => {
+      const next = { ...prev }
+      delete next[e.pointerId]
+      return next
+    })
     setPreview(null)
-    activeHighlightedKeyRef.current = null
   }
 
   // Tuş stilini belirle
@@ -362,193 +420,201 @@ export default function Keyboard({
     if (status === 'red') {
       return 'bg-slate-900/90 border-transparent text-slate-500 opacity-60'
     }
-    return 'bg-slate-800/90 hover:bg-slate-700/90 border-white/10 text-white shadow-sm'
+    return 'bg-slate-800/90 border-white/10 text-white shadow-sm'
   }
 
+  const activeKeysSet = new Set(Object.values(activeKeyIds))
+  const isPassDisabled = disabled || !hasPass || !onPass
+
   return (
-    <div
-      ref={containerRef}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onContextMenu={(e) => e.preventDefault()}
-      className="
-        w-full max-w-[430px] px-1 pb-2 sm:pb-3 pt-1 flex flex-col gap-1 sm:gap-1.5
-        select-none shrink-0 relative
-        touch-none
-        [-webkit-user-select:none]
-        [-webkit-touch-callout:none]
-      "
-      style={{
-        touchAction: 'none',
-        WebkitTapHighlightColor: 'transparent',
-      }}
-      role="region"
-      aria-label="29 Harfli Türkçe Ekran Klavyesi"
-    >
-      {/* ─── Önizleme Balonu (SPEC-v2 Bölüm 9.3 madde 1) ─── */}
-      {preview && (
-        <div
-          className="
-            absolute pointer-events-none z-30 flex items-center justify-center
-            font-black text-2xl text-white rounded-2xl
-            bg-violet-600 border-2 border-violet-300 shadow-2xl
-            -translate-x-1/2 -translate-y-[115%] animate-fade-in
-          "
-          style={{
-            left: preview.x,
-            top: preview.y,
-            width: Math.max(preview.width * 1.3, 46),
-            height: 54,
-          }}
+    <div className="w-full max-w-[430px] px-1 pb-2 sm:pb-3 flex flex-col select-none shrink-0 relative">
+      {/* ─── PAS Butonu Satırı (Klavyenin hemen üstünde, sağa yaslı, ≥44px dokunma alanı) ─── */}
+      <div className="w-full flex justify-end px-1 mb-2">
+        <button
+          type="button"
+          disabled={isPassDisabled}
+          onClick={handlePassPress}
+          className={`
+            min-h-[44px] min-w-[64px] px-3.5 py-1.5 rounded-lg text-xs font-black tracking-wider
+            border transition-all duration-150 active:scale-95 flex items-center justify-center
+            ${
+              isPassDisabled
+                ? 'bg-slate-800/30 text-slate-500 border-white/5 opacity-40 cursor-not-allowed pointer-events-none'
+                : isPassConfirming
+                  ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-lg shadow-amber-500/50 animate-pulse'
+                  : 'bg-slate-800/80 hover:bg-slate-700/80 border-white/10 text-rose-300'
+            }
+          `}
+          title={hasPass ? 'Kelimeyi PAS geç' : 'Bonusta PAS kullanılamaz'}
+          aria-label={isPassConfirming ? 'PAS onay bekliyor' : 'Kelimeyi PAS geç'}
         >
-          {preview.label}
-        </div>
-      )}
-
-      {/* ─── 1. Satır (10 Harf): E R T Y U I O P Ğ Ü ─── */}
-      <div className="flex justify-center gap-0.5 sm:gap-1 w-full">
-        {KEYBOARD_ROW_1.map((char) => (
-          <button
-            key={char}
-            data-key={char}
-            type="button"
-            disabled={disabled}
-            className={`
-              flex-1 h-11 sm:h-12 rounded-lg text-xs sm:text-base font-bold
-              border transition-all duration-150 active:scale-95
-              flex items-center justify-center p-0 min-w-0
-              ${getKeyClass(char)}
-            `}
-          >
-            {char}
-          </button>
-        ))}
+          {isPassConfirming ? 'PAS?' : 'PAS'}
+        </button>
       </div>
 
-      {/* ─── 2. Satır (10 Harf): A S D F G H J K L Ş ─── */}
-      <div className="flex justify-center gap-0.5 sm:gap-1 w-full">
-        {KEYBOARD_ROW_2.map((char) => (
-          <button
-            key={char}
-            data-key={char}
-            type="button"
-            disabled={disabled}
-            className={`
-              flex-1 h-11 sm:h-12 rounded-lg text-xs sm:text-base font-bold
-              border transition-all duration-150 active:scale-95
-              flex items-center justify-center p-0 min-w-0
-              ${getKeyClass(char)}
-            `}
+      {/* ─── Klavye Tuş Alanı (Pointer Events) ─── */}
+      <div
+        ref={containerRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onContextMenu={(e) => e.preventDefault()}
+        className="
+          w-full flex flex-col gap-1 sm:gap-1.5 relative
+          touch-none
+          [-webkit-user-select:none]
+          [-webkit-touch-callout:none]
+        "
+        style={{
+          touchAction: 'none',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+        role="region"
+        aria-label="29 Harfli Türkçe Ekran Klavyesi"
+      >
+        {/* Opsiyonel Önizleme Balonu */}
+        {SHOW_PREVIEW_BUBBLE && preview && (
+          <div
+            className="
+              absolute pointer-events-none z-30 flex items-center justify-center
+              font-black text-2xl text-white rounded-2xl
+              bg-violet-600 border-2 border-violet-300 shadow-2xl
+              -translate-x-1/2 -translate-y-[115%] animate-fade-in
+            "
+            style={{
+              left: preview.x,
+              top: preview.y,
+              width: Math.max(preview.width * 1.3, 46),
+              height: 54,
+            }}
           >
-            {char}
-          </button>
-        ))}
-      </div>
+            {preview.label}
+          </div>
+        )}
 
-      {/* ─── 3. Satır (9 Harf): İ Z C V B N M Ö Ç ─── */}
-      <div className="flex justify-center gap-0.5 sm:gap-1 w-full px-2 sm:px-3">
-        {KEYBOARD_ROW_3.map((char) => (
-          <button
-            key={char}
-            data-key={char}
-            type="button"
-            disabled={disabled}
-            className={`
-              flex-1 h-11 sm:h-12 rounded-lg text-xs sm:text-base font-bold
-              border transition-all duration-150 active:scale-95
-              flex items-center justify-center p-0 min-w-0
-              ${getKeyClass(char)}
-            `}
-          >
-            {char}
-          </button>
-        ))}
-      </div>
-
-      {/* ─── 4. Satır (Aksiyon): [PAS][SİL][GÖNDER] (ACTION_ROW Tek Sabit) ─── */}
-      <div className="flex justify-center gap-1 sm:gap-1.5 w-full mt-0.5">
-        {ACTION_ROW.map((act) => {
-          if (act.id === 'PAS') {
-            const isPassDisabled = disabled || !hasPass || !onPass
+        {/* ─── 1. Satır (10 Harf): E R T Y U I O P Ğ Ü ─── */}
+        <div className="flex justify-between gap-1 w-full">
+          {KEY_LAYOUT.row1.map((char) => {
+            const isPressed = activeKeysSet.has(char)
             return (
               <button
-                key={act.id}
-                data-key="PAS"
-                type="button"
-                disabled={isPassDisabled}
-                className={`
-                  flex-[1] h-11 sm:h-12 rounded-lg text-xs sm:text-sm font-black tracking-wider
-                  border transition-all duration-150 active:scale-95
-                  flex items-center justify-center min-w-0
-                  ${
-                    isPassDisabled
-                      ? 'bg-slate-800/30 text-slate-500 border-white/5 opacity-40 cursor-not-allowed pointer-events-none'
-                      : isPassConfirming
-                        ? 'bg-amber-500 text-slate-950 border-amber-300 shadow-lg shadow-amber-500/50 animate-pulse'
-                        : 'bg-slate-800/90 hover:bg-slate-700/90 border-white/10 text-rose-300'
-                  }
-                `}
-                title={hasPass ? 'Kelimeyi PAS geç' : 'Bonusta PAS kullanılamaz'}
-                aria-label={isPassConfirming ? 'PAS onay bekliyor' : 'Kelimeyi PAS geç'}
-              >
-                {isPassConfirming ? 'PAS?' : act.label}
-              </button>
-            )
-          }
-
-          if (act.id === 'DELETE') {
-            return (
-              <button
-                key={act.id}
-                data-key="DELETE"
+                key={char}
+                data-key={char}
                 type="button"
                 disabled={disabled}
-                className="
-                  flex-[1.3] h-11 sm:h-12 rounded-lg text-xs sm:text-sm font-bold
-                  bg-slate-800/90 hover:bg-slate-700/90 border border-white/10 text-rose-300
-                  transition-all duration-150 active:scale-95
-                  flex items-center justify-center min-w-0 gap-1
-                "
-                title="Son harfi sil (basılı tutunca tekrarlar)"
-                aria-label="Son harfi sil"
+                className={`
+                  flex-1 h-[clamp(46px,6.8dvh,54px)] rounded-lg text-sm sm:text-base font-bold
+                  border flex items-center justify-center p-0 min-w-0
+                  ${isPressed ? 'scale-[0.93] brightness-125 ring-2 ring-violet-400' : ''}
+                  ${getKeyClass(char)}
+                `}
               >
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current shrink-0" viewBox="0 0 24 24">
-                  <path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z" />
-                </svg>
-                <span>{act.label}</span>
+                {char}
               </button>
             )
-          }
+          })}
+        </div>
 
-          if (act.id === 'SUBMIT') {
-            const isSubmitDisabled = disabled || !canSubmit
+        {/* ─── 2. Satır (11 Harf): A S D F G H J K L Ş İ ─── */}
+        <div className="flex justify-between gap-1 w-full">
+          {KEY_LAYOUT.row2.map((char) => {
+            const isPressed = activeKeysSet.has(char)
             return (
               <button
-                key={act.id}
-                data-key="SUBMIT"
+                key={char}
+                data-key={char}
                 type="button"
-                disabled={isSubmitDisabled}
+                disabled={disabled}
                 className={`
-                  flex-[1.7] h-11 sm:h-12 rounded-lg text-xs sm:text-sm font-black tracking-wider
-                  border transition-all duration-150 active:scale-95
-                  flex items-center justify-center min-w-0
-                  ${
-                    !isSubmitDisabled
-                      ? 'bg-violet-600 hover:bg-violet-500 text-white border-violet-400 shadow-md shadow-violet-600/40'
-                      : 'bg-slate-800/40 text-slate-500 border-white/5 opacity-50 cursor-not-allowed'
-                  }
+                  flex-1 h-[clamp(46px,6.8dvh,54px)] rounded-lg text-sm sm:text-base font-bold
+                  border flex items-center justify-center p-0 min-w-0
+                  ${isPressed ? 'scale-[0.93] brightness-125 ring-2 ring-violet-400' : ''}
+                  ${getKeyClass(char)}
                 `}
-                aria-label="Tahmini gönder"
               >
-                {act.label}
+                {char}
               </button>
             )
-          }
+          })}
+        </div>
 
-          return null
-        })}
+        {/* ─── 3. Satır (10 Öğe): [GÖNDER] Z C V B N M Ö Ç [SİL] ─── */}
+        <div className="flex justify-between gap-1 w-full">
+          {ROW_3_ITEMS.map((item) => {
+            const isPressed = activeKeysSet.has(item.id)
+
+            if (item.id === 'SUBMIT') {
+              const isSubmitDisabled = disabled || !canSubmit
+              return (
+                <button
+                  key={item.id}
+                  data-key="SUBMIT"
+                  type="button"
+                  disabled={isSubmitDisabled}
+                  style={{ flex: item.weight }}
+                  className={`
+                    h-[clamp(46px,6.8dvh,54px)] rounded-lg text-xs sm:text-sm font-black tracking-wider
+                    border flex items-center justify-center min-w-0
+                    ${isPressed && !isSubmitDisabled ? 'scale-[0.93] brightness-125' : ''}
+                    ${
+                      !isSubmitDisabled
+                        ? 'bg-violet-600 text-white border-violet-400 shadow-md shadow-violet-600/40'
+                        : 'bg-slate-800/40 text-slate-500 border-white/5 opacity-50 cursor-not-allowed'
+                    }
+                  `}
+                  aria-label="Tahmini gönder"
+                >
+                  {item.label}
+                </button>
+              )
+            }
+
+            if (item.id === 'DELETE') {
+              return (
+                <button
+                  key={item.id}
+                  data-key="DELETE"
+                  type="button"
+                  disabled={disabled}
+                  style={{ flex: item.weight }}
+                  className={`
+                    h-[clamp(46px,6.8dvh,54px)] rounded-lg text-xs sm:text-sm font-bold
+                    bg-slate-800/90 border border-white/10 text-rose-300
+                    flex items-center justify-center min-w-0 gap-1
+                    ${isPressed ? 'scale-[0.93] brightness-125 ring-2 ring-rose-400' : ''}
+                  `}
+                  title="Son harfi sil (basılı tutunca tekrarlar)"
+                  aria-label="Son harfi sil"
+                >
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current shrink-0" viewBox="0 0 24 24">
+                    <path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z" />
+                  </svg>
+                  <span className="hidden sm:inline">{item.label}</span>
+                </button>
+              )
+            }
+
+            // Normal harf tuşu (Z C V B N M Ö Ç)
+            return (
+              <button
+                key={item.id}
+                data-key={item.id}
+                type="button"
+                disabled={disabled}
+                style={{ flex: item.weight }}
+                className={`
+                  h-[clamp(46px,6.8dvh,54px)] rounded-lg text-sm sm:text-base font-bold
+                  border flex items-center justify-center p-0 min-w-0
+                  ${isPressed ? 'scale-[0.93] brightness-125 ring-2 ring-violet-400' : ''}
+                  ${getKeyClass(item.id)}
+                `}
+              >
+                {item.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

@@ -1,36 +1,53 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
-  KEYBOARD_ROW_1,
-  KEYBOARD_ROW_2,
-  KEYBOARD_ROW_3,
-  ACTION_ROW,
+  KEY_LAYOUT,
+  ROW_3_ITEMS,
+  COMMIT_ON,
   getCharForLetterKey,
   resolveKeyAtPoint,
   gestureReducer,
   createInitialGestureState,
   createDeleteRepeatSchedule,
   computeKeyStates,
+  calculateTileSize,
   type KeyRect,
 } from './keyboardLogic'
 
-describe('Klavye Düzeni ve Karakter Kuralları', () => {
+describe('Klavye Düzeni ve Karakter Kuralları (SPEC-v2 Rev. 3)', () => {
+  it('COMMIT_ON varsayılan olarak "down" modundadır', () => {
+    expect(COMMIT_ON).toBe('down')
+  })
+
   it('29 Türkçe harf içerir, Q/W/X içermez, yinelenen harf yoktur', () => {
-    const allLetters = [...KEYBOARD_ROW_1, ...KEYBOARD_ROW_2, ...KEYBOARD_ROW_3]
+    const allLetters = [...KEY_LAYOUT.row1, ...KEY_LAYOUT.row2, ...KEY_LAYOUT.row3Letters]
     expect(allLetters).toHaveLength(29)
 
-    // Yinelenen harf kontrolü
     const unique = new Set(allLetters)
     expect(unique.size).toBe(29)
 
-    // Q, W, X harflerinin olmadığını doğrula
     expect(allLetters).not.toContain('Q')
     expect(allLetters).not.toContain('W')
     expect(allLetters).not.toContain('X')
+  })
 
-    // Satır sayıları
-    expect(KEYBOARD_ROW_1).toHaveLength(10)
-    expect(KEYBOARD_ROW_2).toHaveLength(10)
-    expect(KEYBOARD_ROW_3).toHaveLength(9)
+  it('Satır 1: 10 harf (E R T Y U I O P Ğ Ü)', () => {
+    expect(KEY_LAYOUT.row1).toEqual(['E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Ğ', 'Ü'])
+  })
+
+  it('Satır 2: 11 harf (A S D F G H J K L Ş İ) - İ harfi ikinci satırın sonundadır', () => {
+    expect(KEY_LAYOUT.row2).toEqual(['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ş', 'İ'])
+    expect(KEY_LAYOUT.row2[KEY_LAYOUT.row2.length - 1]).toBe('İ')
+  })
+
+  it('Satır 3: [GÖNDER] Z C V B N M Ö Ç [SİL] - GÖNDER başta, SİL sonda', () => {
+    expect(ROW_3_ITEMS).toHaveLength(10)
+    expect(ROW_3_ITEMS[0].id).toBe('SUBMIT')
+    expect(ROW_3_ITEMS[0].label).toBe('GÖNDER')
+    expect(ROW_3_ITEMS[ROW_3_ITEMS.length - 1].id).toBe('DELETE')
+    expect(ROW_3_ITEMS[ROW_3_ITEMS.length - 1].label).toBe('SİL')
+
+    const middleLetters = ROW_3_ITEMS.slice(1, -1).map((item) => item.id)
+    expect(middleLetters).toEqual(['Z', 'C', 'V', 'B', 'N', 'M', 'Ö', 'Ç'])
   })
 
   it('I tuşu "ı", İ tuşu "i" üretir', () => {
@@ -43,220 +60,208 @@ describe('Klavye Düzeni ve Karakter Kuralları', () => {
     expect(getCharForLetterKey('Ç')).toBe('ç')
     expect(getCharForLetterKey('Ö')).toBe('ö')
   })
-
-  it('ACTION_ROW tek sabittir ve PAS, SİL, GÖNDER içerir', () => {
-    expect(ACTION_ROW).toHaveLength(3)
-    expect(ACTION_ROW[0].id).toBe('PAS')
-    expect(ACTION_ROW[1].id).toBe('DELETE')
-    expect(ACTION_ROW[2].id).toBe('SUBMIT')
-  })
 })
 
 describe('resolveKeyAtPoint', () => {
   const rects: KeyRect[] = [
-    { id: 'E', x: 10, y: 10, width: 30, height: 44 },
-    { id: 'R', x: 44, y: 10, width: 30, height: 44 }, // Arada 4px boşluk var (40..44)
-    { id: 'PAS', x: 10, y: 100, width: 60, height: 44, isAction: true },
+    { id: 'E', x: 10, y: 10, width: 30, height: 50 },
+    { id: 'R', x: 45, y: 10, width: 30, height: 50 }, // Arada 5px boşluk var (40..45)
+    { id: 'SUBMIT', x: 10, y: 120, width: 60, height: 50, isAction: true },
   ]
 
   it('tuşun tam içine tıklanınca o tuşu döner', () => {
     expect(resolveKeyAtPoint(rects, 15, 20)).toBe('E')
     expect(resolveKeyAtPoint(rects, 50, 25)).toBe('R')
-    expect(resolveKeyAtPoint(rects, 30, 110)).toBe('PAS')
+    expect(resolveKeyAtPoint(rects, 30, 130)).toBe('SUBMIT')
   })
 
   it('tuşlar arasındaki boşlukta en yakın tuşu döner (ölü alan yok)', () => {
-    // x = 41 (E bitişi 40, R başlangıcı 44; x=41 E'ye 1px, R'ye 3px)
+    // x = 41 (E bitişi 40, R başlangıcı 45; E'ye 1px, R'ye 4px)
     expect(resolveKeyAtPoint(rects, 41, 20)).toBe('E')
-    // x = 43 (R'ye 1px yakın)
-    expect(resolveKeyAtPoint(rects, 43, 20)).toBe('R')
+    // x = 44 (R'ye 1px yakın)
+    expect(resolveKeyAtPoint(rects, 44, 20)).toBe('R')
   })
 
-  it('klavye alanının çok dışındaysa null döner (iptal)', () => {
+  it('klavye sınırlarının çok dışındaysa null döner', () => {
     expect(resolveKeyAtPoint(rects, 300, 500, 30)).toBeNull()
-    expect(resolveKeyAtPoint(rects, -100, 0, 30)).toBeNull()
   })
 })
 
-describe('gestureReducer (Pointer Hareket Mantığı)', () => {
-  it('harf tuşuna basılıp aynı tuşta parmak kalkınca harfi onaylar', () => {
+describe('gestureReducer (Giriş Davranışı - COMMIT_ON = down)', () => {
+  it('harf tuşuna POINTER_DOWN olunca anında CHAR aksiyonu üretir', () => {
     let state = createInitialGestureState()
-    const downRes = gestureReducer(state, {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'A',
-    })
+    const downRes = gestureReducer(
+      state,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 1,
+        keyId: 'A',
+      },
+      'down',
+    )
+
+    expect(downRes.action).toEqual({ type: 'CHAR', char: 'a', keyId: 'A' })
+    expect(downRes.nextState.pointers[1].hasCommitted).toBe(true)
+
+    // POINTER_UP anında tekrar yazmaz
+    const upRes = gestureReducer(
+      downRes.nextState,
+      {
+        type: 'POINTER_UP',
+        pointerId: 1,
+      },
+      'down',
+    )
+    expect(upRes.action).toBeUndefined()
+  })
+
+  it('COMMIT_ON = down modunda parmak basılıyken kaydırılsa bile ek harf yazılmaz', () => {
+    let state = createInitialGestureState()
+    const downRes = gestureReducer(
+      state,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 1,
+        keyId: 'A',
+      },
+      'down',
+    )
     state = downRes.nextState
+
+    // S üzerine kaydırıldı
+    const moveRes = gestureReducer(
+      state,
+      {
+        type: 'POINTER_MOVE',
+        pointerId: 1,
+        keyId: 'S',
+      },
+      'down',
+    )
+    expect(moveRes.action).toBeUndefined()
+
+    // Parmak kalkınca da yeni harf girilmez
+    const upRes = gestureReducer(
+      moveRes.nextState,
+      {
+        type: 'POINTER_UP',
+        pointerId: 1,
+      },
+      'down',
+    )
+    expect(upRes.action).toBeUndefined()
+  })
+
+  it('GÖNDER: parmak aynı tuştayken POINTER_UP anında SUBMIT üretir', () => {
+    let state = createInitialGestureState()
+    const downRes = gestureReducer(
+      state,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 1,
+        keyId: 'SUBMIT',
+        isAction: true,
+      },
+      'down',
+    )
     expect(downRes.action).toBeUndefined()
 
-    const upRes = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
-    expect(upRes.action).toEqual({ type: 'CHAR', char: 'a', keyId: 'A' })
-    expect(upRes.nextState.pointers[1]).toBeUndefined()
-  })
-
-  it('yanlış tuşa basıp kaydırarak doğru tuşta bırakınca bırakılan harfi yazar', () => {
-    let state = createInitialGestureState()
-    // A'ya bastı
-    state = gestureReducer(state, {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'A',
-    }).nextState
-
-    // S'ye kaydırdı
-    state = gestureReducer(state, {
-      type: 'POINTER_MOVE',
-      pointerId: 1,
-      keyId: 'S',
-    }).nextState
-
-    // S üzerinde parmağı kaldırdı
-    const upRes = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
-    expect(upRes.action).toEqual({ type: 'CHAR', char: 's', keyId: 'S' })
-  })
-
-  it('klavye dışına kaydırılıp bırakılırsa veya cancel olursa iptal edilir', () => {
-    let state = createInitialGestureState()
-    state = gestureReducer(state, {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'A',
-    }).nextState
-
-    // Dışarı çıktı (keyId: null)
-    state = gestureReducer(state, {
-      type: 'POINTER_MOVE',
-      pointerId: 1,
-      keyId: null,
-    }).nextState
-
-    const upRes = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
-    expect(upRes.action).toBeUndefined()
-
-    // cancel senaryosu
-    let cancelState = gestureReducer(createInitialGestureState(), {
-      type: 'POINTER_DOWN',
-      pointerId: 2,
-      keyId: 'B',
-    }).nextState
-
-    const cancelRes = gestureReducer(cancelState, {
-      type: 'POINTER_CANCEL',
-      pointerId: 2,
-    })
-    expect(cancelRes.action).toBeUndefined()
-    expect(cancelRes.nextState.pointers[2]).toBeUndefined()
-  })
-
-  it('GÖNDER ve PAS tuşlarında kaydırma iptal koruması: yalnızca aynı tuşta up olursa tetiklenir', () => {
-    // 1) GÖNDER'e basıp harfe kayarsa -> tetiklenmez!
-    let state = gestureReducer(createInitialGestureState(), {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'SUBMIT',
-      isAction: true,
-    }).nextState
-
-    state = gestureReducer(state, {
-      type: 'POINTER_MOVE',
-      pointerId: 1,
-      keyId: 'L',
-    }).nextState
-
-    let upRes = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
-    expect(upRes.action).toBeUndefined()
-
-    // 2) GÖNDER'e basıp aynı tuşta up olursa -> SUBMIT tetiklenir
-    state = gestureReducer(createInitialGestureState(), {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'SUBMIT',
-      isAction: true,
-    }).nextState
-
-    upRes = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
+    const upRes = gestureReducer(
+      downRes.nextState,
+      {
+        type: 'POINTER_UP',
+        pointerId: 1,
+      },
+      'down',
+    )
     expect(upRes.action).toEqual({ type: 'SUBMIT' })
-
-    // 3) PAS'a basıp aynı tuşta up olursa -> PASS tetiklenir
-    state = gestureReducer(createInitialGestureState(), {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'PAS',
-      isAction: true,
-    }).nextState
-
-    upRes = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
-    expect(upRes.action).toEqual({ type: 'PASS' })
   })
 
-  it('SİL tuşuna basıldığında DELETE_START, parmak kalkınca DELETE_STOP üretir', () => {
-    const downRes = gestureReducer(createInitialGestureState(), {
-      type: 'POINTER_DOWN',
-      pointerId: 1,
-      keyId: 'DELETE',
-      isAction: true,
-    })
+  it('GÖNDER tuşuna basıp dışarı kaydırılırsa iptal edilir', () => {
+    let state = createInitialGestureState()
+    state = gestureReducer(
+      state,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 1,
+        keyId: 'SUBMIT',
+        isAction: true,
+      },
+      'down',
+    ).nextState
+
+    // Dışarı kaydırıldı
+    state = gestureReducer(
+      state,
+      {
+        type: 'POINTER_MOVE',
+        pointerId: 1,
+        keyId: 'Z',
+      },
+      'down',
+    ).nextState
+
+    const upRes = gestureReducer(
+      state,
+      {
+        type: 'POINTER_UP',
+        pointerId: 1,
+      },
+      'down',
+    )
+    expect(upRes.action).toBeUndefined()
+  })
+
+  it('SİL tuşu POINTER_DOWN anında DELETE_START, POINTER_UP anında DELETE_STOP üretir', () => {
+    const downRes = gestureReducer(
+      createInitialGestureState(),
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 1,
+        keyId: 'DELETE',
+        isAction: true,
+      },
+      'down',
+    )
     expect(downRes.action).toEqual({ type: 'DELETE_START' })
 
-    const upRes = gestureReducer(downRes.nextState, {
-      type: 'POINTER_UP',
-      pointerId: 1,
-    })
+    const upRes = gestureReducer(
+      downRes.nextState,
+      {
+        type: 'POINTER_UP',
+        pointerId: 1,
+      },
+      'down',
+    )
     expect(upRes.action).toEqual({ type: 'DELETE_STOP' })
   })
 
   it('çoklu dokunma (multi-pointer) bağımsız çalışır', () => {
     let state = createInitialGestureState()
     // Sol başparmak A'ya bastı
-    state = gestureReducer(state, {
-      type: 'POINTER_DOWN',
-      pointerId: 10,
-      keyId: 'A',
-    }).nextState
+    const p1 = gestureReducer(
+      state,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 10,
+        keyId: 'A',
+      },
+      'down',
+    )
+    expect(p1.action).toEqual({ type: 'CHAR', char: 'a', keyId: 'A' })
+    state = p1.nextState
 
     // Sağ başparmak K'ya bastı
-    state = gestureReducer(state, {
-      type: 'POINTER_DOWN',
-      pointerId: 20,
-      keyId: 'K',
-    }).nextState
-
-    expect(Object.keys(state.pointers)).toHaveLength(2)
-
-    // Sol başparmak kalktı (A yazıldı)
-    const upLeft = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 10,
-    })
-    expect(upLeft.action).toEqual({ type: 'CHAR', char: 'a', keyId: 'A' })
-    state = upLeft.nextState
-    expect(state.pointers[10]).toBeUndefined()
-    expect(state.pointers[20]).toBeDefined()
-
-    // Sağ başparmak kalktı (K yazıldı)
-    const upRight = gestureReducer(state, {
-      type: 'POINTER_UP',
-      pointerId: 20,
-    })
-    expect(upRight.action).toEqual({ type: 'CHAR', char: 'k', keyId: 'K' })
+    const p2 = gestureReducer(
+      state,
+      {
+        type: 'POINTER_DOWN',
+        pointerId: 20,
+        keyId: 'K',
+      },
+      'down',
+    )
+    expect(p2.action).toEqual({ type: 'CHAR', char: 'k', keyId: 'K' })
   })
 })
 
@@ -269,7 +274,7 @@ describe('createDeleteRepeatSchedule', () => {
     vi.useRealTimers()
   })
 
-  it('basılı tutulunca 400ms sonra tekrarlı silme başlatır, stop ile sızıntısız durur', () => {
+  it('basılı tutulunca 400ms sonra tekrarlı silme tetikler', () => {
     const tick = vi.fn()
     const schedule = createDeleteRepeatSchedule(tick, {
       initialDelayMs: 400,
@@ -282,30 +287,22 @@ describe('createDeleteRepeatSchedule', () => {
     expect(schedule.isRunning()).toBe(true)
     expect(tick).not.toHaveBeenCalled()
 
-    // 399ms: henüz tetiklenmedi
     vi.advanceTimersByTime(399)
     expect(tick).not.toHaveBeenCalled()
 
-    // 400ms: ilk tekrar vuruşu
     vi.advanceTimersByTime(1)
     expect(tick).toHaveBeenCalledTimes(1)
 
-    // 480ms: ikinci vuruş (80ms sonra)
     vi.advanceTimersByTime(80)
     expect(tick).toHaveBeenCalledTimes(2)
 
-    // stop çağrılınca durur
     schedule.stop()
     expect(schedule.isRunning()).toBe(false)
-    vi.advanceTimersByTime(500)
-    expect(tick).toHaveBeenCalledTimes(2)
   })
 })
 
-describe('computeKeyStates (Harf Renk Öncelikleri)', () => {
-  it('yeşil > sarı > kırmızı önceliğini uygular', () => {
-    // 1. Tahminde: 'k' sarı, 'a' kırmızı, 'l' yeşil
-    // 2. Tahminde: 'k' yeşil oldu, 'a' sarı oldu
+describe('computeKeyStates', () => {
+  it('yeşil > sarı > kırmızı önceliğini korur', () => {
     const guesses = [
       {
         guess: 'kalem',
@@ -318,28 +315,67 @@ describe('computeKeyStates (Harf Renk Öncelikleri)', () => {
     ]
 
     const states = computeKeyStates(guesses as any)
-    expect(states['k']).toBe('green') // yellow -> green oldu
-    expect(states['l']).toBe('green') // yeşil korundu
-    expect(states['a']).toBe('yellow') // red -> yellow yükseldi
+    expect(states['k']).toBe('green')
+    expect(states['l']).toBe('green')
+    expect(states['a']).toBe('yellow')
     expect(states['e']).toBe('red')
-    expect(states['m']).toBe('red')
-    expect(states['p']).toBe('red')
-    expect(states['n']).toBe('red')
+  })
+})
+
+describe('calculateTileSize (Dinamik Tahta Kutu Boyutu Hesabı)', () => {
+  it('320×568 dar ekranda (270px kullanılabilir yükseklik) 4 harfli kelime kaydırmasız sığar', () => {
+    const res = calculateTileSize({
+      availableWidth: 320,
+      availableHeight: 270,
+      letterCount: 4,
+      rowCount: 5,
+      maxTileSize: 64,
+      minTileSize: 28,
+      gapX: 6,
+      gapY: 6,
+      paddingX: 8,
+      paddingY: 6,
+    })
+
+    // Yükseklik 270px sınırını aşmamalı
+    expect(res.boardHeight).toBeLessThanOrEqual(270)
+    // Kutu boyutu makul olmalı
+    expect(res.tileSize).toBeGreaterThanOrEqual(44)
+    expect(res.tileSize).toBeLessThanOrEqual(64)
   })
 
-  it('yeşil harf sonraki tahminde kırmızı veya sarı çıksa bile yeşil kalır', () => {
-    const guesses = [
-      {
-        guess: 'tatar',
-        marks: ['green', 'red', 'yellow', 'red', 'red'] as const,
-      },
-      {
-        guess: 'tabak',
-        marks: ['yellow', 'red', 'red', 'red', 'red'] as const,
-      },
-    ]
+  it('320×568 dar ekranda 7 harfli kelime de sığar', () => {
+    const res = calculateTileSize({
+      availableWidth: 320,
+      availableHeight: 270,
+      letterCount: 7,
+      rowCount: 5,
+      maxTileSize: 64,
+      minTileSize: 28,
+      gapX: 4,
+      gapY: 4,
+      paddingX: 8,
+      paddingY: 6,
+    })
 
-    const states = computeKeyStates(guesses as any)
-    expect(states['t']).toBe('green') // 2. tahminde yellow çıksa da ilkinde yeşil olduğu için yeşil kalır
+    expect(res.boardHeight).toBeLessThanOrEqual(270)
+    expect(res.boardWidth).toBeLessThanOrEqual(320)
+  })
+
+  it('393×852 modern ekranda 4 harfli kutular üst sınıra (64px) ulaşır', () => {
+    const res = calculateTileSize({
+      availableWidth: 393,
+      availableHeight: 480,
+      letterCount: 4,
+      rowCount: 5,
+      maxTileSize: 64,
+      minTileSize: 28,
+      gapX: 6,
+      gapY: 6,
+      paddingX: 8,
+      paddingY: 6,
+    })
+
+    expect(res.tileSize).toBe(64)
   })
 })

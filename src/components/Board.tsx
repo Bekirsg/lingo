@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import type { RoundState } from '../game/state'
 import type { Mark } from '../game/engine'
 import { turkishUpper } from '../utils/turkish'
 import { playSound } from '../audio/sound'
+import { calculateTileSize } from '../game/keyboard/keyboardLogic'
 
 interface BoardData {
   letterCount: number
@@ -35,12 +36,49 @@ export default function Board({
   if (!data) return null
   const { letterCount, currentWord, guesses, currentInput, wordWon = false, wordLost = false } = data
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [boardLayout, setBoardLayout] = useState<{ tileSize: number; boardWidth: number } | null>(null)
+
+  // Ekran ve dikey alan boyutuna göre dinamik kutu boyutu hesabı (SPEC-v2 Rev. 3)
+  useEffect(() => {
+    if (!containerRef.current) return
+    const el = containerRef.current
+
+    const updateSize = () => {
+      const rect = el.getBoundingClientRect()
+      if (rect.width > 0 && rect.height > 0) {
+        const gap = letterCount >= 7 ? 4 : 6
+        const res = calculateTileSize({
+          availableWidth: rect.width,
+          availableHeight: rect.height,
+          letterCount,
+          rowCount: 5,
+          maxTileSize: 64,
+          minTileSize: 28,
+          gapX: gap,
+          gapY: gap,
+          paddingX: 8,
+          paddingY: 6,
+        })
+        setBoardLayout({ tileSize: res.tileSize, boardWidth: res.boardWidth })
+      }
+    }
+
+    updateSize()
+    const observer = new ResizeObserver(updateSize)
+    observer.observe(el)
+    window.addEventListener('resize', updateSize)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateSize)
+    }
+  }, [letterCount])
+
   // Animasyon süresi yönetimi (≤ 700 ms)
   const [animatingRow, setAnimatingRow] = useState<number | null>(null)
 
   useEffect(() => {
     if (isEvaluating && guesses.length === 0) {
-      // Failsafe: 4. turda kelime kaybından hemen yeni kelime geldi (guesses sıfırlandı).
       onAnimationComplete?.()
       return
     }
@@ -48,7 +86,6 @@ export default function Board({
       const rowIndex = guesses.length - 1
       setAnimatingRow(rowIndex)
 
-      // Kademeli kutu çevirme ses efektleri (her harf çevrilişinde kısa flip sesi)
       const flipTimers: ReturnType<typeof setTimeout>[] = []
       for (let i = 0; i < letterCount; i++) {
         const timer = setTimeout(() => {
@@ -57,7 +94,6 @@ export default function Board({
         flipTimers.push(timer)
       }
 
-      // Kademeli kutu çevirme: (letterCount - 1) * 90ms + 300ms çevirme animasyonu <= 700ms
       const totalAnimationDuration = Math.min((letterCount - 1) * 90 + 350, 700)
       const endTimer = setTimeout(() => {
         setAnimatingRow(null)
@@ -78,25 +114,20 @@ export default function Board({
   const lockedFirstChar = turkishUpper(Array.from(currentWord)[0] ?? '')
   const currentChars = Array.from(currentInput).map(c => turkishUpper(c))
 
-  // Harf sayısına göre dinamik boşluk ve maksimum genişlik (özellikle dar ekranlarda dikey taşmayı önleme)
-  const isWideStage = letterCount >= 7
-  const boardMaxW =
-    letterCount === 4
-      ? 'max-w-[240px] sm:max-w-[280px]'
-      : letterCount === 5
-        ? 'max-w-[290px] sm:max-w-[320px]'
-        : isWideStage
-          ? 'max-w-[370px]'
-          : 'max-w-[340px]'
-  const rowGap = isWideStage ? 'gap-1 sm:gap-2' : 'gap-1.5 sm:gap-2'
-  const colGap = isWideStage ? 'gap-1 sm:gap-1.5' : 'gap-1.5 sm:gap-2'
-  const fontClass = isWideStage ? 'text-lg sm:text-2xl' : 'text-xl sm:text-2xl'
-  const roundedClass = isWideStage ? 'rounded-lg sm:rounded-xl' : 'rounded-xl'
+  const gap = letterCount >= 7 ? 'gap-1' : 'gap-1.5'
+  const tileSize = boardLayout?.tileSize ?? (letterCount >= 7 ? 40 : 54)
+  const fontClass =
+    tileSize >= 56 ? 'text-2xl sm:text-3xl' : tileSize >= 44 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'
+  const roundedClass = tileSize >= 52 ? 'rounded-xl' : 'rounded-lg'
 
   return (
-    <div className="w-full flex-1 flex flex-col items-center justify-center px-2 sm:px-4 py-1 sm:py-2 select-none overflow-hidden">
+    <div
+      ref={containerRef}
+      className="w-full flex-1 flex flex-col items-center justify-center px-1 sm:px-2 py-0.5 select-none overflow-hidden"
+    >
       <div
-        className={`w-full ${boardMaxW} flex flex-col ${rowGap}`}
+        className={`flex flex-col ${gap}`}
+        style={boardLayout ? { width: `${boardLayout.boardWidth}px` } : undefined}
         role="grid"
         aria-label="Kelime tahmin tahtası"
       >
@@ -105,7 +136,6 @@ export default function Board({
           const isActive = rIndex === activeRowIndex
           const isRowAnimating = animatingRow === rIndex
 
-          // Geçmiş tahmin verisi
           const pastGuess = isPast ? guesses[rIndex] : null
           const pastChars = pastGuess ? Array.from(pastGuess.guess).map(c => turkishUpper(c)) : []
           const pastMarks: Mark[] = pastGuess ? pastGuess.marks : []
@@ -113,12 +143,9 @@ export default function Board({
           return (
             <div
               key={rIndex}
-              className={`grid ${colGap} w-full transition-transform duration-200 ${
+              className={`flex justify-center ${gap} w-full transition-transform duration-200 ${
                 isActive && isShaking ? 'animate-shake' : ''
               }`}
-              style={{
-                gridTemplateColumns: `repeat(${letterCount}, minmax(0, 1fr))`,
-              }}
               role="row"
             >
               {cols.map((cIndex) => {
@@ -131,20 +158,17 @@ export default function Board({
                   mark = pastMarks[cIndex] || 'empty'
                 } else if (isActive) {
                   if (cIndex === 0) {
-                    // SPEC 4.2-1: İlk kutuda ilk harf otomatik yazılıdır, yeşildir ve KİLİTLİDİR.
                     char = lockedFirstChar
                     mark = 'locked'
                   } else {
                     char = currentChars[cIndex] || ''
                     mark = 'empty'
-                    // Şu anki aktif boş kutu
                     if (cIndex === currentChars.length) {
                       isCurrentBox = true
                     }
                   }
                 }
 
-                // Renk ve stil sınıfları
                 let bgClass = 'bg-white/5 border-white/10 text-white'
                 let glowClass = ''
 
@@ -163,19 +187,20 @@ export default function Board({
                   bgClass = 'bg-white/10 border-white/30 text-white font-bold'
                 }
 
-                // Kutu çevirme stili
                 const staggerDelay = isRowAnimating ? `${cIndex * 85}ms` : '0ms'
 
                 return (
                   <div
                     key={cIndex}
                     style={{
+                      width: `${tileSize}px`,
+                      height: `${tileSize}px`,
                       transitionDelay: staggerDelay,
                       aspectRatio: '1 / 1',
                     }}
                     className={`
                       flex items-center justify-center font-black
-                      border-2 transition-all duration-300 transform min-w-0
+                      border-2 transition-all duration-300 transform shrink-0
                       ${roundedClass} ${fontClass} ${bgClass} ${glowClass}
                       ${isRowAnimating ? 'animate-flip' : ''}
                     `}

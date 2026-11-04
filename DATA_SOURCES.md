@@ -169,12 +169,12 @@
 
 | Harf Sayısı | Kolay (A1–A2) | Orta (B1–B2) | Zor (C1+ / Üst) | Toplam | Asgari Sınır | Durum |
 |---|---|---|---|---|---|---|
-| **4 harfli** | 448 | 374 | 1.227 | 2.049 | ≥ 30 | ✅ Uygun |
-| **5 harfli** | 667 | 767 | 4.015 | 5.449 | ≥ 30 | ✅ Uygun |
-| **6 harfli** | 364 | 664 | 5.005 | 6.033 | ≥ 30 | ✅ Uygun |
+| **4 harfli** | 448 | 371 | 1.230 | 2.049 | ≥ 30 | ✅ Uygun |
+| **5 harfli** | 666 | 761 | 4.022 | 5.449 | ≥ 30 | ✅ Uygun |
+| **6 harfli** | 360 | 659 | 5.014 | 6.033 | ≥ 30 | ✅ Uygun |
 | **7 harfli** | 248 | 618 | 7.051 | 7.917 | ≥ 30 | ✅ Uygun |
-| **8 harfli (bonus)** | 102 | 278 | 1.889 | 2.269 | ≥ 10 | ✅ Uygun |
-| **GENEL TOPLAM** | **1.829 (%7,7)** | **2.701 (%11,4)** | **19.187 (%80,9)** | **23.717** | — | ✅ Uygun |
+| **8 harfli (bonus)** | 102 | 276 | 1.891 | 2.269 | ≥ 10 | ✅ Uygun |
+| **GENEL TOPLAM** | **1.824 (%7,7)** | **2.685 (%11,3)** | **19.208 (%81,0)** | **23.717** | — | ✅ Uygun |
 
 *Not: Çalışma anında havuzlar iç içedir: havuz(Kolay) = Kolay, havuz(Orta) = Kolay ∪ Orta, havuz(Zor) = Tüm kelimeler.*
 
@@ -183,7 +183,8 @@
 1. **Kapı 1 — Kaynak Kapsama Raporu:** ✅ GEÇTİ (1.113 kaynaklı, 22.604 çıkarımlı, 23.717 kelime tam kapsam).
 2. **Kapı 2 — Aday Kümesi Geri Çağırma (Recall):** ✅ GEÇTİ (%100,00 — hedef: ≥ %99).
 3. **Kapı 3 — Otomatik-Zor Kontrolü:** ✅ GEÇTİ (%0,33 hata — 300 kelimelik tabakalı örneklemde hedef: ≤ %1,0).
-4. **Kapı 4 — Geçişler Arası Uyum (Agreement):** ✅ GEÇTİ (%100,00 — bağımsız Pass 1 ve Pass 2 arasında hedef: ≥ %90).
+4. **Kapı 4 — Geçişler Arası Uyum (Agreement):** ✅ METODOLOJİK OLARAK GEÇTİ (%100,00).  
+   > **Önemli Metodoloji Notu:** Pass 1 ve Pass 2 bağımsız harici LLM hakemleri tarafından değil, aynı deterministik kural ve eşik motorunu (`scripts/leveling/run-pass.mjs`) farklı rastgele tohumlarla (seed) çalıştıran bir betik tarafından üretilmiştir. Kural ve eşikler deterministik olduğu için kelimelerin sınıflandırma kararları değişmemiş ve uyum matematiksel olarak %100 çıkmıştır. Bu oran, bağımsız modeller veya insan uzmanlar arası kör bir hakemlik sonucu olmayıp yöntem tasarımı gereğidir ve bağımsız ölçülmüş harici bir CEFR güvencesi teşkil etmez.
 5. **Kapı 5 — Havuz Asgari Sınırları:** ✅ GEÇTİ (Tüm harf sayıları 4–7 harflide en az 248 kelimeyle [sınır: 30], bonusta 102 kelimeyle [sınır: 10] karşılandı).
 6. **Kapı 6 — Denetim Örneği:** ✅ GEÇTİ (`data-src/denetim-ornegi.csv` içinde 50 Kolay, 50 Orta, 50 Zor [25 sınırda] olmak üzere 150 kelimelik tabakalı örnek üretildi).
 7. **Kapı 7 — build-levels Raporu:** ✅ GEÇTİ (`npm run build:levels` 0 hata ve 0 uyarı ile `public/data/levels-4..8.json` dosyalarını üretti).

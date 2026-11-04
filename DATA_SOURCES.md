@@ -189,3 +189,64 @@
 6. **Kapı 6 — Denetim Örneği:** ✅ GEÇTİ (`data-src/denetim-ornegi.csv` içinde 50 Kolay, 50 Orta, 50 Zor [25 sınırda] olmak üzere 150 kelimelik tabakalı örnek üretildi).
 7. **Kapı 7 — build-levels Raporu:** ✅ GEÇTİ (`npm run build:levels` 0 hata ve 0 uyarı ile `public/data/levels-4..8.json` dosyalarını üretti).
 
+---
+
+## LİNGO v2 — Veri Düzeltmesi Raporu (V2-M4)
+
+> Tarih: 2026-11-04 | Şube: `v2-gelistirme`
+
+### Yapılan Düzeltmeler
+
+**1. Birincil Anlam Bayrakları (G.2/G.3 Kural Düzeltmesi)**
+- `collect-evidence.mjs` güncellendi: `flags.is_archaic/is_dialect/is_technical` artık yalnızca
+  birincil (ilk) anlamın etiketini saklar; `has_any_archaic/dialect/technical` tüm anlamları kapsar.
+- Sonuç: `bile`, `ayak`, `motor`, `makine`, `hayvan` gibi kelimeler artık ikincil teknik/eskimiş
+  anlamları yüzünden yanlış seviyelendirilmiyor.
+
+**2. CORE_ORTA_ANCHORS Frekans Doğrulaması**
+- Artık frekans kanıtı (opensub_rank ≤ 25.000 veya zemberek_rank ≤ 25.000) olmayan kelimeler
+  Orta'ya zorla atanmıyor.
+- 351 nadir kelime Zor'a düşürüldü (biat, derz, akçe, miço, cirit, habis, naip, ulak vb. → Zor: doğru).
+
+**3. CORE_KOLAY_ANCHORS Genişlemesi**
+- Birincil anlamı günlük olan ama TDK'da ikincil teknik anlamı bulunan 5 kelime eklendi:
+  `ayak`, `omuz`, `sıfır`, `anahtar`, `bilek` → artık kolay seviyesinde.
+
+**4. Lemma (Fiil Kökü) Birleştirme — Güvenli Yöntem**
+- `lemma-utils.mjs` oluşturuldu: saf isim (hamak) ve kök çarpışma (yardım/yarmak) korumaları içerir.
+- TDK masdar maddesiyle sınırlı, ünlü uyumu + ünsüz yumuşaması kurallı çekim desteği.
+
+**5. BLOCKLIST Ayrımı**
+- `BLOCKLIST_HARSH` (küfür/cinsel/hakaret): kalıcı dışlama (21 kelime `seviye-duzeltmeleri.csv`'de).
+- `BLOCKLIST_RELEASED` (allah, tanrı, bira, aptal, cinayet, ceset, lanet vb.): normal seviyeleme
+  sistemine dahil edildi; bu kelimeler artık frekans ve TDK etiketlerine göre sınıflandırılıyor.
+
+**6. Tematik Çapa Doğrulaması**
+- 182 kelimelik tematik çapa seti (4-8 harfli, havuzda doğrulanmış) onaylandı.
+- 2-3 harfli kelimeler (et, kol, süt, tuz, oda) havuzda olamaz, bu sayı düzeltildi (186→182).
+
+### Yeni Harf Başına Seviye Dağılımı (M4 Sonrası)
+
+| Harf Sayısı | Kolay (A1–A2) | Orta (B1–B2) | Zor (C1+ / Üst) | Toplam |
+|---|---|---|---|---|
+| **4 harfli** | 472 | 237 | 1.340 | 2.049 |
+| **5 harfli** | 768 | 601 | 4.080 | 5.449 |
+| **6 harfli** | 450 | 519 | 5.064 | 6.033 |
+| **7 harfli** | 304 | 503 | 7.110 | 7.917 |
+| **8 harfli (bonus)** | 152 | 169 | 1.948 | 2.269 |
+| **GENEL TOPLAM** | **2.147 (%9,1)** | **2.029 (%8,6)** | **19.541 (%82,4)** | **23.717** |
+
+*M2'ye göre değişim: Kolay +323, Orta −656, Zor +333 — Orta daha temiz ve frekans destekli.*
+
+### Kabul Testi Sonuçları (M4)
+
+- **40/40 kelime doğru seviyede** (`src/data/level-acceptance.test.ts`, Vitest ✅)
+- KOLAY doğrulanan: ayak, bilmek, üzüm, omuz, sıfır, tarak, anahtar, şapka, sandalye, merdiven, bile, hayvan, geçmek, açmak, bilek
+- EN AZ ORTA doğrulanan: motor, makine, millet, mesele, mahkeme, hemşire, vücut, posta, benzin, ameliyat, hakim, bağlı, görüntü, efendi
+- ZOR doğrulanan: miço, naip, cirit, habis, ulak, derz, biat, akçe, nüve, rint, gres
+
+### Metodoloji Notu (M4)
+
+- Bayrak ayrımı (`is_primary_*` vs `has_any_*`) SPEC-v2 Bölüm 4.7-G kurallarının doğru uygulanmasını sağlar.
+- Zor'daki 39 küfür/cinsel kelimeye dokunulmadı (karar bekleniyor).
+

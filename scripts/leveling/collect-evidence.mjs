@@ -2,8 +2,8 @@
  * LİNGO v2 — Kanıt Toplama Betiği (Evidence Collector)
  * SPEC-v2 Bölüm 4.7-B
  *
- * Tüm 23.717 kelime için çoklu derlem frekanslarını, TDK tanımlarını ve etiketlerini
- * `data-src/level-evidence.jsonl` dosyasına yazar.
+ * Tüm 23.717 kelime için çoklu derlem frekanslarını, TDK GTS v12 tanımlarını
+ * (birincil ve tüm anlamlar ayrılarak) ve etiketlerini `data-src/level-evidence.jsonl` dosyasına yazar.
  */
 
 import fs from 'node:fs'
@@ -25,6 +25,31 @@ function normalize(s) {
     .trim()
 }
 
+const TECHNICAL_TAGS = new Set([
+  'tıp',
+  'biyoloji',
+  'fizik',
+  'kimya',
+  'felsefe',
+  'jeoloji',
+  'zooloji',
+  'botanik',
+  'anatomi',
+  'astronomi',
+  'dil bilgisi',
+  'matematik',
+  'mantık',
+  'ruh bilimi',
+  'jeomorfoloji',
+  'mineraloji',
+  'meteoroloji',
+  'bilişim',
+  'hukuk',
+  'denizcilik',
+  'mimarlık',
+  'ekonomi',
+])
+
 async function loadGts() {
   console.log('📖 TDK GTS v12 yükleniyor...')
   const gtsPath = path.join(RAW_DIR, 'gts.json')
@@ -40,24 +65,56 @@ async function loadGts() {
       const entry = JSON.parse(line)
       if (!entry.madde) continue
       const norm = normalize(entry.madde)
-      if (tdkMap.has(norm)) continue // İlk/bağımsız tanım öncelikli
 
-      const anlam = entry.anlamlarListe?.[0]?.anlam || ''
-      const tags = new Set()
-      if (entry.anlamlarListe && Array.isArray(entry.anlamlarListe)) {
-        for (const a of entry.anlamlarListe) {
-          if (a.ozelliklerListe && Array.isArray(a.ozelliklerListe)) {
-            for (const o of a.ozelliklerListe) {
-              if (o.tam_adi) tags.add(o.tam_adi)
-            }
+      const anlamlar = entry.anlamlarListe || []
+      const firstAnlam = anlamlar[0] || {}
+      const firstTags = new Set(
+        (firstAnlam.ozelliklerListe || []).map(o => o.tam_adi).filter(Boolean)
+      )
+
+      const allTags = new Set()
+      for (const a of anlamlar) {
+        if (a.ozelliklerListe) {
+          for (const o of a.ozelliklerListe) {
+            if (o.tam_adi) allTags.add(o.tam_adi)
           }
         }
       }
 
+      const firstTagArr = Array.from(firstTags)
+      const allTagArr = Array.from(allTags)
+
+      // BİRİNCİL ANLAM BAYRAKLARI
+      const isPrimaryArchaic = firstTagArr.some(t => t.includes('eskimiş') || t === 'eski')
+      const isPrimaryDialect = firstTagArr.some(t => t.includes('ağız') || t.includes('halk'))
+      const isPrimaryTechnical = firstTagArr.some(t => TECHNICAL_TAGS.has(t))
+
+      // TÜM ANLAMLAR BAYRAKLARI
+      const hasAnyArchaic = allTagArr.some(t => t.includes('eskimiş') || t === 'eski')
+      const hasAnyDialect = allTagArr.some(t => t.includes('ağız') || t.includes('halk'))
+      const hasAnyTechnical = allTagArr.some(t => TECHNICAL_TAGS.has(t))
+
+      // TDK normalizasyonunda yaşayan / zengin madde başını tercih et
+      if (tdkMap.has(norm)) {
+        const existing = tdkMap.get(norm)
+        if (existing.is_archaic && !isPrimaryArchaic) {
+          // Yeni yaşayan maddeyi tercih et
+        } else if (existing.meanings >= parseInt(entry.anlam_say, 10)) {
+          continue
+        }
+      }
+
       tdkMap.set(norm, {
-        anlam: anlam.split(';')[0].trim().slice(0, 150),
-        tags: Array.from(tags),
+        anlam: (firstAnlam.anlam || '').split(';')[0].trim().slice(0, 150),
+        tags: allTagArr,
+        primary_tags: firstTagArr,
         meanings: parseInt(entry.anlam_say, 10) || 1,
+        is_primary_archaic: isPrimaryArchaic,
+        is_primary_dialect: isPrimaryDialect,
+        is_primary_technical: isPrimaryTechnical,
+        has_any_archaic: hasAnyArchaic,
+        has_any_dialect: hasAnyDialect,
+        has_any_technical: hasAnyTechnical,
       })
     } catch {
       // Satır hatası varsa atla
@@ -117,7 +174,6 @@ function loadAzer1k() {
   const filePath = path.join(RAW_DIR, 'azer-1k.js')
   const content = fs.readFileSync(filePath, 'utf-8')
   const set = new Set()
-  // module.exports = ["bir", ...]
   const matches = content.match(/"([^"]+)"/g)
   if (matches) {
     for (const m of matches) {
@@ -127,31 +183,6 @@ function loadAzer1k() {
   console.log(`  ✅ ${set.size} temel kelime indekslendi.`)
   return set
 }
-
-const TECHNICAL_TAGS = new Set([
-  'tıp',
-  'biyoloji',
-  'fizik',
-  'kimya',
-  'felsefe',
-  'jeoloji',
-  'zooloji',
-  'botanik',
-  'anatomi',
-  'astronomi',
-  'dil bilgisi',
-  'matematik',
-  'mantık',
-  'ruh bilimi',
-  'jeomorfoloji',
-  'mineraloji',
-  'meteoroloji',
-  'bilişim',
-  'hukuk',
-  'denizcilik',
-  'mimarlık',
-  'ekonomi',
-])
 
 async function main() {
   const tdkMap = await loadGts()
@@ -174,15 +205,21 @@ async function main() {
     const word = normalize(parts[0])
     const harf = parseInt(parts[1], 10)
 
-    const tdk = tdkMap.get(word) || { anlam: '', tags: [], meanings: 0 }
+    const tdk = tdkMap.get(word) || {
+      anlam: '',
+      tags: [],
+      primary_tags: [],
+      meanings: 0,
+      is_primary_archaic: false,
+      is_primary_dialect: false,
+      is_primary_technical: false,
+      has_any_archaic: false,
+      has_any_dialect: false,
+      has_any_technical: false,
+    }
     const sub = openSubMap.get(word)
     const zemRank = zemberekMap.get(word) || null
     const inAzer = azerSet.has(word)
-
-    const tags = tdk.tags
-    const isArchaic = tags.some(t => t.includes('eskimiş') || t === 'eski')
-    const isDialect = tags.some(t => t.includes('ağız') || t.includes('halk'))
-    const isTechnical = tags.some(t => TECHNICAL_TAGS.has(t))
 
     const record = {
       w: word,
@@ -190,6 +227,7 @@ async function main() {
       tdk: {
         anlam: tdk.anlam,
         tags: tdk.tags,
+        primary_tags: tdk.primary_tags,
         meanings: tdk.meanings,
       },
       freq: {
@@ -199,9 +237,14 @@ async function main() {
         in_azer_1k: inAzer,
       },
       flags: {
-        is_archaic: isArchaic,
-        is_dialect: isDialect,
-        is_technical: isTechnical,
+        // G.2 / G.3 gereği birincil anlama bağlı bayraklar:
+        is_archaic: tdk.is_primary_archaic,
+        is_dialect: tdk.is_primary_dialect,
+        is_technical: tdk.is_primary_technical,
+        // Bilgi amaçlı tüm anlam bayrakları:
+        has_any_archaic: tdk.has_any_archaic,
+        has_any_dialect: tdk.has_any_dialect,
+        has_any_technical: tdk.has_any_technical,
       },
     }
 

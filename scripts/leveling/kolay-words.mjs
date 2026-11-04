@@ -12,35 +12,10 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_SRC = path.resolve(__dirname, '../../data-src')
 
-// Hassas, argo, kaba veya aile dostu oyuna uygun olmayan kelimeler
-export const BLOCKLIST = new Set([
-  'boktan',
-  'boklu',
-  'ibne',
-  'puşt',
-  'göt',
-  'kahpe',
-  'lanet',
-  'ahmak',
-  'aptal',
-  'aptalca',
-  'ahbap',
-  'allah',
-  'tanrı',
-  'ulan',
-  'yahu',
-  'cehennem',
-  'cinayet',
-  'ceset',
-  'cünüp',
-  'haç',
-  'zina',
-  'esrar',
-  'rakı',
-  'şarap',
-  'bira',
-  'şişko',
-])
+import { BLOCKLIST_HARSH, VALID_THEMATIC_ANCHORS, getVerbLemmaCounts } from './lemma-utils.mjs'
+
+// Dışlanan kaba / cinsel / hakaret sözcükleri
+export const BLOCKLIST = BLOCKLIST_HARSH
 
 // CEFR A1-A2 Çekirdek Anlam Çapaları (Sözlükte bire bir varlığı kanıtlanmış)
 export const CORE_KOLAY_ANCHORS = new Set([
@@ -77,6 +52,7 @@ export const CORE_KOLAY_ANCHORS = new Set([
   'avlu',
   'ayna',
   'aynı',
+  'ayak',
   'ayva',
   'ayın',
   'açık',
@@ -307,6 +283,7 @@ export const CORE_KOLAY_ANCHORS = new Set([
   'okul',
   'okur',
   'olay',
+  'omuz',
   'onay',
   'onur',
   'oran',
@@ -487,6 +464,7 @@ export const CORE_KOLAY_ANCHORS = new Set([
   'besin',
   'beyaz',
   'biber',
+  'bilek',
   'bilet',
   'bilgi',
   'bilim',
@@ -770,6 +748,7 @@ export const CORE_KOLAY_ANCHORS = new Set([
   'sergi',
   'sevgi',
   'sıcak',
+  'sıfır',
   'sınav',
   'sınıf',
   'sınır',
@@ -1080,6 +1059,7 @@ export const CORE_KOLAY_ANCHORS = new Set([
   'aklında',
   'altıncı',
   'anlamak',
+  'anahtar',
   'anlaşma',
   'anlayış',
   'arkadaş',
@@ -1266,7 +1246,19 @@ export function getVerifiedKolayWords() {
 
   const result = new Set()
 
-  // 1. Çekirdek çapaları sözlükte doğrula
+  const lemmaCounts = getVerbLemmaCounts()
+
+  // 1. Tematik çapaları doğrula (Rev. 4)
+  for (const w of VALID_THEMATIC_ANCHORS) {
+    if (evMap.has(w) && !BLOCKLIST.has(w)) {
+      const e = evMap.get(w)
+      if (!e.flags.is_archaic && !e.flags.is_dialect) {
+        result.add(w)
+      }
+    }
+  }
+
+  // 2. Çekirdek çapaları sözlükte doğrula
   for (const w of CORE_KOLAY_ANCHORS) {
     if (evMap.has(w) && !BLOCKLIST.has(w)) {
       const e = evMap.get(w)
@@ -1276,17 +1268,23 @@ export function getVerifiedKolayWords() {
     }
   }
 
-  // 2. Çok yüksek frekanslı günlük kelimeleri dahil et (OpenSub <= 3500 veya Azer 1k veya Zemberek <= 1500)
+  // 3. Çok yüksek frekanslı günlük kelimeleri dahil et
   for (const e of lines) {
     if (BLOCKLIST.has(e.w)) continue
-    if (e.flags.is_archaic || e.flags.is_dialect || e.flags.is_technical) continue
+    // Birincil anlamı eskimiş veya ağız ise Kolay olamaz
+    if (e.flags.is_archaic || e.flags.is_dialect) continue
 
-    const isHighFreq =
+    const effectiveCount = lemmaCounts.get(e.w) || e.freq.opensub_count || 0
+    const isHighFreqByCount = effectiveCount >= 5000
+    const isHighFreqByRank =
       (e.freq.opensub_rank !== null && e.freq.opensub_rank <= 3500) ||
       e.freq.in_azer_1k ||
       (e.freq.zemberek_rank !== null && e.freq.zemberek_rank <= 1500)
 
-    if (isHighFreq) {
+    // Birincil anlam teknik olsa bile frekansı çok yüksekse Kolay'a izin ver
+    const isTechAllowed = !e.flags.is_technical || effectiveCount >= 7000 || (e.freq.opensub_rank !== null && e.freq.opensub_rank <= 3500)
+
+    if ((isHighFreqByRank || isHighFreqByCount) && isTechAllowed) {
       result.add(e.w)
     }
   }

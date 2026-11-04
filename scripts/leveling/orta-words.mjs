@@ -696,26 +696,41 @@ export function getVerifiedOrtaWords(kolayWords) {
 
   const result = new Set()
 
-  // 1. Çekirdek B1-B2 çapalarını sözlükte doğrula
+  // 1. Çekirdek B1-B2 çapalarını sözlükte ve frekans kanıtıyla doğrula
   for (const w of CORE_ORTA_ANCHORS) {
     if (evMap.has(w) && !BLOCKLIST.has(w) && !kolay.has(w)) {
       const e = evMap.get(w)
-      // SPEC-v2 4.7-G.2: eskimiş / ağız kelimeler kolay veya orta olamaz!
+      // SPEC-v2 4.7-G.2: birincil anlamı eskimiş / ağız kelimeler orta olamaz!
       if (!e.flags.is_archaic && !e.flags.is_dialect) {
-        result.add(w)
+        // Frekans kanıtı: iki derlemden birinde ilk 25.000 içinde olmalı
+        const isFreqValid =
+          (e.freq.opensub_rank !== null && e.freq.opensub_rank <= 25000) ||
+          (e.freq.zemberek_rank !== null && e.freq.zemberek_rank <= 25000)
+        if (isFreqValid) {
+          result.add(w)
+        }
       }
     }
   }
 
-  // 2. Orta frekanslı kelimeler (OpenSub 3501..16000 veya Zemberek 1501..7500 veya çok anlamlı >= 3)
+  // 2. Orta frekanslı kelimeler (OpenSub <= 16000 veya Zemberek <= 7500 veya ilk 25k içindeki çok anlamlılar)
   for (const e of lines) {
     if (kolay.has(e.w) || BLOCKLIST.has(e.w)) continue
-    // SPEC-v2 4.7-G.2 kuralı: eskimiş veya ağız ise orta olamaz!
+    // SPEC-v2 4.7-G.2 kuralı: birincil anlamı eskimiş veya ağız ise orta olamaz!
     if (e.flags.is_archaic || e.flags.is_dialect) continue
 
     const inMidSub = e.freq.opensub_rank !== null && e.freq.opensub_rank <= 16000
     const inMidZem = e.freq.zemberek_rank !== null && e.freq.zemberek_rank <= 7500
-    const isPolysemous = e.tdk.meanings >= 3 && e.freq.opensub_rank !== null
+
+    // Uzmanlık terimi kuralı: birincil anlam teknik terimse yalnızca orta frekanstaysa Orta olabilir
+    if (e.flags.is_technical) {
+      if (inMidSub || inMidZem) {
+        result.add(e.w)
+      }
+      continue
+    }
+
+    const isPolysemous = e.tdk.meanings >= 3 && e.freq.opensub_rank !== null && e.freq.opensub_rank <= 25000
 
     if (inMidSub || inMidZem || isPolysemous) {
       result.add(e.w)

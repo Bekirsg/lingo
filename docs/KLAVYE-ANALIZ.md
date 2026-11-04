@@ -60,3 +60,34 @@ Kareler daima kare kalır (`aspect-square`), üst sınır 64 px'dir.
 
 > **Rev. 3 Karar Notu:**  
 > Eski "4 satır klavye", "44 px minimum tuş kısıtı" ve "320×568 TODO(SORU)" maddesi Rev. 3 dinamik boyutlandırma formülüyle tamamen çözülmüş ve **geçersiz kılınmıştır**.
+
+---
+
+## 4. Sistem Klavyesi Seçeneği ve visualViewport Entegrasyonu (Rev. 4)
+
+Kullanıcı tercihlerine Ayarlar menüsünden erişilebilen `keyboard: 'game' | 'system'` seçeneği eklenmiştir.
+
+### 4.1 Sistem Modu Mimari ve Çalışma Prensipleri (`InputLayer`)
+
+1. **Görsel Alan:** 29 harfli sanal ekran klavyesi gizlenir; yerine kompakt bir eylem çubuğu `[PAS] ... [GÖNDER]` gösterilir:
+   - **PAS:** Solda iki aşamalı onaylı ("PAS" → "PAS?", 2 sn zaman aşımı) bağımsız buton. Bonusta pasif/gizli.
+   - **Klavye Göstergesi / Tetikleyici:** Ortada klavye durumunu gösteren ve dokunulduğunda odağı yenileyen buton.
+   - **GÖNDER:** Sağda mor-indigo gradyanlı, yalnızca kelime tamamlandığında (`canSubmit === true`) aktif olan onay butonu.
+2. **Gizli `<input>` ve iOS Güvenliği:**
+   - Sayfa yakınlaşmasını (auto-zoom) önlemek için `fontSize: 16px` şartı sağlanmıştır.
+   - Ekran kaymasını önlemek için `position: fixed`, `top: 0`, `left: 0`, `opacity: 0`, `pointer-events: none` kullanılmıştır.
+   - `autoCapitalize="none"`, `autoCorrect="off"`, `autoComplete="off"`, `spellCheck={false}`, `enterKeyHint="send"` ile sistem müdahaleleri kapatılmıştır.
+   - Android Gboard silme (backspace) olaylarını garantilemek için sentinel tamponu (`'   '`) tekniği uygulanmıştır.
+3. **Girdi Temizleme (`inputSanitize`):**
+   - Türkçe karakter dönüşümü: `I` → `ı`, `İ` → `i`, `toLocaleLowerCase('tr-TR')`.
+   - Şapkalı harf normalizasyonu: `â` → `a`, `î` → `i`, `û` → `u`.
+   - Yabancı harf engeli: `q`, `w`, `x` kesinlikle elenir.
+   - Rakam, noktalama, boşluk ve semboller ayıklanır.
+4. **visualViewport Entegrasyonu:**
+   - Mobil cihazlarda sistem klavyesi açıldığında `window.visualViewport.height` dinamik olarak takip edilir.
+   - `--app-height` ve `--visual-viewport-height` CSS değişkenleri güncellenir.
+   - Tahta kutu boyutu hesabı (`calculateTileSize`) klavye açıkken kalan yüksekliğe göre otomatik küçülür; tahtanın taşması veya dikey kaydırma oluşması engellenir.
+5. **Otomatik ve Etkileşimli Odak:**
+   - Oyun başladığında ve yeni kelimeye geçildiğinde otomatik odaklanılır.
+   - Tahtaya dokunulduğunda sistem klavyesi yeniden açılır.
+   - Bonus turunda **BİL** butonuna basıldığı anda doğrudan sistem klavyesine odaklanılır.

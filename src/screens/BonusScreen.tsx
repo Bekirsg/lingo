@@ -14,7 +14,7 @@ import type { GameState } from '../game/state'
 import { GameController } from '../game/state'
 import type { Clock } from '../game/clock'
 import BonusBoardRow from '../components/BonusBoardRow'
-import Keyboard from '../components/Keyboard'
+import InputLayer from '../components/InputLayer'
 import { turkishUpper } from '../utils/turkish'
 import { formatPoints } from '../components/Hud'
 import { playSound } from '../audio/sound'
@@ -39,6 +39,9 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
   const [liveScore, setLiveScore] = useState(bs.currentScore)
   const controllerRef = useRef(controller)
   controllerRef.current = controller
+
+  // Sistem klavyesi odaklama referansı
+  const systemFocusRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     if (!isReading && !isWriting) return
@@ -252,7 +255,10 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
       </div>
 
       {/* ─── 8 Kutu (Tek Satır) ───────────────────────────────── */}
-      <div className="w-full flex justify-center py-1 sm:py-2 shrink-0">
+      <div
+        className="w-full flex justify-center py-1 sm:py-2 shrink-0 cursor-pointer"
+        onClick={() => systemFocusRef.current?.()}
+      >
         <BonusBoardRow bonusState={bs} isWriting={isWriting} />
       </div>
 
@@ -266,6 +272,10 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
                 playSound('key_press')
                 triggerHaptic('tap')
                 controller.pressBil()
+                // BİL butonuna basılınca sistem klavyesine odaklan
+                setTimeout(() => {
+                  systemFocusRef.current?.()
+                }, 50)
               }}
               className="
                 w-full max-w-sm py-4 sm:py-5 px-6 sm:px-8 rounded-2xl
@@ -283,7 +293,7 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
         )}
 
         {isWriting && (
-          <Keyboard
+          <InputLayer
             statuses={{}}
             onChar={handleChar}
             onDelete={handleDelete}
@@ -291,6 +301,9 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
             canSubmit={allFilled}
             hasPass={false}
             disabled={bs.answered}
+            onRegisterFocus={(fn) => {
+              systemFocusRef.current = fn
+            }}
           />
         )}
       </div>

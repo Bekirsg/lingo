@@ -5,12 +5,14 @@ import HowToPlay from './screens/HowToPlay'
 import HighScore from './screens/HighScore'
 import Settings from './screens/Settings'
 import GameScreen from './screens/GameScreen'
+import { useVisualViewport } from './hooks/useVisualViewport'
 
 /** Uygulama kök ekran durumları */
 type Screen = 'splash' | 'menu' | 'game' | 'howtoplay' | 'highscore' | 'settings'
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('splash')
+  useVisualViewport()
 
   const navigate = useCallback((s: Screen) => setScreen(s), [])
 

@@ -13,9 +13,12 @@ export const HIGH_SCORE_KEY = 'be:highscore'
 export const STATS_KEY = 'be:stats'
 export const SETTINGS_KEY = 'be:settings'
 
+export type KeyboardMode = 'game' | 'system'
+
 export interface SettingsData {
   sound: boolean
   haptics: boolean
+  keyboard: KeyboardMode
 }
 
 export interface GameStats {
@@ -50,6 +53,7 @@ export function setHighScore(score: number): void {
 const DEFAULT_SETTINGS: SettingsData = {
   sound: true,
   haptics: true,
+  keyboard: 'game',
 }
 
 export function getSettings(): SettingsData {
@@ -60,6 +64,7 @@ export function getSettings(): SettingsData {
       return {
         sound: typeof parsed.sound === 'boolean' ? parsed.sound : DEFAULT_SETTINGS.sound,
         haptics: typeof parsed.haptics === 'boolean' ? parsed.haptics : DEFAULT_SETTINGS.haptics,
+        keyboard: parsed.keyboard === 'system' ? 'system' : 'game',
       }
     }
   } catch {
@@ -74,8 +79,17 @@ export function setSettings(partial: Partial<SettingsData>): SettingsData {
     const updated: SettingsData = {
       sound: partial.sound !== undefined ? Boolean(partial.sound) : current.sound,
       haptics: partial.haptics !== undefined ? Boolean(partial.haptics) : current.haptics,
+      keyboard:
+        partial.keyboard !== undefined
+          ? partial.keyboard === 'system'
+            ? 'system'
+            : 'game'
+          : current.keyboard,
     }
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated))
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('be:settings_changed', { detail: updated }))
+    }
     return updated
   } catch {
     return { ...DEFAULT_SETTINGS, ...partial }

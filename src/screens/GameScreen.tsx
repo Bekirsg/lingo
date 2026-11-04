@@ -5,7 +5,7 @@ import { loadWordRepository, ensureBonusLoaded } from '../data/wordsLoader'
 import { getHighScore } from '../data/storage'
 import Hud from '../components/Hud'
 import Board from '../components/Board'
-import Keyboard from '../components/Keyboard'
+import InputLayer from '../components/InputLayer'
 import WordResultModal from '../components/WordResultModal'
 import CountdownOverlay from '../components/CountdownOverlay'
 import PausedOverlay from '../components/PausedOverlay'
@@ -28,6 +28,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [isEvaluating, setIsEvaluating] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
+
+  // Sistem klavyesi odaklama referansı
+  const systemFocusRef = useRef<(() => void) | null>(null)
 
   // Arka plan otomatik duraklatma için referans
   const controllerRef = useRef<GameController | null>(null)
@@ -319,31 +322,36 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       )}
 
       {/* Oyun Tahtası (5 satır x N harf) */}
-      {isRound4 && r4 ? (
-        <Board
-          boardData={{
-            letterCount: r4.stage,
-            currentWord: r4.lostWord || r4.currentWord,
-            guesses: r4.guesses,
-            currentInput: r4.currentInput,
-            wordWon: false,
-            wordLost: gameState.screen === 'round4_word_lost',
-          }}
-          isEvaluating={isEvaluating}
-          onAnimationComplete={handleAnimationComplete}
-          isShaking={isShaking}
-        />
-      ) : rs ? (
-        <Board
-          roundState={rs}
-          isEvaluating={isEvaluating}
-          onAnimationComplete={handleAnimationComplete}
-          isShaking={isShaking}
-        />
-      ) : null}
+      <div
+        className="w-full flex-1 flex flex-col items-center justify-center min-h-0"
+        onClick={() => systemFocusRef.current?.()}
+      >
+        {isRound4 && r4 ? (
+          <Board
+            boardData={{
+              letterCount: r4.stage,
+              currentWord: r4.lostWord || r4.currentWord,
+              guesses: r4.guesses,
+              currentInput: r4.currentInput,
+              wordWon: false,
+              wordLost: gameState.screen === 'round4_word_lost',
+            }}
+            isEvaluating={isEvaluating}
+            onAnimationComplete={handleAnimationComplete}
+            isShaking={isShaking}
+          />
+        ) : rs ? (
+          <Board
+            roundState={rs}
+            isEvaluating={isEvaluating}
+            onAnimationComplete={handleAnimationComplete}
+            isShaking={isShaking}
+          />
+        ) : null}
+      </div>
 
-      {/* Ekran Klavyesi (Özel Türkçe tuşlar) */}
-      <Keyboard
+      {/* Ekran Girdi Katmanı (Oyun veya Sistem Klavyesi) */}
+      <InputLayer
         statuses={keyboardStatuses}
         onChar={handleChar}
         onDelete={handleDelete}
@@ -352,6 +360,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         hasPass={true}
         canSubmit={canSubmit}
         disabled={isKeyboardDisabled}
+        onRegisterFocus={(fn) => {
+          systemFocusRef.current = fn
+        }}
       />
 
       {/* 3-2-1 Geri Sayım Katmanı */}

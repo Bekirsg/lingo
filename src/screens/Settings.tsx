@@ -12,7 +12,7 @@ export default function Settings({ onBack }: SettingsProps) {
   const [resetConfirm, setResetConfirm] = useState(false)
   const [resetDone, setResetDone] = useState(false)
 
-  const toggle = (key: keyof SettingsData) => {
+  const toggle = (key: 'sound' | 'haptics') => {
     const updated = setSettings({ [key]: !settings[key] })
     setSettingsState(updated)
 
@@ -21,6 +21,14 @@ export default function Settings({ onBack }: SettingsProps) {
     } else if (key === 'haptics' && updated.haptics) {
       triggerHaptic('tap')
     }
+  }
+
+  const handleKeyboardChange = (mode: 'game' | 'system') => {
+    if (settings.keyboard === mode) return
+    const updated = setSettings({ keyboard: mode })
+    setSettingsState(updated)
+    playSound('key_press')
+    triggerHaptic('tap')
   }
 
   const handleReset = () => {
@@ -67,6 +75,50 @@ export default function Settings({ onBack }: SettingsProps) {
           value={settings.haptics}
           onToggle={() => toggle('haptics')}
         />
+      </div>
+
+      {/* Klavye Tercihi */}
+      <div className="mt-6">
+        <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-2.5 px-1">
+          ⌨️ Klavye Seçeneği
+        </h3>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => handleKeyboardChange('game')}
+            className={`
+              flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all duration-150 active:scale-95
+              ${
+                settings.keyboard === 'game'
+                  ? 'bg-violet-600/30 border-violet-400 text-white shadow-lg shadow-violet-500/20 ring-1 ring-violet-400'
+                  : 'bg-[var(--color-bg-card)] border-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+              }
+            `}
+            aria-pressed={settings.keyboard === 'game'}
+          >
+            <span className="text-2xl mb-1">🎮</span>
+            <span className="text-sm font-bold">Oyun Klavyesi</span>
+            <span className="text-[10px] text-slate-400 mt-0.5 leading-tight">Özel 29 harfli ekran klavyesi</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleKeyboardChange('system')}
+            className={`
+              flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all duration-150 active:scale-95
+              ${
+                settings.keyboard === 'system'
+                  ? 'bg-emerald-600/30 border-emerald-400 text-white shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400'
+                  : 'bg-[var(--color-bg-card)] border-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+              }
+            `}
+            aria-pressed={settings.keyboard === 'system'}
+          >
+            <span className="text-2xl mb-1">📱</span>
+            <span className="text-sm font-bold">Telefon Klavyesi</span>
+            <span className="text-[10px] text-slate-400 mt-0.5 leading-tight">Cihaz klavyesi + eylem çubuğu</span>
+          </button>
+        </div>
       </div>
 
       {/* Skor ve İstatistik Sıfırlama */}

@@ -59,7 +59,7 @@ Butonlar: Yarışma, Çalışma, Analizler, Nasıl Oynanır, Ayarlar. Eski "En Y
 Tek ekran, sekmeli: Özet • Kelimeler • Sözlük Dışı • Performans • Harfler • İlerleme (Bölüm 7). Üstte iki filtre: **Mod** (Tümü / Yarışma / Çalışma / Hatalarımla) ve **Seviye** (Tümü / Kolay / Orta / Zor). Veri yoksa her sekmede sade bir "Henüz veri yok" mesajı.
 
 ### 3.5 Ayarlar
-Mevcut ses ve titreşim anahtarları + iki ayrı sıfırlama düğmesi (ikisi de onay penceresiyle):
+Mevcut ses ve titreşim anahtarları + **Klavye Tercihi** (`be:settings` altında `keyboard: 'game' | 'system'` — Oyun Klavyesi veya Telefon Klavyesi) + iki ayrı sıfırlama düğmesi (ikisi de onay penceresiyle):
 - Rekorları sıfırla (3 seviyenin rekoru ve istatistikleri).
 - Analiz verisini sıfırla (tüm modların analiz verisi + oturum özetleri + "öğrenildi" kayıtları).
 
@@ -357,7 +357,15 @@ Jest/Vitest ile test edilebilsin diye hareket ve boyut mantığı saf fonksiyonl
 
 ### 9.5 Opsiyonel (kullanıcı onayı olmadan YAPMA)
 - Tuş boyutu ayarı (Normal / Büyük).
-- Sistem klavyesini kullanma seçeneği.
+- Sistem klavyesini kullanma seçeneği (Rev. 4 ile tamamlandı).
+
+### 9.6 Sistem Klavyesi Seçeneği (Rev. 4)
+Kullanıcı tercihine göre Ayarlar ekranından "Telefon Klavyesi" seçilebilir (`be:settings` altında `keyboard: 'system'`).
+- **Görsel Tasarım:** Harf tuşları gizlenir; yerine kompakt bir eylem çubuğu `[PAS] ... [GÖNDER]` gösterilir (bonusta PAS pasif/gizli).
+- **Gizli Input & Odak:** `position: fixed`, `fontSize: 16px` (iOS otomatik zoom engeli), `autoCapitalize="none"`, `autoCorrect="off"`, `spellCheck={false}`, `enterKeyHint="send"`.
+- **Girdi Filtresi:** `inputSanitize` ile Türkçe küçük harfe çevrilir (I→ı, İ→i), şapkalı harfler normalize edilir (â→a, î→i, û→u), q/w/x ve geçersiz karakterler ayıklanır.
+- **visualViewport Uyumu:** Mobil sistem klavyesi açıldığında `window.visualViewport.height` dinlenerek ekran ve tahta boyutları (`calculateTileSize`) dinamik olarak daralır; kaydırmasız taşma engellenir.
+- **BİL Butonu & Tahta Dokunması:** BİL'e basıldığında veya tahtaya dokunulduğunda gizli input'a odaklanılarak sistem klavyesi anında açılır.
 
 ## 10. PAS
 

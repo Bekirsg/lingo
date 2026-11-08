@@ -1,345 +1,39 @@
 [
   {
-    "w": "çocukça",
+    "w": "sefil",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "sakince",
     "cefr": "B2",
     "guven": 2,
     "gerekce": "Genel soyut veya medya dili sözcüğü."
   },
   {
-    "w": "defa",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
+    "w": "itici",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
   },
   {
-    "w": "kanı",
+    "w": "eyleme",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "evvel",
     "cefr": "A2",
     "guven": 2,
     "gerekce": "Günlük yaşam ve rutin kelimesi."
   },
   {
-    "w": "normal",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "kurum",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "cinsiyet",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "çanta",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "giyim",
+    "w": "yüklü",
     "cefr": "B1",
     "guven": 2,
     "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "bozulma",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "kahraman",
-    "cefr": "A2",
-    "guven": 2,
-    "gerekce": "Günlük yaşam ve rutin kelimesi."
-  },
-  {
-    "w": "fark",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "sportif",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "erişim",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "harita",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "reçel",
-    "cefr": "A2",
-    "guven": 2,
-    "gerekce": "Günlük yaşam ve rutin kelimesi."
-  },
-  {
-    "w": "paha",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "küçük",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "çatlak",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "akşama",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "mekik",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "bağlama",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "niyetli",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "keşiş",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "kaymak",
-    "cefr": "A2",
-    "guven": 2,
-    "gerekce": "Günlük yaşam ve rutin kelimesi."
-  },
-  {
-    "w": "ezik",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "sanat",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "tutum",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "gizlemek",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "kontak",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "haraç",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "ayrıntı",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "doğum",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "nine",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "şebeke",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "delta",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "başlıca",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "kemer",
-    "cefr": "A2",
-    "guven": 2,
-    "gerekce": "Günlük yaşam ve rutin kelimesi."
-  },
-  {
-    "w": "emmek",
-    "cefr": "A2",
-    "guven": 2,
-    "gerekce": "Günlük yaşam ve rutin kelimesi."
-  },
-  {
-    "w": "çığlık",
-    "cefr": "A2",
-    "guven": 2,
-    "gerekce": "Günlük yaşam ve rutin kelimesi."
-  },
-  {
-    "w": "baskı",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "ayrılma",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "dahil",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "kaşık",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "kontrat",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "anayasa",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "korsan",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "komşu",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "tekstil",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "donma",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "kısıtlı",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "dönüşmek",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "küçücük",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "kalkmak",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "ciğer",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "kesmek",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "iftira",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "leke",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
   },
   {
     "w": "kurbağa",
@@ -348,135 +42,441 @@
     "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
   },
   {
-    "w": "panda",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "köşe",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "yarış",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "ölümüne",
+    "w": "direktör",
     "cefr": "A2",
     "guven": 2,
     "gerekce": "Günlük yaşam ve rutin kelimesi."
   },
   {
-    "w": "gözlük",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "cephe",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "parazit",
-    "cefr": "B2",
-    "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
-  },
-  {
-    "w": "özgür",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "uçuk",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "samsun",
-    "cefr": "B1",
-    "guven": 2,
-    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
-  },
-  {
-    "w": "barda",
+    "w": "düzelmek",
     "cefr": "A2",
     "guven": 2,
     "gerekce": "Günlük yaşam ve rutin kelimesi."
   },
   {
-    "w": "şarkı",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "nezaket",
+    "w": "soytarı",
     "cefr": "B2",
     "guven": 2,
     "gerekce": "Genel soyut veya medya dili sözcüğü."
   },
   {
-    "w": "ebedi",
-    "cefr": "B2",
+    "w": "lisans",
+    "cefr": "B1",
     "guven": 2,
-    "gerekce": "Genel soyut veya medya dili sözcüğü."
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
   },
   {
-    "w": "bitirmek",
+    "w": "zemin",
     "cefr": "A1",
     "guven": 3,
     "gerekce": "Temel günlük kelime ve yüksek frekans."
   },
   {
-    "w": "moda",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "taşımak",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "veda",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "izlemek",
-    "cefr": "A1",
-    "guven": 3,
-    "gerekce": "Temel günlük kelime ve yüksek frekans."
-  },
-  {
-    "w": "minik",
+    "w": "karmaşık",
     "cefr": "A2",
     "guven": 2,
     "gerekce": "Günlük yaşam ve rutin kelimesi."
   },
   {
-    "w": "kuşku",
+    "w": "yiyecek",
     "cefr": "A1",
     "guven": 3,
     "gerekce": "Temel günlük kelime ve yüksek frekans."
   },
   {
-    "w": "sersem",
+    "w": "sonra",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "destek",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "tilki",
     "cefr": "B1",
     "guven": 2,
     "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "kırılma",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "menü",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "amca",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "talih",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "için",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "engelli",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "yarar",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "iksir",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "papel",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "gelişim",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "bileşik",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "ipekçi",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "bakma",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "bayan",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "örnek",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "aşmak",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "reis",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "ödev",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "bardak",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "uzatmak",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "ateş",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "stres",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "paten",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "bunca",
+    "cefr": "A2",
+    "guven": 2,
+    "gerekce": "Günlük yaşam ve rutin kelimesi."
+  },
+  {
+    "w": "kötülük",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "sevimli",
+    "cefr": "A2",
+    "guven": 2,
+    "gerekce": "Günlük yaşam ve rutin kelimesi."
+  },
+  {
+    "w": "slogan",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "pürüzsüz",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "kuruma",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "dilemek",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "gövde",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "önceleri",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "donma",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "bile",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "gelenek",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "gözlem",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "muhbir",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "hemen",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "kıymet",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "sınırlı",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "tanıdık",
+    "cefr": "A2",
+    "guven": 2,
+    "gerekce": "Günlük yaşam ve rutin kelimesi."
+  },
+  {
+    "w": "öyle",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "deneme",
+    "cefr": "A2",
+    "guven": 2,
+    "gerekce": "Günlük yaşam ve rutin kelimesi."
+  },
+  {
+    "w": "reçete",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "ayırt",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "tabut",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "flora",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "stajyer",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "seyahat",
+    "cefr": "A2",
+    "guven": 2,
+    "gerekce": "Günlük yaşam ve rutin kelimesi."
+  },
+  {
+    "w": "faiz",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "tahmini",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "sonuncu",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "zengin",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "amber",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "atılgan",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "iflas",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "doymak",
+    "cefr": "A2",
+    "guven": 2,
+    "gerekce": "Günlük yaşam ve rutin kelimesi."
+  },
+  {
+    "w": "tutam",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "veri",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "mala",
+    "cefr": "B2",
+    "guven": 2,
+    "gerekce": "Genel soyut veya medya dili sözcüğü."
+  },
+  {
+    "w": "doksan",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
+  },
+  {
+    "w": "manzara",
+    "cefr": "B1",
+    "guven": 2,
+    "gerekce": "Bağımsız kullanım ve yaygın soyut kavram."
+  },
+  {
+    "w": "zorun",
+    "cefr": "A1",
+    "guven": 3,
+    "gerekce": "Temel günlük kelime ve yüksek frekans."
   }
 ]

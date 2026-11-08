@@ -9,7 +9,7 @@ abli;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 abra;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 abuk;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 abus;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
-acar;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+acar;4;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 acem;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acep;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acil;4;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
@@ -35,7 +35,7 @@ adaş;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adat;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aday;4;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 adcı;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
-adem;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+adem;4;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 adet;4;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 adıl;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adım;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -570,7 +570,7 @@ elçi;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 elde;4;B1;orta;2;cikarim;Uzmanlık terimi kuralı gereği orta seviye.
 elek;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 elem;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-elif;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+elif;4;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 elik;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 elim;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 elit;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -675,7 +675,7 @@ fare;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 fark;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 fars;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 farz;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-faul;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+faul;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 fava;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 feci;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 feda;4;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
@@ -690,7 +690,7 @@ fevç;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fevk;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fevt;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 feza;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
-fıçı;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+fıçı;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 fırt;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fide;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fiil;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -867,7 +867,7 @@ huşu;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıska;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ışık;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 ışıl;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ışın;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ışın;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ışkı;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıtır;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıtri;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -998,7 +998,7 @@ izam;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izan;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izaz;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izbe;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
-izci;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+izci;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 izge;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izin;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 jale;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -1337,7 +1337,7 @@ odak;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 odun;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 ofis;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 oğul;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-oğuz;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+oğuz;4;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 ojit;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 okar;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 okçu;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -1496,7 +1496,7 @@ pire;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pisi;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 pist;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 pişi;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
-plaj;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+plaj;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 plak;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 plan;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 polo;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -1515,7 +1515,7 @@ punç;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 punt;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pupa;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 puro;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
-pusu;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+pusu;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 puşt;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 püre;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 raca;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -1904,7 +1904,7 @@ uygu;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyku;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 uyma;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyum;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-uyur;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uyur;4;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 uyuz;4;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 uzak;4;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 uzam;4;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2230,7 +2230,7 @@ anlak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anlam;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 anlık;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 anmak;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
-anons;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+anons;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ansız;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anten;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 antet;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2373,7 +2373,7 @@ azgın;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 azılı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 azize;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 azlık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-azmak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+azmak;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 azman;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aznif;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 azoik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2381,7 +2381,7 @@ azvay;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 babaç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 babet;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 babun;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bacak;5;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+bacak;5;B1;orta;2;cikarim;Uzmanlık terimi kuralı gereği orta seviye.
 baççı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baçlı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 badal;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2495,7 +2495,7 @@ baton;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 batur;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bavcı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bavlı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bavul;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bavul;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bayan;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 bayat;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bayır;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2629,7 +2629,7 @@ bitek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bitey;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bitik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bitim;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bitiş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bitiş;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bitki;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 bitli;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bitme;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2711,7 +2711,7 @@ bulgu;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 bulma;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 buluş;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 bulut;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-bunak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bunak;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bunca;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 bunlu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bunma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -2729,7 +2729,7 @@ buyot;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 buzcu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 buzla;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 buzlu;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-buzul;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+buzul;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bücür;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 büğet;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 büğlü;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -3228,7 +3228,7 @@ direy;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 diriğ;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 diril;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dirim;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-disko;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+disko;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 dişçi;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 dişil;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dişli;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -3280,7 +3280,7 @@ donra;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 donuk;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 donut;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dorse;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-doruk;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+doruk;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 dorum;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dosya;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 doygu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -3379,7 +3379,7 @@ düven;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düver;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düyek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düyun;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-düzce;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+düzce;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 düzeç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düzem;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düzen;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -3456,7 +3456,7 @@ emici;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 emlak;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 emlik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 emmeç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-emmek;5;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+emmek;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 emoji;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 emraz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 emsal;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -3494,7 +3494,7 @@ ergin;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 erika;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 erime;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 erinç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-erkan;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+erkan;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 erkeç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 erkek;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 erken;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -3591,7 +3591,7 @@ ezgiç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ezgin;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ezici;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ezinç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ezmek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ezmek;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 facia;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fagot;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fahiş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -3703,7 +3703,7 @@ fiyat;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 fizik;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 flama;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fleol;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-flora;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+flora;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 flori;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 flöre;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 flört;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -3797,7 +3797,7 @@ gelen;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 gelim;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gelin;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 gelir;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-geliş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+geliş;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 gelme;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 gemre;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 genel;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -3857,7 +3857,7 @@ gofre;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 golcü;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 gollü;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gonca;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-goril;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+goril;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 göbek;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 göbel;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 göbüt;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -3979,7 +3979,7 @@ hafta;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 haham;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 hahha;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 haile;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-hakan;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
+hakan;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 hakça;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hakem;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 hakim;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
@@ -4155,7 +4155,7 @@ hilti;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hilye;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 himen;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hindi;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-hippi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+hippi;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 hisar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hisçe;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hisli;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4205,7 +4205,7 @@ hücum;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 hükmi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hüküm;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 hülle;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-hülya;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+hülya;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 hüner;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hünsa;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hürle;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4228,7 +4228,7 @@ hüzün;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıskat;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıslah;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıslak;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-ıslık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ıslık;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ısrar;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 ıssız;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ıstar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4295,7 +4295,7 @@ ihmal;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 ihraç;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ihram;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ihraz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ihsan;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+ihsan;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 ihsas;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ihtar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ihvan;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4324,7 +4324,7 @@ ileti;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ilgeç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ilhak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ilham;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-ilhan;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+ilhan;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 ilkah;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ilkel;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ilkin;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4372,7 +4372,7 @@ iptal;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 ipucu;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 irade;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 iradi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-irfan;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+irfan;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 irice;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 irite;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 irkme;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4423,10 +4423,10 @@ itina;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 itlaf;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 itlik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 itmam;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-itmek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+itmek;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ivedi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ivesi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ivmek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ivmek;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 iyice;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 izabe;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izafe;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4437,7 +4437,7 @@ izlek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izlem;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izlev;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 izole;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
-izzet;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+izzet;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 jakar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 janti;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 jarse;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4524,7 +4524,7 @@ kamga;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kamış;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kamil;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kamus;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kanal;5;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+kanal;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 kanat;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 kanca;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kanık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4548,7 +4548,7 @@ kaput;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kapuz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karaf;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karar;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
-karga;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+karga;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kargı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kargo;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 karha;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4629,7 +4629,7 @@ kazan;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kazaz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kazık;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kazıl;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kazım;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+kazım;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 kazma;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kebap;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 kebir;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4669,7 +4669,7 @@ kepez;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kepir;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kepme;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kerde;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kerem;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+kerem;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 keres;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kerih;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kerim;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -4681,7 +4681,7 @@ kesat;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kesbi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kesek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kesel;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kesen;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kesen;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 keser;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kesif;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kesik;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -4742,7 +4742,7 @@ kısış;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kısıt;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıska;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıskı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kısma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kısma;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kısmi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıssa;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kışın;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
@@ -4884,7 +4884,7 @@ koşut;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kotan;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 koton;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kotra;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kovan;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kovan;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kovcu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kovma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kovuk;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -5427,7 +5427,7 @@ mumcu;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 mumlu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mumya;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 munis;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-murat;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
+murat;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 muris;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 musap;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 musır;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -5453,7 +5453,7 @@ mühre;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mühür;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 müjde;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mülga;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-mülki;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+mülki;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mümas;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mümin;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 münşi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -5479,7 +5479,7 @@ nahak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nahır;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nahif;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nahiv;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-nahoş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+nahoş;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 nakdi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nakıs;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nakış;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -5511,7 +5511,7 @@ natuk;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 natür;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nazal;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nazar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-nazım;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+nazım;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 nazır;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nazik;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 nazil;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -5557,7 +5557,7 @@ nısıf;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nicel;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 niçin;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 nifak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-nihai;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+nihai;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 nihan;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 nikah;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 nikap;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -5727,7 +5727,7 @@ ozuga;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 övücü;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 övünç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 özdek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-özden;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+özden;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 özdeş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 özeme;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 özenç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6042,7 +6042,7 @@ sabur;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saçak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saçık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saçış;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-saçlı;5;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+saçlı;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 saçma;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 sadak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sadet;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6148,7 +6148,7 @@ saten;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sathi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 satıh;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 satım;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-satır;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+satır;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 satış;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 satir;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 satma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6211,7 +6211,7 @@ selam;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 selef;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 selek;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 selen;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-selim;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+selim;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 selis;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 selva;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 selvi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6293,7 +6293,7 @@ sırık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sırım;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sırlı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sırma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sıska;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sıska;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sıtma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıvat;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıvık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6306,7 +6306,7 @@ siber;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sibop;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sicil;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sicim;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sidik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sidik;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sifin;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sifon;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sigar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6338,7 +6338,7 @@ siper;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sipsi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 siren;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 siret;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sirke;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sirke;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sirmo;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 siroz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sirto;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6375,7 +6375,7 @@ soloz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 soluk;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 soluş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 somak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-somon;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+somon;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 somun;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 somut;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 somya;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6501,7 +6501,7 @@ sürme;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sürre;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sürur;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sürüm;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sürüş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sürüş;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 süsen;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 süslü;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 süsme;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6577,7 +6577,7 @@ süzüş;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şeran;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şeref;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 şerha;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-şerif;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+şerif;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 şerik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şerir;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şerit;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -6855,7 +6855,7 @@ tiriz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tirle;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tirsi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tirşe;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-titan;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+titan;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 titiz;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tohum;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 tokaç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -6863,14 +6863,14 @@ tokat;5;A1;kolay;3;kaynakli;Çekirdek CEFR A1 çapa kuralı.
 toklu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tokuz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tokyo;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-tolga;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+tolga;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 tomak;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 tomar;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonaj;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 toner;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonga;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonik;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-tonla;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+tonla;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tonlu;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonoz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 topaç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7006,7 +7006,7 @@ ulema;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ulufe;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uluma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 umacı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ummak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ummak;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 umman;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 umumi;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 unluk;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7029,7 +7029,7 @@ uymak;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 uymaz;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyruk;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uysal;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-uyuma;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uyuma;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 uzama;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uzlet;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uzluk;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7152,7 +7152,7 @@ virüs;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 visal;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 viski;5;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 vişne;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-vites;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+vites;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 vitir;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 viyak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 viyol;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7207,7 +7207,7 @@ yalız;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalpa;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalpı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yamaç;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yamak;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yamak;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yaman;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yamçı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yamuk;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -7267,7 +7267,7 @@ yavaş;5;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 yaver;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yavru;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yavsı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yavuz;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+yavuz;5;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 yayan;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yaygı;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yayık;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7404,7 +7404,7 @@ yürük;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüsrü;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüzde;5;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 yüzer;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yüzey;5;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yüzey;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yüzlü;5;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yüzme;5;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yüzük;5;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
@@ -7520,7 +7520,7 @@ acıkış;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acıklı;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 acıkma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acılık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-acımak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+acımak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 acımık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acımsı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acınış;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7551,7 +7551,7 @@ adacyo;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adaklı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adalat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adalet;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-adamak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+adamak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 adamca;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adamcı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 adanış;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7659,7 +7659,7 @@ alakok;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alamet;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alamot;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alarga;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-alarma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+alarma;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 alaşım;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alatav;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alaten;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -7845,7 +7845,7 @@ armoni;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 armudi;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 arnika;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 arpacı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-arslan;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+arslan;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 artçıl;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 artist;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 artmak;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
@@ -8037,7 +8037,7 @@ balena;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 balgam;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 balici;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 balina;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-balkan;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+balkan;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 balkır;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 balkon;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 ballık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8051,7 +8051,7 @@ bandaj;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 banker;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 banket;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bankiz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-banmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+banmak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 baobap;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baraka;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 barata;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8101,7 +8101,7 @@ batıcı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 batılı;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 batıni;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 batkın;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-batmak;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+batmak;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 batman;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 batsat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 battal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8110,7 +8110,7 @@ bayağı;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 bayatı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bayati;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baygın;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-baykuş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+baykuş;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 baylan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baymak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baypas;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8161,7 +8161,7 @@ benzin;6;B1;orta;2;cikarim;Uzmanlık terimi kuralı gereği orta seviye.
 benzol;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 beraat;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 berbat;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
-berber;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+berber;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 berdel;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 berduş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bereli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8211,7 +8211,7 @@ bileme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bilgiç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bilgin;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bilici;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bilinç;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+bilinç;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 billur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bilmek;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 bilmez;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -8254,7 +8254,7 @@ bodrum;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 boğada;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 boğası;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 boğata;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-boğmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+boğmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 boğucu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 boğunç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bokluk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8356,7 +8356,7 @@ buralı;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 burası;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 burçak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 burgaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-burhan;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+burhan;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 burkma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 burkuk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 burmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8485,7 +8485,7 @@ cinsel;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 cismen;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 civciv;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 cizvit;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-coşkun;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+coşkun;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 coşmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 cömert;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 cumbul;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8568,7 +8568,7 @@ cüzzam;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çekmen;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çekpas;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çekyat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-çelebi;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+çelebi;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 çelenk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çelmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çelmik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8748,13 +8748,13 @@ dehliz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dehşet;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 dejavu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dekont;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dekore;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dekore;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 delege;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 delgeç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 delgiç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 delice;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 delici;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-delmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+delmek;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 demevi;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 demiri;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 demkeş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8791,7 +8791,7 @@ despot;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dessas;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 destan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 destar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-destek;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+destek;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 destur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 deşarj;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 deşmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8837,7 +8837,7 @@ dilmaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dilmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dilotu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dilsel;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dilsiz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dilsiz;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 dimdik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dimmer;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dimnit;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -8985,7 +8985,7 @@ düziko;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düzine;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 düzlem;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düzlük;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-düzmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+düzmek;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ebabil;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ebelik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ebesiz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9097,7 +9097,7 @@ endeks;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 endişe;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 enemek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 enenme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-enerji;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+enerji;6;B1;orta;2;cikarim;Uzmanlık terimi kuralı gereği orta seviye.
 enfiye;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 enfüsi;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 engebe;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9119,11 +9119,11 @@ ergene;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ergime;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 erigen;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eriksi;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-erimek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+erimek;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 erinme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 erişim;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 erişme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-erişte;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+erişte;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 eriten;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eritiş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eritme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9232,7 +9232,7 @@ fasile;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fasone;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fassal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 faşing;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-faşist;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+faşist;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 faşizm;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fatura;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 faullü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9589,7 +9589,7 @@ hamlaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hamlık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hamsin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hamule;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-hançer;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+hançer;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 handan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 haneli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hangar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9602,7 +9602,7 @@ haranı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 haraşo;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 haraza;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 harçlı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-hardal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+hardal;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 hareke;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hareki;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hareli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9705,7 +9705,7 @@ hidrür;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hijyen;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hikaye;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 hikemi;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-hikmet;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+hikmet;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 hilali;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hileci;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hileli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -9967,7 +9967,7 @@ istila;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 istiva;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 işaret;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 işbaşı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-işemek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+işemek;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 işetme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 işeyiş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 işitim;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10107,7 +10107,7 @@ kanaat;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kanama;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kanara;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kanata;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kancık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kancık;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kancıl;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kancur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kandaş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10115,7 +10115,7 @@ kandil;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kanepe;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kangal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kankan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kanmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kanmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kanser;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kansız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kantar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10197,7 +10197,7 @@ kaside;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaskat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kasket;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaslan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kasmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kasmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kasnak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kassıl;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kassız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10237,7 +10237,7 @@ kavrak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kavram;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 kavruk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kavşak;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-kaygan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kaygan;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kaygın;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kayısı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaykaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10478,7 +10478,7 @@ konkav;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 konken;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 konkre;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 konkur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-konmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+konmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 konser;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 konsey;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 konsol;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10492,8 +10492,8 @@ kontur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 konulu;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 konuşu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 konvoy;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-konyak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kopmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+konyak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+kopmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kordon;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 korida;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 korist;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10564,7 +10564,7 @@ krepon;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kreten;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kreton;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 krezol;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kriket;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kriket;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kripto;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kriter;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kritik;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -10614,7 +10614,7 @@ kurulu;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 kuruma;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kuskun;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kuskus;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kusmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kusmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kusmuk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kuşane;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kuşbaz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10719,7 +10719,7 @@ leopar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 lerzan;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 leşçil;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 leşker;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-levent;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+levent;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 levrek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 leylak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 leylek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10788,7 +10788,7 @@ mağrur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mağşuş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahbes;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahbup;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-mahcup;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+mahcup;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 mahcur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahcuz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahdum;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10797,7 +10797,7 @@ mahfil;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahfuz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahiye;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahkuk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-mahkum;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+mahkum;6;B1;orta;2;cikarim;Uzmanlık terimi kuralı gereği orta seviye.
 mahlas;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahlep;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mahluk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -10883,7 +10883,7 @@ market;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 markiz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 markka;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 markör;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-marley;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+marley;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 marpuç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 marsık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 martin;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
@@ -10974,7 +10974,7 @@ melike;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 melisa;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 melodi;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 meltem;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-memeli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+memeli;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 memluk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 memnun;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 memure;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -11081,7 +11081,7 @@ mışmış;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mızıka;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mızıma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mızmız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-mızrak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+mızrak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 mızrap;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mibzer;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mideci;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -11127,7 +11127,7 @@ misina;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 miskal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 misket;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 miskin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-mistik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+mistik;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 misvak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 misyon;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 miting;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
@@ -11661,7 +11661,7 @@ payton;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pazılı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pazval;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 peçeli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-peçete;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+peçete;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 pehpeh;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pekala;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 pekent;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -11737,7 +11737,7 @@ piston;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pişdar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pişkin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pişman;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-pişmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+pişmek;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 piştov;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pitaya;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 piyade;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -11767,7 +11767,7 @@ poliçe;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pomelo;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 pompaj;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ponçik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ponpon;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ponpon;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ponton;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 poplin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 porfir;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -11940,7 +11940,7 @@ sabıka;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sabite;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sabote;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sabura;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-saçmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+saçmak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 saçsız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saçula;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sadaka;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -11974,14 +11974,14 @@ salata;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 salgın;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 salise;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 salkım;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-salmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+salmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 salpak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saltçı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saltık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 samani;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 samiin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 samimi;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-samsun;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+samsun;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 sanayi;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 sancak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sançma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -11999,7 +11999,7 @@ santur;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sapçık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sapınç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sapkın;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sapmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sapmak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sapsız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saraka;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 saralı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12112,7 +12112,7 @@ serçin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 serdar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sergen;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sergin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-serhat;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+serhat;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 serian;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 serili;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 serkeş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12130,7 +12130,7 @@ seryum;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sesçil;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 seslem;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 seslik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sessiz;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+sessiz;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 sesteş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 setliç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sevici;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12144,12 +12144,12 @@ seyyah;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 seyyal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 seyyar;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 seyyie;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sezmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sezmek;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sezyum;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sfenks;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıçmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sığlık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sığmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sığmak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sıhhat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıkıca;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sıkıcı;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
@@ -12157,7 +12157,7 @@ sıkkın;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıklet;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıklık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıkmaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sıkmak;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+sıkmak;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 sılacı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sınaat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sınama;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12179,13 +12179,13 @@ sıyrık;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sızgıt;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sızıcı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sızılı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sızmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sızmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 siesta;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 siftah;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sigala;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sigara;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 siklon;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sikmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sikmek;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 silgeç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 silgiç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 silkme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12212,7 +12212,7 @@ sirken;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 siroko;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sirrus;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sismik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sistem;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+sistem;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 sistit;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sistol;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sivriç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12272,10 +12272,10 @@ soymak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 soymuk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 soysal;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 soysuz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sökmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sökmek;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sölpük;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sömürü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sönmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sönmek;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sörfçü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sövmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sövücü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12375,7 +12375,7 @@ süzgün;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 süzmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 süzücü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şablon;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-şahane;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+şahane;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 şahbaz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şahika;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şahlık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12482,7 +12482,7 @@ süzücü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şişkin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şişlik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şişman;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
-şişmek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+şişmek;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 şiveli;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şizoit;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 şlempe;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12887,7 +12887,7 @@ titrek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 titrem;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tokalı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tokluk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-tokmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+tokmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 toksik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 toksin;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tolere;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -12900,7 +12900,7 @@ tomruk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonluk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonsuz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonton;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-topbaş;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
+topbaş;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 toplaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 toplam;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 toplum;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -12955,7 +12955,7 @@ tulyum;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tumağı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tumşuk;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tundra;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-turgay;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+turgay;6;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 turgor;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 turist;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 turizm;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
@@ -12969,7 +12969,7 @@ tutmaç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tutmak;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 tutsak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tutsat;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-tutucu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+tutucu;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tutulu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tuzcul;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tuzlak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13062,7 +13062,7 @@ usulca;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 usulen;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 usulet;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 utanış;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-utanma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+utanma;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 uterus;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 utkulu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 utulma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13097,7 +13097,7 @@ uyutum;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyuyuş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyuzlu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uzakça;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-uzamak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uzamak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 uzanım;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uzanış;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uzanma;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13127,7 +13127,7 @@ uzuvca;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üniter;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ünleme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ünlülü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-üremek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+üremek;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 üremik;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üreteç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üretim;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
@@ -13151,7 +13151,7 @@ uzuvca;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üstüpü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üşeniş;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üşenme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-üşümek;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+üşümek;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 üşüntü;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üşürme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 üşüşme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13257,7 +13257,7 @@ vükela;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 vüzera;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yabani;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yağlık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yağmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yağmak;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yağmur;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 yağrın;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yağsız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13276,7 +13276,7 @@ yalgın;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalınç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yallah;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalman;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yalnız;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+yalnız;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 yalpak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalpık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yaltak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13292,7 +13292,7 @@ yandık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yangın;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 yanıcı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yanlık;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yanlış;6;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+yanlış;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 yanmak;6;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 yanmaz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yansız;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13430,7 +13430,7 @@ yummak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yumruk;6;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 yumulu;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yunmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yutmak;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yutmak;6;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yuvalı;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüğrük;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüklem;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13443,7 +13443,7 @@ yülüme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yünsüz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yürüme;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüzgeç;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yüzler;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yüzler;6;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yüzlük;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüzmek;6;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 yüzsüz;6;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13553,9 +13553,9 @@ acarlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aceleci;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 acemice;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acıkara;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-acıkmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+acıkmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 acınmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-acıtmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+acıtmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 acillik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acizane;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 acizlik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13837,7 +13837,7 @@ ampirik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anaçlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anaerki;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anagram;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-anahtar;7;A1;kolay;3;kaynakli;Çekirdek CEFR A1 çapa kuralı.
+anahtar;7;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 analist;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 analoji;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anamnez;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13860,7 +13860,7 @@ aneroit;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 angarya;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 angutça;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anıklık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-anılmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+anılmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 anırmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anırtma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 anıtsal;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -13931,7 +13931,7 @@ araçsız;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 arakiye;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aralama;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aranjör;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-aranmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+aranmak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 araşmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aratmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 arayıcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14003,7 +14003,7 @@ asansör;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 aseptik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 asıklık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 asıllık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-asılmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+asılmak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 asılsız;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 asırlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 asilane;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14053,7 +14053,7 @@ aşkıncı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aştırma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ataerki;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ataklık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-atanmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+atanmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 atanmış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atasözü;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atavizm;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14068,7 +14068,7 @@ atfetme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atılgan;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 atılmak;7;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 atımlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-atışmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+atışmak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 atiklik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atlamak;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 atlanma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14083,7 +14083,7 @@ avallık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 avantaj;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 avantür;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 avcılık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-avlamak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+avlamak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 avlanış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 avlanma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 avlatma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14110,7 +14110,7 @@ aydınca;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayetlik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayıklık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayıkmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ayılmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ayılmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ayıltma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayıpsız;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayırıcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14232,7 +14232,7 @@ bakışma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bakilik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baklalı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 baklava;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bakteri;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bakteri;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 balaban;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 balalık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 balerin;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14423,7 +14423,7 @@ beyanat;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 beyazlı;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 beybaba;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 beyhude;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-beyinli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+beyinli;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 beyinsi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 beyitli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 beyyine;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14432,7 +14432,7 @@ beyzbol;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bezdiri;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bezekçi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bezekli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bezelye;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bezelye;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bezemek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bezeniş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bezenme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14481,7 +14481,7 @@ bilecen;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bilemek;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 bileniş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bilenme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bilerek;7;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+bilerek;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 bileşen;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bileşik;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bileşim;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14521,7 +14521,7 @@ biperva;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 birader;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 biralık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 birbiri;7;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-birçoğu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+birçoğu;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 birebir;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 birerli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bireşim;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14616,7 +14616,7 @@ bozalık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bozarık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bozarış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bozarma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bozkurt;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+bozkurt;7;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 bozlama;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bozmacı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bozukça;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -14677,10 +14677,10 @@ bulanma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bulantı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bulaşık;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bulaşlı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bulaşma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bulaşma;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bulatma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bulgari;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bulmaca;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bulmaca;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bulunak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bulunma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 buluntu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15131,7 +15131,7 @@ cüsseli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çözünme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çözüntü;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çözüşme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-çubukçu;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+çubukçu;7;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 çubuklu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çuhadar;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çuhasız;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15142,7 +15142,7 @@ cüsseli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çuvallı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çünkülü;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çürüklü;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-çürümek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+çürümek;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 çürütme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çürütüş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çürüyüş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15300,7 +15300,7 @@ denilme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 denizci;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 denklem;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 denklik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-denktaş;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+denktaş;7;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 deplase;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 depozit;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 depreme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15397,7 +15397,7 @@ dinçlik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dinelme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dinleme;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 dinleti;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dinozor;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dinozor;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 dipdinç;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dipdiri;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dipfriz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15561,7 +15561,7 @@ dövülme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dövülüş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dövünme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dövünüş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dövüşçü;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dövüşçü;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 dövüşme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 drahoma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dretnot;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15866,7 +15866,7 @@ esirmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eskalop;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eskicil;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eskiden;7;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
-eskiler;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+eskiler;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 eskilik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eskimek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eskimsi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -15959,8 +15959,8 @@ ezgince;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ezgisel;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eziklik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ezilgen;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ezilmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ezilmiş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ezilmek;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+ezilmiş;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ezimevi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ezofori;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 faallik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16011,7 +16011,7 @@ fenalık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fenerci;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fenerli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fenomen;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-feragat;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+feragat;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ferahlı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 feraset;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ferdası;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16179,7 +16179,7 @@ gecikiş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gecikme;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 geçende;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 geçenek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-geçerli;7;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+geçerli;7;B1;orta;2;cikarim;Uzmanlık terimi kuralı gereği orta seviye.
 geçiliş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 geçilme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 geçimli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16406,7 +16406,7 @@ günaşık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 günberi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 güneğik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 güneşli;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
-güneyli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+güneyli;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 günindi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 günleme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 güreşçi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16607,7 +16607,7 @@ hicviye;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hiçbiri;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 hiçleme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hidatit;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-hidayet;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+hidayet;7;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 hilafet;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hilebaz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hilekar;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16705,7 +16705,7 @@ hüzünlü;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ısırgan;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ısırgın;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ısırıcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ısırmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ısırmak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ısırtma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ısıtıcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ısıtmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16721,7 +16721,7 @@ hüzünlü;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ıslıklı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıspanak;7;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 ıspavli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ısrarcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ısrarcı;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ısrarlı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıssızca;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ıstakoz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -16842,7 +16842,7 @@ ilerici;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ileride;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 ilerlek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 iletken;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-iletmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+iletmek;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ilgeçli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ilgisiz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 iliksiz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -17139,7 +17139,7 @@ kabahat;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabakçı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabalak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabalık;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-kabarık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kabarık;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kabarış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabarma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabartı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -17149,14 +17149,14 @@ kablolu;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kabotaj;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabuklu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kabuksu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kaburga;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kaburga;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kabuslu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaçakaç;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaçakçı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaçamak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kaçıkça;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaçılma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kaçıncı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kaçıncı;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kaçınık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaçınış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaçınma;7;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -17224,7 +17224,7 @@ kaleska;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kalgıma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kalhane;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kalımlı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kalınca;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kalınca;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kalınma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kalıntı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kalıpçı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -17263,7 +17263,7 @@ kamuoyu;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kamusal;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kamutay;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kanalet;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kanamak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kanamak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kanarya;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kanasta;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kanatış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -17327,7 +17327,7 @@ karakuş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karalık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karaltı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karamak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-karaman;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+karaman;7;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 karamel;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karamsı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karamuk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -17972,7 +17972,7 @@ kurtsuz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kurulma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kuruluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kuruluş;7;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
-kurumak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kurumak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kurumlu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kuruntu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kurutaç;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -18302,7 +18302,7 @@ megapol;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 megaton;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 megavat;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 meğerki;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-meğerse;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+meğerse;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 mehabet;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mekancı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mekanik;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -18569,7 +18569,7 @@ mücamaa;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mücavir;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mücazat;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mücella;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-müdafaa;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+müdafaa;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 müdahil;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 müdavim;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 müdrike;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -18952,8 +18952,8 @@ oyunluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ozanlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 öçlenme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ödemeli;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
-ödenmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ödeşmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ödenmek;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+ödeşmek;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ödetmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ödevcil;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ödlekçe;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -19008,10 +19008,10 @@ ozanlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 önceden;7;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 öncelik;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 öncesiz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-öncülük;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+öncülük;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 öndelik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 önemsiz;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
-önermek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+önermek;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 öngörme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 önlemek;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 önleniş;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -19022,7 +19022,7 @@ ozanlık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 önünden;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 öptürme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 öpülmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-öpüşmek;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+öpüşmek;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ördürme;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 örenlik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 örgüsüz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -19265,7 +19265,7 @@ popüler;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 pornocu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 porsuma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 portföy;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-portmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+portmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 posasız;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 postacı;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 postane;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -19482,7 +19482,7 @@ sakırtı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sakızcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sakızlı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sakince;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
-saklama;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+saklama;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 salabet;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 salacak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 salakça;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
@@ -19962,7 +19962,7 @@ suölçer;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 suratlı;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sureten;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 surname;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-susamak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+susamak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 susamlı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 susamsı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 susatma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -20312,7 +20312,7 @@ tarihçe;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tarihçi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tarihen;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tarihli;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-tarikat;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+tarikat;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tartıcı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tartılı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tartmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -20389,7 +20389,7 @@ tecrübi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tecziye;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tedafüi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tedahül;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-tedarik;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+tedarik;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tedavül;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tedenni;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tedrici;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -20739,7 +20739,7 @@ uğruluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uğrunda;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uğunmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uğurluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-uğursuz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uğursuz;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 uhuvvet;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ukalaca;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ukulele;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -20767,7 +20767,7 @@ urbasız;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 urgancı;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 urlaşma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 usangın;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-usanmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+usanmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 usareli;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 usçuluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uskumru;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -20783,7 +20783,7 @@ usulsüz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uşaklık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 utangaç;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 utangan;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-utanmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+utanmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 utanmaz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 utçuluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 utulmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -20813,7 +20813,7 @@ uyumsal;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyumsuz;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyunmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyuşkan;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-uyuşmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uyuşmak;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 uyutmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyutucu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyuzluk;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21161,7 +21161,7 @@ yavaşça;7;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 yavuklu;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yavuzca;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yayalık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yaygara;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yaygara;7;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yayılım;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yayılış;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yayılma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21281,7 +21281,7 @@ yırlama;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yırtıcı;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yırtlak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yırtmaç;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yırtmak;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yırtmak;7;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yıvışık;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yıvışma;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yiğitçe;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21448,7 +21448,7 @@ zülüflü;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 zümrüdi;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 züppece;7;UST;zor;1;cikarim;Listede yok, varsayılan zor
 abandone;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-abartmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+abartmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 abdiaciz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 abıhayat;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 açıkağız;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21495,7 +21495,7 @@ alçaklık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alçalmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aldangıç;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aldanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-aldatmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+aldatmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 aldırmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 alelusul;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 aleyhtar;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21562,12 +21562,12 @@ ataerkil;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atfetmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atgiller;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 atıcılık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-atlanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+atlanmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 atlatmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 atmosfer;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 avantacı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 avantalı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-avlanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+avlanmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ayakaltı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayaküstü;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ayartmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21643,7 +21643,7 @@ başvezir;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 başyaver;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bataklık;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 baterici;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-batırmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+batırmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 batisfer;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 batiskaf;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bavlımak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21659,7 +21659,7 @@ bediiyat;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 beğenmek;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 beklemek;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 belediye;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-belirmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+belirmek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 belirsiz;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 belirtke;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 belleten;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21707,7 +21707,7 @@ birtakım;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bisiklet;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bisülfür;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bitirmek;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
-bitirmiş;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bitirmiş;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 bitişmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 biyaprak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 biyosfer;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21715,11 +21715,11 @@ biyoşimi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bizlemek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 blastula;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 blokajlı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-boğulmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+boğulmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 boğuşmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 boklamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bonmarşe;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-boşalmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+boşalmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 boşanmak;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 boşboğaz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 boşlamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21739,7 +21739,7 @@ börkenek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 brovning;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 buhurluk;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bukağılı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-bulanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+bulanmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 bulaşkan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 bulaşmak;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 buldozer;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21850,7 +21850,7 @@ cüssesiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çırpıntı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çıtçıtçı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çiçeklik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-çiğnemek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+çiğnemek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 çikolata;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 çintiyan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çirkefli;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21872,7 +21872,7 @@ cüssesiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çömelmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çömezlik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çöpçatan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-çözülmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+çözülmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 çözümler;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 çözüşmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çullamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21881,7 +21881,7 @@ cüssesiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 çürütmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dadanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dağarcık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dağılmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dağılmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 dağıtıcı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dağıtmak;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 dağlamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -21972,7 +21972,7 @@ didinmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 didişmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dikbaşlı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dikensiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dikilmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dikilmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 diksiyon;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 diktafon;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 diktatör;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22000,10 +22000,10 @@ dizilmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 doğramak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 doğrudan;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 doğruluk;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
-doğurmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+doğurmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 doğurucu;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dokunmak;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
-dolanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dolanmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 dolaşmak;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 dolaysız;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 doldurma;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22016,7 +22016,7 @@ donanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 donatmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 doyumsuz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 doyurmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-dökülmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+dökülmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 döllenme;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 dömivole;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 döndürme;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22046,7 +22046,7 @@ düşünmek;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 düşürmek;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 düzelmek;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 düzeltme;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-düzenbaz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+düzenbaz;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 düzgüsel;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 düztaban;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ebediyen;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
@@ -22067,7 +22067,7 @@ elleşmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 elmasiye;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 elvermek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 emanetçi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-emretmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+emretmek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 emsalsiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 emzirmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 enjektör;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22075,7 +22075,7 @@ entertip;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 envanter;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 epikerem;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 erdirmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-ergenlik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+ergenlik;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 espadril;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 espresso;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 esritmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22083,7 +22083,7 @@ estampaj;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eşekbaşı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eşelemek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 eşkinsiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-eşleşmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+eşleşmek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 etiketçi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 etkenlik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 etkinlik;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
@@ -22116,7 +22116,7 @@ fetişizm;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fıkramak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fırdöndü;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fırıldak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-fırlamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+fırlamak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 fırsatçı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fışkırma;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 fiiliyat;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22191,7 +22191,7 @@ göğüslük;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gökdelen;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gökdoğan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gölermek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-gömülmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+gömülmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 gönderge;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 gönderme;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 gönenmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22236,7 +22236,7 @@ hafızlık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hafiflik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hafniyum;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hakimevi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-haklamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+haklamak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 haksever;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 haktanır;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 hamallık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22373,7 +22373,7 @@ istitrat;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 istralya;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 işlemeci;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 işlerlik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-işletmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+işletmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 işlevsel;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 işsizlik;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 iştahsız;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22469,7 +22469,7 @@ karalama;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karambol;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karanlık;8;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 karargah;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kararmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kararmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 karaturp;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karavana;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 karavela;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22491,7 +22491,7 @@ kasınmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kasideci;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaşanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaşbastı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kaşınmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kaşınmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kaşkaval;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaşkorse;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kataklaz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22508,7 +22508,7 @@ kavlamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kavramak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kavuniçi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kavurmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kavuşmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kavuşmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kavzamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kayabaşı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kaydırak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22566,7 +22566,7 @@ kırışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kırıtmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kırkyama;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kırtıpil;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kısılmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kısılmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kısınmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıstırma;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıtlamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22582,7 +22582,7 @@ kıyışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıymasız;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kıytırık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kızaklık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kızarmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kızarmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 kızcağız;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kızdırma;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kızışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22602,7 +22602,7 @@ kohezyon;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kokimbit;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 koklamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kokurdan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-kokuşmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+kokuşmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 kokutmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kolağası;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kolaylık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22611,7 +22611,7 @@ kollamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 koltukçu;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 koltuklu;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 komandit;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-komedyen;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+komedyen;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 komisyon;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 komitacı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 kompleks;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22771,7 +22771,7 @@ mektupçu;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 melodram;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 memleket;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 mendebur;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-menderes;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+menderes;8;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 mendirek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 menhiyat;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 menisküs;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -22825,7 +22825,7 @@ muhakeme;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 muhakkak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 muhannet;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 muharebe;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-muharrem;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
+muharrem;8;UST;zor;2;cikarim;Kişi/yer/boy adı kökenli madde kuralı gereği zor.
 muhasebe;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 muhassas;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 muhassıl;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23150,7 +23150,7 @@ salamura;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 salaşpur;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 salınmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sallabaş;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sallamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sallamak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 saltanat;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sanatkar;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sandalet;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23172,7 +23172,7 @@ sarımsak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sarsıntı;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 satasıya;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sataşmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-satılmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+satılmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 savaşmak;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 savulmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 savunmak;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
@@ -23229,13 +23229,13 @@ sınırsız;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 sırıtmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sırnaşık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıvışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-sıyırmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+sıyırmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 sıyırtma;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sıyrıntı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sidiklik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 silahşor;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 silindir;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-silinmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+silinmek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 silkinti;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 silüryen;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 sinameki;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23415,7 +23415,7 @@ tekerlek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 tekgövde;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 teklemek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 teknikçi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-telaffuz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+telaffuz;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 telepati;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 telhisçi;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 temelsiz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23483,7 +23483,7 @@ tonalite;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tonilato;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 toparlak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 topçeker;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-toplamak;8;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+toplamak;8;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 toplantı;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 topluluk;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 topuksuz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23494,7 +23494,7 @@ tosuncuk;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tövbekar;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tözcülük;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tramplen;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-transfer;8;B1;orta;1;cikarim;İki geçiş uzlaştırmasında güvenli üst seviye.
+transfer;8;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 travesti;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tremolit;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 triatlon;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23509,7 +23509,7 @@ tutulmak;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 tutulmaz;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tutunmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tutuşmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-tükenmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+tükenmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 tükenmez;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tüketmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 tükürmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23525,7 +23525,7 @@ ufalamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ufaltmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ufarakça;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uğraşmak;8;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
-uğratmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uğratmak;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 ultrason;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uluhiyet;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 ululamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23533,7 +23533,7 @@ umdurmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uslanmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyarlama;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 uyaroğlu;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-uydurmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+uydurmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 uygulama;8;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
 uygunsuz;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 uzlaşmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23585,7 +23585,7 @@ yakınlık;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yakınsak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yakışmak;8;A2;kolay;2;cikarim;Günlük yaşam ve rutin kelimesi.
 yaklaşım;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-yalandan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yalandan;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yaldızcı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalınlık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yalıtkan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23600,7 +23600,7 @@ yanılmak;8;A1;kolay;3;kaynakli;Temel günlük kelime ve yüksek frekans.
 yanlamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yanşamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yapıncak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yapışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yapışmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yapmacık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yapsatçı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yaptırım;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
@@ -23615,7 +23615,7 @@ yaslamak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yaşatkan;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yaşatmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yataklık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yatırmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yatırmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yatışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yatmalık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yavrucak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23637,7 +23637,7 @@ yemlemek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yemyeşil;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yeniçeri;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yenileme;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yenilmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yenilmek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yerleşik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yeşermek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yeşillik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23649,7 +23649,7 @@ yığılmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yığımlık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yığışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yıkamacı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yıkılmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yıkılmak;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
 yılancık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yılaşırı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yıldırım;8;A1;kolay;3;cikarim;Temel günlük kelime ve yüksek frekans.
@@ -23662,7 +23662,7 @@ yıllıklı;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yırtıkça;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yıvışmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yirmilik;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
-yitirmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yitirmek;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yivlemek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yoğalmak;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yoğunluk;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
@@ -23688,7 +23688,7 @@ yükünmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yüpürmek;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yürürlük;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 yürütmek;8;B1;orta;2;cikarim;Bağımsız kullanım ve yaygın soyut kavram.
-yüzeysel;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
+yüzeysel;8;B2;orta;2;cikarim;Genel soyut veya medya dili sözcüğü.
 yüzsüzce;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 zağarlık;8;UST;zor;1;cikarim;Listede yok, varsayılan zor
 zakkumlu;8;UST;zor;1;cikarim;Listede yok, varsayılan zor

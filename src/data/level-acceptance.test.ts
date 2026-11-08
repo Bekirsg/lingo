@@ -69,6 +69,15 @@ describe('Veri Kalitesi Kabul Testi (M4)', () => {
       'bağlı',     // 5h - sıfat
       'görüntü',   // 7h - medya
       'efendi',    // 6h - unvan
+      // M4 veri düzeltmesi ekleri (yaşayan modern anlam)
+      'şahane',    // 6h - modern yaşayan anlam
+      'nihai',     // 5h - modern yaşayan anlam
+      'sıska',     // 5h - modern yaşayan anlam
+      'şerif',     // 5h - modern yaşayan anlam
+      'erimek',    // 6h - temel fiil lemmalı
+      'doruk',     // 5h - modern yaşayan anlam
+      'buzul',     // 5h - coğrafya, modern
+      'bisiklet',  // 8h - modern günlük araç
     ]
 
     for (const word of MUST_BE_AT_LEAST_ORTA) {
@@ -92,6 +101,29 @@ describe('Veri Kalitesi Kabul Testi (M4)', () => {
       'nüve',   // teknik/bilimsel
       'rint',   // eskimiş tip adı
       'gres',   // teknik yağlayıcı
+      // M4 veri düzeltmesi ekleri (kişi, yer, boy adları ve çekimli homonimler)
+      'tolga',
+      'kerem',
+      'kazım',
+      'nazım',
+      'özden',
+      'ilhan',
+      'irfan',
+      'izzet',
+      'erkan',
+      'yavuz',
+      'burhan',
+      'coşkun',
+      'düzce',
+      'balkan',
+      'arslan',
+      'çelebi',
+      'oğuz',
+      'elif',
+      'günü',
+      'evin',
+      'gücü',
+      'bende',
     ]
 
     for (const word of MUST_BE_ZOR) {

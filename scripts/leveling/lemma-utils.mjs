@@ -35,6 +35,22 @@ export const BLOCKLIST_RELEASED = [
   'ahbap', 'yahu', 'şişko', 'haç'
 ]
 
+// (c) KİŞİ ADI, YER ADI, BOY ADI KÖKENLİ MADDELER (Kolay ve Orta'dan kesin dışlanıp Zor'a aktarılanlar)
+export const PROPER_NAMES = new Set([
+  // Kullanıcı zorunlu listesi (18)
+  'tolga', 'kerem', 'kazım', 'nazım', 'özden', 'ilhan', 'irfan', 'izzet', 'erkan', 'yavuz',
+  'burhan', 'coşkun', 'düzce', 'balkan', 'arslan', 'çelebi', 'oğuz', 'elif',
+  // Madde 1 ek kişi / yer / boy adları
+  'hülya', 'ihsan', 'hikmet', 'levent', 'serhat', 'turgay', 'hidayet', 'topbaş', 'denktaş',
+  'çubukçu', 'samsun', 'karaman', 'menderes', 'muharrem', 'bozkurt', 'adem', 'selim', 'acar',
+  'murat', 'hakan'
+])
+
+// (d) YAŞAYAN MODERN ANLAMI OLAN VE ORTA'YA ÇIKABİLEN KELİMELER (SPEC-v2 4.7 Madde 2)
+export const MODERN_MEANING_EXCEPTIONS = new Set([
+  'şahane', 'nihai', 'sıska', 'şerif', 'erimek', 'doruk', 'buzul'
+])
+
 // 4-8 harfli, havuzda bulunan onaylanmış tematik çapa kelimeleri (2-3 harfliler ayıklanmıştır)
 export const VALID_THEMATIC_ANCHORS = new Set([
   // Vücut Organları (17)

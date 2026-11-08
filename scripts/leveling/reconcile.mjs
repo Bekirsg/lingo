@@ -13,6 +13,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { CORE_KOLAY_ANCHORS } from './kolay-words.mjs'
+import { PROPER_NAMES, MODERN_MEANING_EXCEPTIONS } from './lemma-utils.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
@@ -128,7 +129,7 @@ export function reconcileLevels() {
     // ============================================================
 
     // G.1: Resmi listede A1/A2 etiketli kelime kolaydan düşürülemez
-    if (CORE_KOLAY_ANCHORS.has(w) && finalLevel !== 'kolay') {
+    if (CORE_KOLAY_ANCHORS.has(w) && !PROPER_NAMES.has(w) && finalLevel !== 'kolay') {
       finalLevel = 'kolay'
       finalCefr = 'A1'
       guven = 3
@@ -138,9 +139,12 @@ export function reconcileLevels() {
     }
 
     // G.2: TDK'da "eskimiş" / "ağız" etiketli kelime, resmi listede yoksa kolay veya orta olamaz
+    // İstisna: Yaşayan modern anlamı olan kelimeler (SPEC-v2 4.7 M4)
+    const hasModernException = MODERN_MEANING_EXCEPTIONS.has(w)
     if (
       (ev.flags.is_archaic || ev.flags.is_dialect) &&
       !CORE_KOLAY_ANCHORS.has(w) &&
+      !hasModernException &&
       finalLevel !== 'zor'
     ) {
       finalLevel = 'zor'
@@ -148,6 +152,15 @@ export function reconcileLevels() {
       guven = 2
       kaynak = 'cikarim'
       gerekce = 'TDK eskimiş veya ağız kuralı gereği zor.'
+      consistencyViolationsResolved++
+    }
+
+    if (hasModernException && finalLevel === 'zor') {
+      finalLevel = 'orta'
+      finalCefr = 'B1'
+      guven = 2
+      kaynak = 'cikarim'
+      gerekce = 'Modern yaşayan anlam kuralı gereği orta seviye.'
       consistencyViolationsResolved++
     }
 
@@ -159,6 +172,18 @@ export function reconcileLevels() {
       kaynak = 'cikarim'
       gerekce = 'Uzmanlık terimi kuralı gereği orta seviye.'
       consistencyViolationsResolved++
+    }
+
+    // G.4: Kişi adı, yer adı, boy adı kökenli maddeler kesin Zor seviyesine aktarılır (SPEC-v2 4.7 M4)
+    if (PROPER_NAMES.has(w)) {
+      if (finalLevel !== 'zor') {
+        consistencyViolationsResolved++
+      }
+      finalLevel = 'zor'
+      finalCefr = 'UST'
+      guven = 2
+      kaynak = 'cikarim'
+      gerekce = 'Kişi/yer/boy adı kökenli madde kuralı gereği zor.'
     }
 
     decisions.push({

@@ -8,6 +8,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BLOCKLIST, getVerifiedKolayWords } from './kolay-words.mjs'
+import { PROPER_NAMES, MODERN_MEANING_EXCEPTIONS, getVerbLemmaCounts } from './lemma-utils.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_SRC = path.resolve(__dirname, '../../data-src')
@@ -165,7 +166,6 @@ export const CORE_ORTA_ANCHORS = new Set([
   'nüks',
   'nüve',
   'odak',
-  'oğuz',
   'olgu',
   'oluş',
   'onam',
@@ -342,7 +342,6 @@ export const CORE_ORTA_ANCHORS = new Set([
   'dönüş',
   'döviz',
   'duyum',
-  'düzce',
   'düzey',
   'ederi',
   'eğilim',
@@ -370,7 +369,6 @@ export const CORE_ORTA_ANCHORS = new Set([
   'hiciv',
   'iklim',
   'ilişki',
-  'irfan',
   'irade',
   'kalıt',
   'kayba',
@@ -672,6 +670,14 @@ export const CORE_ORTA_ANCHORS = new Set([
   'zemberek',
   'zencefil',
   'ziyaretçi',
+  // Yaşayan modern anlam çapaları (SPEC-v2 4.7 M4)
+  'şahane',
+  'nihai',
+  'sıska',
+  'şerif',
+  'erimek',
+  'doruk',
+  'buzul',
 ])
 
 /**
@@ -693,13 +699,18 @@ export function getVerifiedOrtaWords(kolayWords) {
     .filter(Boolean)
     .map(l => JSON.parse(l))
   const evMap = new Map(lines.map(e => [e.w, e]))
+  const verbLemmaCounts = getVerbLemmaCounts()
 
   const result = new Set()
 
   // 1. Çekirdek B1-B2 çapalarını sözlükte ve frekans kanıtıyla doğrula
   for (const w of CORE_ORTA_ANCHORS) {
-    if (evMap.has(w) && !BLOCKLIST.has(w) && !kolay.has(w)) {
+    if (evMap.has(w) && !BLOCKLIST.has(w) && !kolay.has(w) && !PROPER_NAMES.has(w)) {
       const e = evMap.get(w)
+      if (MODERN_MEANING_EXCEPTIONS.has(w)) {
+        result.add(w)
+        continue
+      }
       // SPEC-v2 4.7-G.2: birincil anlamı eskimiş / ağız kelimeler orta olamaz!
       if (!e.flags.is_archaic && !e.flags.is_dialect) {
         // Frekans kanıtı: iki derlemden birinde ilk 25.000 içinde olmalı
@@ -715,11 +726,16 @@ export function getVerifiedOrtaWords(kolayWords) {
 
   // 2. Orta frekanslı kelimeler (OpenSub <= 16000 veya Zemberek <= 7500 veya ilk 25k içindeki çok anlamlılar)
   for (const e of lines) {
-    if (kolay.has(e.w) || BLOCKLIST.has(e.w)) continue
+    if (kolay.has(e.w) || BLOCKLIST.has(e.w) || PROPER_NAMES.has(e.w)) continue
+    if (MODERN_MEANING_EXCEPTIONS.has(e.w)) {
+      result.add(e.w)
+      continue
+    }
     // SPEC-v2 4.7-G.2 kuralı: birincil anlamı eskimiş veya ağız ise orta olamaz!
     if (e.flags.is_archaic || e.flags.is_dialect) continue
 
-    const inMidSub = e.freq.opensub_rank !== null && e.freq.opensub_rank <= 16000
+    const verbCount = verbLemmaCounts.get(e.w) || 0
+    const inMidSub = (e.freq.opensub_rank !== null && e.freq.opensub_rank <= 16000) || verbCount >= 1000
     const inMidZem = e.freq.zemberek_rank !== null && e.freq.zemberek_rank <= 7500
 
     // Uzmanlık terimi kuralı: birincil anlam teknik terimse yalnızca orta frekanstaysa Orta olabilir

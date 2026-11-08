@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_SRC = path.resolve(__dirname, '../../data-src')
 
-import { BLOCKLIST_HARSH, VALID_THEMATIC_ANCHORS, getVerbLemmaCounts } from './lemma-utils.mjs'
+import { BLOCKLIST_HARSH, VALID_THEMATIC_ANCHORS, getVerbLemmaCounts, PROPER_NAMES } from './lemma-utils.mjs'
 
 // Dışlanan kaba / cinsel / hakaret sözcükleri
 export const BLOCKLIST = BLOCKLIST_HARSH
@@ -1250,7 +1250,7 @@ export function getVerifiedKolayWords() {
 
   // 1. Tematik çapaları doğrula (Rev. 4)
   for (const w of VALID_THEMATIC_ANCHORS) {
-    if (evMap.has(w) && !BLOCKLIST.has(w)) {
+    if (evMap.has(w) && !BLOCKLIST.has(w) && !PROPER_NAMES.has(w)) {
       const e = evMap.get(w)
       if (!e.flags.is_archaic && !e.flags.is_dialect) {
         result.add(w)
@@ -1260,7 +1260,7 @@ export function getVerifiedKolayWords() {
 
   // 2. Çekirdek çapaları sözlükte doğrula
   for (const w of CORE_KOLAY_ANCHORS) {
-    if (evMap.has(w) && !BLOCKLIST.has(w)) {
+    if (evMap.has(w) && !BLOCKLIST.has(w) && !PROPER_NAMES.has(w)) {
       const e = evMap.get(w)
       if (!e.flags.is_archaic && !e.flags.is_dialect) {
         result.add(w)
@@ -1270,7 +1270,7 @@ export function getVerifiedKolayWords() {
 
   // 3. Çok yüksek frekanslı günlük kelimeleri dahil et
   for (const e of lines) {
-    if (BLOCKLIST.has(e.w)) continue
+    if (BLOCKLIST.has(e.w) || PROPER_NAMES.has(e.w)) continue
     // Birincil anlamı eskimiş veya ağız ise Kolay olamaz
     if (e.flags.is_archaic || e.flags.is_dialect) continue
 

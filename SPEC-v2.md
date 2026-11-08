@@ -64,7 +64,7 @@ Mevcut ses ve titreşim anahtarları + **Klavye Tercihi** (`be:settings` altınd
 - Analiz verisini sıfırla (tüm modların analiz verisi + oturum özetleri + "öğrenildi" kayıtları).
 
 ### 3.6 Nasıl Oynanır
-3 modu, seviyeleri, çalışma modunu, PAS'ı, klavyeyi (kaydır-bırak) ve analizleri anlatan güncel metin. Metinler gerçek kurallara uymalı (15 sn tahmin süresi, bonus 3 sn okuma + 7 sn harf açılması, BİL sonrası 10 sn yazma süresi, 4. tur 120 sn, 4. turda kaybedilen kelimede cevap + ~3 sn donuk süre).
+3 modu, seviyeleri, çalışma modunu, PAS'ı, klavyeyi (harfe basınca anında yazma, önizleme balonu yok, Ayarlar'da Oyun veya Telefon klavyesi seçimi) ve analizleri anlatan güncel metin. Metinler gerçek kurallara uymalı (15 sn tahmin süresi, bonus 3 sn okuma + 7 sn harf açılması, BİL sonrası 10 sn yazma süresi, 4. tur 120 sn, 4. turda kaybedilen kelimede cevap + ~3 sn donuk süre).
 
 ## 4. Seviye Sistemi
 
@@ -402,7 +402,7 @@ HUD'da değişiklik yok. "Nasıl Oynanır" ekranında PAS açıklanır.
 8. Hatalarımla çalış seçici: Ağırlıklı seçim (y + c), uygun kelime olmayan harf sayısını atlama, hepsi öğrenilmişse boş durum.
 9. Çalışma döngüsü: 4→5→6→7→8 sırası, tekrarsızlık, rekor/stats'a yazmama, analiz verisine doğru etiketle yazma.
 10. Öneri kuralları: Her kural için eşik üstü/altı testleri (yeni kural 9 dahil).
-11. Klavye: düzen tam 29 harf, yinelenen yok, q/w/x yok; words-4…7 ve bonus-8 yalnızca bu 29 harfi içerir; `resolveKeyAtPoint` (tuş içi, boşluk, kenar); `gestureReducer` (kaydır-bırak, iptal, çoklu pointer, alan dışı bırakma); SİL tekrar zamanlaması (sahte zamanlayıcı); `keyStates` öncelik sırası.
+11. Klavye: düzen tam 29 harf, yinelenen yok, q/w/x yok; words-4…7 ve bonus-8 yalnızca bu 29 harfi içerir; basınca doğrudan yazma (down-event), önizleme balonu yok; Ayarlar'da Oyun/Telefon klavyesi seçimi; `resolveKeyAtPoint` ve kenar genişletmesi; SİL tekrar zamanlaması (sahte zamanlayıcı); `keyStates` öncelik sırası.
 12. PAS: Her bağlamda doğru akış (1–3. tur, final, Çalışma, Hatalarımla); iki aşamalı onay ve sıfırlanması; animasyon sırasında yok sayma; PAS'ın puan/süre kurallarını bozmaması.
 13. Veri testleri: `levels-*.json` içindeki her kelime ilgili words/bonus dosyasında var; kolay ∩ orta = ∅; şema geçerli.
 14. Mevcut tüm testler geçmeye devam eder (regresyon yok).
@@ -417,7 +417,7 @@ HUD'da değişiklik yok. "Nasıl Oynanır" ekranında PAS açıklanır.
 - [ ] "Hatalarımla çalış": kaçırılan kelimeler çıkıyor; 2 kez üst üste bilince "öğrenildi" oluyor ve analizde sayaç aynı kalıyor.
 - [ ] Analiz sekmeleri doğru, Mod ve Seviye filtreleri çalışıyor, grafikler taşmıyor, ilk açılış yavaşlamamış.
 - [ ] Ayarlar'daki iki sıfırlama düğmesi doğru şeyi siliyor.
-- [ ] Klavye: Q/W/X yok; tuşlar büyük; basınca balon çıkıyor; yanlış tuşa basıp kaydırarak doğru tuşta bırakınca doğru harf giriliyor; SİL basılı tutunca hızlı siliyor; iki başparmakla hızlı yazma çalışıyor; kenar tuşları rahat basılıyor.
+- [ ] Klavye: Q/W/X yok; tuşlar büyük; harfe basınca anında yazılıyor (balon yok); Ayarlar'da Oyun ve Telefon/Sistem klavyesi seçimi çalışıyor; SİL basılı tutunca hızlı siliyor; iki başparmakla hızlı yazma çalışıyor; kenar tuşları rahat basılıyor.
 - [ ] PAS: 1–3. turda cevap gösterip devam ediyor; finalde cevap + ~3 sn donuk süre + yeni kelime; yanlışlıkla tek dokunuşla PAS olmuyor; bonusta PAS yok.
 - [ ] Çevrimdışı (uçak modu) tüm modlar çalışıyor.
 - [ ] Ekran boyutları: 320×568'den 430×932'ye kaydırma ve taşma yok (klavye dahil).
@@ -453,7 +453,7 @@ Her aşama sonunda testleri, `tsc` ve build'i çalıştır, commit'le, PROGRESS.
 3. Çalışma oturum özetleri artık kalıcıdır (son 50).
 4. Bonusta PAS yoktur.
 5. PAS iki aşamalıdır (yanlışlıkla basmaya karşı).
-6. Tuş boyutu ayarı ve sistem klavyesi seçeneği yapılmaz (Bölüm 9.5), onay istenir.
+6. Ayarlar'da Oyun / Telefon klavyesi tercihi sunulmuştur (Bölüm 9.5).
 7. Aday dışı kelimeler otomatik "zor"dur; bu, örnekleme ile doğrulanır (4.8-3).
 8. Tereddütte daha zor seviye seçilir.
 9. Seviyelendirme verisi (`levels-*.json`) kullanıcı onayı beklenmeden `v2-gelistirme` dalına commit edilir, ama `main`'e girmez.

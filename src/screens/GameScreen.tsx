@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { GameController, type GameState } from '../game/state'
 import { getKeyboardStatuses, ROUND_CONFIGS } from '../game/engine'
-import { loadWordRepository, ensureBonusLoaded } from '../data/wordsLoader'
-import { getHighScore } from '../data/storage'
+import { loadWordRepository, ensureBonusLoaded, ensureLevelsLoaded, ensureBonusLevelLoaded } from '../data/wordsLoader'
+import { getLevelRecords } from '../data/storage'
+import type { GameLevel } from '../data/levels'
 import Hud from '../components/Hud'
 import Board from '../components/Board'
 import InputLayer from '../components/InputLayer'
@@ -20,9 +21,10 @@ import { triggerHaptic } from '../haptics/vibration'
 
 interface GameScreenProps {
   onBackToMenu: () => void
+  level?: GameLevel
 }
 
-export default function GameScreen({ onBackToMenu }: GameScreenProps) {
+export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenProps) {
   const [loading, setLoading] = useState(true)
   const [controller, setController] = useState<GameController | null>(null)
   const [gameState, setGameState] = useState<GameState | null>(null)
@@ -41,12 +43,27 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     let active = true
 
     loadWordRepository()
-      .then((repo) => {
+      .then(async (repo) => {
         if (!active) return
 
-        const highScore = getHighScore()
+        // Kolay veya Orta ise seviye dosyalarının hazır olduğundan emin ol (Zor hiçbir şey indirmez)
+        if (level !== 'zor') {
+          try {
+            await Promise.all([
+              ensureLevelsLoaded(repo, level),
+              ensureBonusLevelLoaded(repo, level),
+            ])
+          } catch (err) {
+            console.warn('[LİNGO v2] Seviye dosyaları yüklenemedi, Zor havuzuna düşülüyor:', err)
+          }
+        }
+
+        if (!active) return
+
+        const highScore = getLevelRecords()[level]
         const game = new GameController({
           words: repo,
+          level,
           highScore,
           onStateChange: (state) => {
             setGameState({ ...state })
@@ -57,8 +74,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         setGameState(game.getState())
         setLoading(false)
 
-        // Oyunu hemen başlat
-        game.startNewGame()
+        // Oyunu seçilen seviyeyle hemen başlat
+        game.startNewGame(level)
 
         // Bonus verisini arka planda pre-fetch et (bonusa gelince hazır olsun)
         ensureBonusLoaded(repo).catch(() => {})
@@ -70,7 +87,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     return () => {
       active = false
     }
-  }, [])
+  }, [level])
 
   // SPEC Bölüm 2.1-4: Arka plana atılınca (sekme gizlenince / blur) otomatik duraklama
   useEffect(() => {
@@ -268,7 +285,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     return (
       <GameOverModal
         state={gameState}
-        onNewGame={() => controller.startNewGame()}
+        onNewGame={() => controller.startNewGame(level)}
         onBackToMenu={onBackToMenu}
       />
     )

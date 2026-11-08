@@ -17,8 +17,6 @@ import {
   bonusScore,
   bonusRevealedAtTime,
   round4FinalScore,
-  pickWord,
-  pickBonusWord,
   shuffleRevealOrder,
   GUESS_TIME_LIMIT,
   ROUND4_TIME_LIMIT,
@@ -27,12 +25,15 @@ import {
 } from '../engine'
 import { Clock } from '../clock'
 import type { WordRepository } from '../../data/words'
+import type { GameLevel } from '../../data/levels'
+import { pickWordWithFallback, pickBonusWordWithFallback } from '../../data/levels'
 import type { GameState } from './types'
 
 export * from './types'
 
 export interface GameControllerOptions {
   words: WordRepository
+  level?: GameLevel
   nowFn?: () => number
   onStateChange?: (state: GameState) => void
   highScore?: number
@@ -41,6 +42,7 @@ export interface GameControllerOptions {
 export class GameController {
   private state: GameState
   private words: WordRepository
+  private level: GameLevel
   private clock: Clock
   /** 4. tur kelime kaybında ~3 sn bekleme için bağımsız küçük sayaç */
   private waitClock: Clock
@@ -50,6 +52,7 @@ export class GameController {
 
   constructor(options: GameControllerOptions) {
     this.words = options.words
+    this.level = options.level ?? 'zor'
     this.nowFn = options.nowFn
     this.highScore = options.highScore ?? 0
     this.onStateChange = options.onStateChange
@@ -75,6 +78,7 @@ export class GameController {
       countdownValue: 3,
       finalScore: 0,
       isNewRecord: false,
+      level: this.level,
     }
   }
 
@@ -96,8 +100,11 @@ export class GameController {
 
   // ─── Oyun Başlatma & Akış ─────────────────────────────────────────
 
-  /** Yeni bir oyun başlatır (Ana menüden) */
-  startNewGame(): void {
+  /** Yeni bir oyun başlatır (Ana menüden veya Seviye Seçiminden) */
+  startNewGame(level?: GameLevel): void {
+    if (level) {
+      this.level = level
+    }
     this.clock.stop()
     this.waitClock.stop()
     this.state = {
@@ -109,9 +116,15 @@ export class GameController {
       countdownTarget: 'playing_round',
       finalScore: 0,
       isNewRecord: false,
+      level: this.level,
     }
     this.setupRoundWord(1, 1)
     this.emitState()
+  }
+
+  /** SPEC-v2 startGame(level) desteği */
+  startGame(level?: GameLevel): void {
+    this.startNewGame(level)
   }
 
   /**
@@ -154,11 +167,16 @@ export class GameController {
     const config = ROUND_CONFIGS[round - 1]
     const len = config.letterCount
     const pool = this.words.getWords(len)
-    const word = pickWord(pool, this.state.usedWords)
+    const levelData = this.words.getLevelData?.(len) ?? null
+    const res = this.words.pickWordByLevel
+      ? this.words.pickWordByLevel(len, this.state.level, this.state.usedWords)
+      : pickWordWithFallback(pool, levelData, this.state.level, this.state.usedWords)
 
-    if (!word) {
+    if (!res) {
       throw new Error(`${len} harfli kelime havuzu tükendi!`)
     }
+
+    const word = res.word
 
     this.state.usedWords.add(word)
 
@@ -400,17 +418,20 @@ export class GameController {
 
   private setupBonusQuestion(): void {
     const bonusPool = this.words.getBonusWords()
-    const item = pickBonusWord(bonusPool, this.state.usedWords)
+    const levelData = this.words.getLevelData?.(8) ?? null
+    const res = this.words.pickBonusWordByLevel
+      ? this.words.pickBonusWordByLevel(this.state.level, this.state.usedWords)
+      : pickBonusWordWithFallback(bonusPool, levelData, this.state.level, this.state.usedWords)
 
-    if (!item) {
+    if (!res) {
       throw new Error('Bonus 8 harfli kelime havuzu tükendi!')
     }
 
-    this.state.usedWords.add(item.word)
+    this.state.usedWords.add(res.word)
 
     this.state.bonusState = {
-      word: item.word,
-      definition: item.definition,
+      word: res.word,
+      definition: res.definition,
       revealOrder: shuffleRevealOrder(8),
       revealedCount: 0,
       currentScore: 3000,
@@ -669,11 +690,16 @@ export class GameController {
   private setupRound4Word(stage: number): void {
     if (!this.state.round4State) return
     const pool = this.words.getWords(stage)
-    const word = pickWord(pool, this.state.usedWords)
+    const levelData = this.words.getLevelData?.(stage) ?? null
+    const res = this.words.pickWordByLevel
+      ? this.words.pickWordByLevel(stage, this.state.level, this.state.usedWords)
+      : pickWordWithFallback(pool, levelData, this.state.level, this.state.usedWords)
 
-    if (!word) {
+    if (!res) {
       throw new Error(`4. Tur ${stage} harfli kelime havuzu tükendi!`)
     }
+
+    const word = res.word
 
     this.state.usedWords.add(word)
     this.state.round4State.stage = stage

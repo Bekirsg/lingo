@@ -4,6 +4,7 @@
  */
 
 import type { Mark } from '../engine'
+import type { GameLevel } from '../../data/levels'
 
 export type GameScreen =
   | 'menu'                     // Ana menü
@@ -112,4 +113,6 @@ export interface GameState {
   finalScore: number
   /** Yeni rekor mu? */
   isNewRecord: boolean
+  /** Seçilen oyun seviyesi (SPEC-v2 Bölüm 4 & 5) */
+  level: GameLevel
 }

@@ -194,9 +194,20 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
       {/* ─── Üst Bar: Canlı Süre + Puan ───────────────────────── */}
       <header className="w-full px-3 sm:px-4 pt-2 sm:pt-3 pb-1 flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between">
-          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md">
-            ⭐ BONUS SORU
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 ${
+              state.level === 'kolay'
+                ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40'
+                : state.level === 'orta'
+                  ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
+                  : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
+            }`}>
+              {state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'}
+            </span>
+            <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+              ⭐ BONUS SORU
+            </span>
+          </div>
 
           <div className="flex items-baseline gap-1 text-right">
             <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-400">KASA:</span>

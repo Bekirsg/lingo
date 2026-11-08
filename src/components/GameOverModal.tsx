@@ -15,7 +15,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import type { GameState } from '../game/state'
-import { recordGameResult, getHighScore } from '../data/storage'
+import { recordLevelGameResult, getLevelRecords } from '../data/storage'
 import { formatPoints } from './Hud'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
@@ -32,9 +32,10 @@ export default function GameOverModal({
   onBackToMenu,
 }: GameOverModalProps) {
   const { finalScore, treasury, round4State } = state
+  const level = state.level ?? 'zor'
   const lastStage = round4State?.lastCompletedStage ?? null
 
-  const prevHighScoreRef = useRef<number>(getHighScore())
+  const prevHighScoreRef = useRef<number>(getLevelRecords()[level])
   const hasRecordedRef = useRef(false)
 
   const isRecord = finalScore > 0 && finalScore > prevHighScoreRef.current
@@ -43,7 +44,7 @@ export default function GameOverModal({
   useEffect(() => {
     if (!hasRecordedRef.current) {
       hasRecordedRef.current = true
-      recordGameResult(finalScore, lastStage)
+      recordLevelGameResult(level, finalScore, lastStage)
 
       if (isRecord) {
         playSound('new_record')
@@ -57,7 +58,7 @@ export default function GameOverModal({
         }
       }
     }
-  }, [finalScore, lastStage, isRecord])
+  }, [level, finalScore, lastStage, isRecord])
 
   // Final skor yukarı sayma animasyonu
   const [animatedScore, setAnimatedScore] = useState(0)
@@ -103,6 +104,14 @@ export default function GameOverModal({
   const stageLabel = lastStage ? `${lastStage} Harfli Etap` : 'Hiçbiri (Kasa Yandı)'
   const displayHighScore = Math.max(prevHighScoreRef.current, finalScore)
 
+  const levelName = level === 'kolay' ? 'Kolay' : level === 'orta' ? 'Orta' : 'Zor'
+  const levelBadgeClass =
+    level === 'kolay'
+      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+      : level === 'orta'
+        ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+        : 'bg-violet-500/20 text-violet-300 border-violet-500/40'
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in select-none">
       <div className="max-w-sm w-full p-6 rounded-3xl bg-slate-900/95 border border-violet-500/40 shadow-2xl shadow-violet-500/20 text-center flex flex-col items-center animate-scale-up">
@@ -119,9 +128,14 @@ export default function GameOverModal({
           {isRecord ? '👑' : finalScore > 0 ? '🏆' : '💀'}
         </div>
 
+        {/* Seviye Rozeti */}
+        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider border mb-1.5 ${levelBadgeClass}`}>
+          {levelName} Seviyesi
+        </span>
+
         {isRecord && (
           <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500/30 text-amber-300 border border-amber-500/40 mb-2 animate-pulse">
-            🎉 YENİ REKOR!
+            🎉 YENİ {levelName.toUpperCase()} REKORU!
           </span>
         )}
 
@@ -154,7 +168,7 @@ export default function GameOverModal({
             </div>
 
             <div className="flex justify-between items-center text-slate-300">
-              <span className="text-slate-400">En Yüksek Skor:</span>
+              <span className="text-slate-400">{levelName} Rekoru:</span>
               <span className="font-mono font-bold text-violet-300">
                 {formatPoints(displayHighScore)}
               </span>

@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { getSettings, setSettings, resetHighScore, type SettingsData } from '../data/storage'
+import {
+  getSettings,
+  setSettings,
+  resetLevelRecords,
+  devSimulateV1Record,
+  devRerunMigration,
+  type SettingsData,
+} from '../data/storage'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
 
@@ -11,6 +18,7 @@ export default function Settings({ onBack }: SettingsProps) {
   const [settings, setSettingsState] = useState<SettingsData>(getSettings)
   const [resetConfirm, setResetConfirm] = useState(false)
   const [resetDone, setResetDone] = useState(false)
+  const [devMessage, setDevMessage] = useState<string | null>(null)
 
   const toggle = (key: 'sound' | 'haptics') => {
     const updated = setSettings({ [key]: !settings[key] })
@@ -36,7 +44,7 @@ export default function Settings({ onBack }: SettingsProps) {
       setResetConfirm(true)
       return
     }
-    resetHighScore()
+    resetLevelRecords()
     triggerHaptic('wrong')
     setResetConfirm(false)
     setResetDone(true)
@@ -125,7 +133,7 @@ export default function Settings({ onBack }: SettingsProps) {
       <div className="mt-8">
         {resetDone && (
           <div className="mb-3 px-4 py-3 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-sm text-center font-bold animate-fade-in">
-            ✓ En yüksek skor ve istatistikler sıfırlandı.
+            ✓ 3 seviyedeki tüm rekorlar ve istatistikler sıfırlandı.
           </div>
         )}
 
@@ -142,7 +150,7 @@ export default function Settings({ onBack }: SettingsProps) {
             }
           `}
         >
-          {resetConfirm ? '⚠️  Emin misin? Tümünü Sıfırla!' : '🗑️  En Yüksek Skoru Sıfırla'}
+          {resetConfirm ? '⚠️  Emin misin? 3 Seviyeyi de Sıfırla!' : '🗑️  Rekorları Sıfırla'}
         </button>
 
         {resetConfirm && (
@@ -155,6 +163,46 @@ export default function Settings({ onBack }: SettingsProps) {
           </button>
         )}
       </div>
+
+      {/* Geliştirici Test Araçları (Prod derlemesinde otomatik tree-shake edilir) */}
+      {import.meta.env.DEV && (
+        <div className="mt-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
+          <h3 className="text-xs font-black uppercase tracking-wider text-amber-400 mb-2">
+            🛠️ Geliştirici Test Araçları (DEV)
+          </h3>
+          {devMessage && (
+            <div className="mb-2 p-2 rounded-lg bg-amber-500/20 text-amber-200 text-xs">
+              {devMessage}
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                devSimulateV1Record(12345)
+                playSound('key_press')
+                setDevMessage('v1 rekoru (12.345) localStorage içine yazıldı.')
+                setTimeout(() => setDevMessage(null), 3000)
+              }}
+              className="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold text-left border border-amber-500/30 transition-colors"
+            >
+              📥 v1 rekoru simüle et (12.345)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const res = devRerunMigration()
+                playSound('key_press')
+                setDevMessage(`Taşıma çalıştırıldı (Sonuç: ${res ? 'taşındı' : 'veri yok/güncel'}).`)
+                setTimeout(() => setDevMessage(null), 3000)
+              }}
+              className="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold text-left border border-amber-500/30 transition-colors"
+            >
+              🔄 taşımayı yeniden çalıştır
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

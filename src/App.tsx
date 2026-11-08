@@ -1,32 +1,47 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import SplashScreen from './screens/SplashScreen'
-import MainMenu from './screens/MainMenu'
+import MainMenu, { type AppScreen } from './screens/MainMenu'
+import LevelSelectScreen from './screens/LevelSelectScreen'
 import HowToPlay from './screens/HowToPlay'
-import HighScore from './screens/HighScore'
 import Settings from './screens/Settings'
 import GameScreen from './screens/GameScreen'
 import { useVisualViewport } from './hooks/useVisualViewport'
-
-/** Uygulama kök ekran durumları */
-type Screen = 'splash' | 'menu' | 'game' | 'howtoplay' | 'highscore' | 'settings'
+import { migrateV1ToV2 } from './data/storage'
+import type { GameLevel } from './data/levels'
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('splash')
+  const [screen, setScreen] = useState<AppScreen>('splash')
+  const [selectedLevel, setSelectedLevel] = useState<GameLevel>('zor')
   useVisualViewport()
 
-  const navigate = useCallback((s: Screen) => setScreen(s), [])
+  // v1 verilerini ilk açılışta güvenle taşı (SPEC-v2 Bölüm 5.1)
+  useEffect(() => {
+    migrateV1ToV2()
+  }, [])
+
+  const navigate = useCallback((s: AppScreen) => setScreen(s), [])
+
+  const handleLevelSelect = useCallback((level: GameLevel) => {
+    setSelectedLevel(level)
+    setScreen('game')
+  }, [])
 
   switch (screen) {
     case 'splash':
       return <SplashScreen onReady={() => navigate('menu')} />
     case 'menu':
       return <MainMenu onNavigate={navigate} />
+    case 'level_select':
+      return (
+        <LevelSelectScreen
+          onSelectLevel={handleLevelSelect}
+          onBack={() => navigate('menu')}
+        />
+      )
     case 'game':
-      return <GameScreen onBackToMenu={() => navigate('menu')} />
+      return <GameScreen level={selectedLevel} onBackToMenu={() => navigate('menu')} />
     case 'howtoplay':
       return <HowToPlay onBack={() => navigate('menu')} />
-    case 'highscore':
-      return <HighScore onBack={() => navigate('menu')} />
     case 'settings':
       return <Settings onBack={() => navigate('menu')} />
     default:

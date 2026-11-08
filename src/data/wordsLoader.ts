@@ -50,9 +50,9 @@ export async function ensureBonusLoaded(repo: WordRepository): Promise<void> {
 
 /**
  * Seviye verilerini (levels-4..7.json) lazy olarak yükler.
- * SPEC-v2 4.6: Seçilen seviye Kolay veya Orta ise oyun başlarken yüklenir.
+ * SPEC-v2 4.6 & M4 Düzeltmesi: Seçilen seviye Kolay veya Orta ise oyun başlarken yüklenir.
  * Zor seviyede yüklenmesine gerek yoktur.
- * Dosyalar henüz mevcut değilse (404 vb.) console.warn basıp sessizce Zor havuzuna geri döner.
+ * Dosyalar yüklenemezse (404, ağ hatası vb.) hata fırlatılır; böylece arayüz yükleme hatası ekranı gösterir.
  */
 export async function ensureLevelsLoaded(
   repo: WordRepository,
@@ -66,24 +66,20 @@ export async function ensureLevelsLoaded(
 
   await Promise.all(
     toFetch.map(async len => {
-      try {
-        const res = await fetch(`/data/levels-${len}.json`)
-        if (!res.ok) {
-          console.warn(`[LİNGO v2] levels-${len}.json yüklenemedi (HTTP ${res.status}). Zor havuzu kullanılacak.`)
-          return
-        }
-        const data = (await res.json()) as LevelData
-        repo.loadLevelData?.(len, data)
-        loadedLevelLengths.add(len)
-      } catch (err) {
-        console.warn(`[LİNGO v2] levels-${len}.json yükleme hatası:`, err)
+      const res = await fetch(`/data/levels-${len}.json`)
+      if (!res.ok) {
+        throw new Error(`levels-${len}.json yüklenemedi (HTTP ${res.status})`)
       }
+      const data = (await res.json()) as LevelData
+      repo.loadLevelData?.(len, data)
+      loadedLevelLengths.add(len)
     })
   )
 }
 
 /**
  * Bonus seviye verisini (levels-8.json) lazy olarak yükler.
+ * Yüklenemezse hata fırlatır.
  */
 export async function ensureBonusLevelLoaded(
   repo: WordRepository,
@@ -92,18 +88,13 @@ export async function ensureBonusLevelLoaded(
   if (level === 'zor') return
   if (loadedLevelLengths.has(8)) return
 
-  try {
-    const res = await fetch('/data/levels-8.json')
-    if (!res.ok) {
-      console.warn(`[LİNGO v2] levels-8.json yüklenemedi (HTTP ${res.status}). Zor havuzu kullanılacak.`)
-      return
-    }
-    const data = (await res.json()) as LevelData
-    repo.loadLevelData?.(8, data)
-    loadedLevelLengths.add(8)
-  } catch (err) {
-    console.warn('[LİNGO v2] levels-8.json yükleme hatası:', err)
+  const res = await fetch('/data/levels-8.json')
+  if (!res.ok) {
+    throw new Error(`levels-8.json yüklenemedi (HTTP ${res.status})`)
   }
+  const data = (await res.json()) as LevelData
+  repo.loadLevelData?.(8, data)
+  loadedLevelLengths.add(8)
 }
 
 /** Testler için yükleme önbelleğini sıfırlar */

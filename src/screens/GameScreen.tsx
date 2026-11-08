@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
-import { GameController, type GameState } from '../game/state'
+import { GameController, type GameState, type GameMode } from '../game/state'
 import { getKeyboardStatuses, ROUND_CONFIGS } from '../game/engine'
 import { loadWordRepository, ensureBonusLoaded, ensureLevelsLoaded, ensureBonusLevelLoaded } from '../data/wordsLoader'
 import { getLevelRecords } from '../data/storage'
@@ -15,6 +15,7 @@ import RoundSummaryModal from '../components/RoundSummaryModal'
 import Round4IntroScreen from '../components/Round4IntroScreen'
 import Round4StageClearedModal from '../components/Round4StageClearedModal'
 import GameOverModal from '../components/GameOverModal'
+import PracticeSummaryModal from '../components/PracticeSummaryModal'
 import { turkishUpper } from '../utils/turkish'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
@@ -22,10 +23,14 @@ import { triggerHaptic } from '../haptics/vibration'
 interface GameScreenProps {
   onBackToMenu: () => void
   level?: GameLevel
+  mode?: GameMode
 }
 
-export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenProps) {
+export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarisma' }: GameScreenProps) {
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [reloadKey, setReloadKey] = useState(0)
+  const [showEndConfirm, setShowEndConfirm] = useState(false)
   const [controller, setController] = useState<GameController | null>(null)
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [isEvaluating, setIsEvaluating] = useState(false)
@@ -54,7 +59,12 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
               ensureBonusLevelLoaded(repo, level),
             ])
           } catch (err) {
-            console.warn('[LİNGO v2] Seviye dosyaları yüklenemedi, Zor havuzuna düşülüyor:', err)
+            console.error('[LİNGO v2] Seviye dosyaları yüklenemedi:', err)
+            if (active) {
+              setLoadError(true)
+              setLoading(false)
+            }
+            return
           }
         }
 
@@ -64,6 +74,7 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
         const game = new GameController({
           words: repo,
           level,
+          mode,
           highScore,
           onStateChange: (state) => {
             setGameState({ ...state })
@@ -74,20 +85,24 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
         setGameState(game.getState())
         setLoading(false)
 
-        // Oyunu seçilen seviyeyle hemen başlat
-        game.startNewGame(level)
+        // Oyunu seçilen seviye ve modla hemen başlat
+        game.startNewGame(level, mode)
 
         // Bonus verisini arka planda pre-fetch et (bonusa gelince hazır olsun)
         ensureBonusLoaded(repo).catch(() => {})
       })
       .catch((err) => {
         console.error('Kelime verisi yüklenirken hata:', err)
+        if (active) {
+          setLoadError(true)
+          setLoading(false)
+        }
       })
 
     return () => {
       active = false
     }
-  }, [level])
+  }, [level, mode, reloadKey])
 
   // SPEC Bölüm 2.1-4: Arka plana atılınca (sekme gizlenince / blur) otomatik duraklama
   useEffect(() => {
@@ -215,6 +230,44 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
     prevScreenRef.current = gameState.screen
   }, [gameState?.screen])
 
+  if (loadError) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-dvh bg-[var(--color-bg-primary)] px-6 select-none">
+        <div className="w-full max-w-sm rounded-3xl p-6 bg-slate-900/95 border border-rose-500/30 text-center shadow-2xl flex flex-col items-center">
+          <div className="w-14 h-14 rounded-2xl bg-rose-500/20 border border-rose-400 text-rose-400 flex items-center justify-center text-3xl mb-3 shadow-lg">
+            ⚠️
+          </div>
+          <h2 className="text-xl font-black text-white mb-1">
+            Seviye verisi yüklenemedi
+          </h2>
+          <p className="text-xs text-slate-400 mb-5 leading-relaxed">
+            Kelime listesi sunucudan alınamadı. Lütfen internet bağlantını kontrol et ve tekrar dene.
+          </p>
+          <div className="w-full flex flex-col gap-2.5">
+            <button
+              type="button"
+              onClick={() => {
+                setLoadError(false)
+                setLoading(true)
+                setReloadKey((k) => k + 1)
+              }}
+              className="w-full py-3.5 px-6 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm shadow-lg shadow-violet-600/30 transition-all active:scale-95"
+            >
+              Tekrar Dene
+            </button>
+            <button
+              type="button"
+              onClick={onBackToMenu}
+              className="w-full py-2.5 px-6 rounded-2xl bg-white/10 hover:bg-white/15 text-slate-300 font-semibold text-xs transition-all active:scale-95"
+            >
+              Geri
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (loading || !controller || !gameState) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-[var(--color-bg-primary)] p-6 select-none">
@@ -223,6 +276,18 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
           Kelimeler hazırlanıyor...
         </p>
       </div>
+    )
+  }
+
+  // ─── Çalışma Modu Oturum Özeti Ekranı ─────────────────────────
+  if (gameState.screen === 'practice_summary' && gameState.practiceSummary) {
+    return (
+      <PracticeSummaryModal
+        summary={gameState.practiceSummary}
+        level={gameState.level}
+        onRestart={() => controller.startNewGame(level, mode)}
+        onBackToMenu={onBackToMenu}
+      />
     )
   }
 
@@ -243,7 +308,44 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
           state={gameState}
           controller={controller}
           clock={controller.getClock()}
+          onEndPractice={() => setShowEndConfirm(true)}
         />
+
+        {/* Çalışmayı Bitir Onay Penceresi */}
+        {showEndConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
+            <div className="w-full max-w-xs rounded-3xl p-5 bg-slate-900/95 border border-rose-500/30 text-center shadow-2xl flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-400 text-rose-400 flex items-center justify-center text-2xl mb-3 shadow-lg">
+                🛑
+              </div>
+              <h3 className="text-lg font-black text-white mb-1">
+                Çalışmayı Bitir?
+              </h3>
+              <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                Çalışma oturumun sonlandırılacak ve performans özetin gösterilecek.
+              </p>
+              <div className="w-full flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEndConfirm(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 font-semibold text-xs active:scale-95 transition-all"
+                >
+                  Vazgeç
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEndConfirm(false)
+                    controller.endPractice()
+                  }}
+                  className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-600/30 active:scale-95 transition-all"
+                >
+                  Bitir
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Duraklatıldı Katmanı */}
         {gameState.screen === 'paused' && (
@@ -318,7 +420,44 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
         state={gameState}
         clock={controller.getClock()}
         onPause={() => controller.pauseGame()}
+        onEndPractice={() => setShowEndConfirm(true)}
       />
+
+      {/* Çalışmayı Bitir Onay Penceresi */}
+      {showEndConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
+          <div className="w-full max-w-xs rounded-3xl p-5 bg-slate-900/95 border border-rose-500/30 text-center shadow-2xl flex flex-col items-center">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-400 text-rose-400 flex items-center justify-center text-2xl mb-3 shadow-lg">
+              🛑
+            </div>
+            <h3 className="text-lg font-black text-white mb-1">
+              Çalışmayı Bitir?
+            </h3>
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              Çalışma oturumun sonlandırılacak ve performans özetin gösterilecek.
+            </p>
+            <div className="w-full flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowEndConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 font-semibold text-xs active:scale-95 transition-all"
+              >
+                Vazgeç
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEndConfirm(false)
+                  controller.endPractice()
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-600/30 active:scale-95 transition-all"
+              >
+                Bitir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 4. Tur Kelime Kaybı Bildirimi (Doğru Cevap Gösterimi - ~3 sn Dondurulmuş) */}
       {gameState.screen === 'round4_word_lost' && r4?.lostWord && (
@@ -392,15 +531,18 @@ export default function GameScreen({ onBackToMenu, level = 'zor' }: GameScreenPr
               ? 'Bonus Soru Başlıyor!'
               : gameState.countdownTarget === 'round4_playing'
                 ? 'Büyük Final Başlıyor!'
-                : `${rs?.round ?? 1}. Tur Hazırlanıyor`
+                : gameState.mode === 'calisma'
+                  ? `${rs?.letterCount ?? 4} Harfli Kelime`
+                  : `${rs?.round ?? 1}. Tur Hazırlanıyor`
           }
         />
       )}
 
-      {/* Kelime Sonuç Kartı (1–3. Tur) */}
+      {/* Kelime Sonuç Kartı (1–3. Tur ve Çalışma Modu) */}
       {gameState.screen === 'word_result' && rs && (
         <WordResultModal
           roundState={rs}
+          isCalisma={gameState.mode === 'calisma'}
           onContinue={() => controller.dismissWordResult()}
         />
       )}

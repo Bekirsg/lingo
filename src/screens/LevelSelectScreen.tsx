@@ -1,6 +1,6 @@
 /**
- * LİNGO v2 — Yarışma Seviye Seçimi Ekranı
- * SPEC-v2 Bölüm 3.2, 4.6, 5 & V2-M4
+ * LİNGO v2 — Seviye Seçimi Ekranı (Yarışma ve Çalışma Modları)
+ * SPEC-v2 Bölüm 3.2, 3.3, 4.6, 5, 6 & V2-M4 / V2-M5
  */
 
 import { useState } from 'react'
@@ -11,7 +11,10 @@ import { formatPoints } from '../components/Hud'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
 
+export type GameMode = 'yarisma' | 'calisma'
+
 interface LevelSelectScreenProps {
+  mode?: GameMode
   onSelectLevel: (level: GameLevel) => void
   onBack: () => void
 }
@@ -60,12 +63,20 @@ const LEVEL_CARDS: LevelCardConfig[] = [
   },
 ]
 
-export default function LevelSelectScreen({ onSelectLevel, onBack }: LevelSelectScreenProps) {
+export default function LevelSelectScreen({
+  mode = 'yarisma',
+  onSelectLevel,
+  onBack,
+}: LevelSelectScreenProps) {
   const [loadingLevel, setLoadingLevel] = useState<GameLevel | null>(null)
+  const [loadError, setLoadError] = useState<{ level: GameLevel; message: string } | null>(null)
   const records = getLevelRecords()
+
+  const isPractice = mode === 'calisma'
 
   const handleSelect = async (level: GameLevel) => {
     if (loadingLevel) return
+    setLoadError(null)
 
     playSound('key_press')
     triggerHaptic('tap')
@@ -84,11 +95,49 @@ export default function LevelSelectScreen({ onSelectLevel, onBack }: LevelSelect
         ensureLevelsLoaded(repo, level),
         ensureBonusLevelLoaded(repo, level),
       ])
-    } catch (err) {
-      console.warn('[LİNGO v2] Seviye dosyaları yüklenemedi, Zor havuzuna düşülüyor:', err)
-    } finally {
       onSelectLevel(level)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Bilinmeyen bir hata oluştu.'
+      console.error('[LİNGO v2] Seviye dosyaları yüklenemedi:', msg)
+      // SPEC-v2 M4 Düzeltmesi: Üretimde sessizce Zor'a düşme! Yükleme hatası ekranı göster, oyun başlamasın.
+      setLoadError({
+        level,
+        message: 'Seviye kelime listesi indirilemedi. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
+      })
+    } finally {
+      setLoadingLevel(null)
     }
+  }
+
+  // Yükleme Hatası Ekranı (SPEC-v2 M4 Düzeltmesi)
+  if (loadError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-dvh bg-[var(--color-bg-primary)] px-6 text-center select-none animate-fade-in">
+        <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400 text-3xl flex items-center justify-center mb-4">
+          ⚠️
+        </div>
+        <h2 className="text-xl font-black text-white mb-2">Seviye Verisi Yüklenemedi</h2>
+        <p className="text-xs text-slate-300 max-w-xs mb-6">
+          {loadError.message}
+        </p>
+        <div className="flex flex-col gap-2.5 w-full max-w-xs">
+          <button
+            type="button"
+            onClick={() => handleSelect(loadError.level)}
+            className="w-full py-3.5 px-6 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all duration-200 active:scale-95 shadow-lg shadow-violet-600/30"
+          >
+            🔄 Tekrar Dene
+          </button>
+          <button
+            type="button"
+            onClick={() => setLoadError(null)}
+            className="w-full py-3 px-6 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-sm border border-white/10 transition-all duration-200 active:scale-95"
+          >
+            ← Geri
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -111,16 +160,18 @@ export default function LevelSelectScreen({ onSelectLevel, onBack }: LevelSelect
         </button>
         <div>
           <h2 className="text-xl font-black text-[var(--color-text-primary)]">
-            Yarışma • Seviye Seçimi
+            {isPractice ? 'Çalışma • Seviye Seçimi' : 'Yarışma • Seviye Seçimi'}
           </h2>
           <p className="text-xs text-[var(--color-text-muted)]">
-            Oynamak istediğin kelime zorluğunu seç
+            {isPractice
+              ? 'Alıştırma yapmak istediğin kelime zorluğunu seç'
+              : 'Oynamak istediğin kelime zorluğunu seç'}
           </p>
         </div>
       </div>
 
       {/* Seviye Kartları */}
-      <div className="flex-1 flex flex-col justify-center gap-4 max-w-sm mx-auto w-full">
+      <div className="flex-1 flex flex-col justify-center gap-3.5 max-w-sm mx-auto w-full">
         {LEVEL_CARDS.map((card) => {
           const isLoading = loadingLevel === card.level
           const recordScore = records[card.level]
@@ -155,14 +206,20 @@ export default function LevelSelectScreen({ onSelectLevel, onBack }: LevelSelect
                 {card.description}
               </p>
 
-              {/* Alt Bilgi: Rekor ve Durum */}
+              {/* Alt Bilgi: Rekor veya Çalışma Notu ve Durum */}
               <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
-                <div className="flex items-center gap-1.5 text-slate-400">
-                  <span>🏆 En Yüksek:</span>
-                  <span className={`font-mono font-bold ${card.accentColor}`}>
-                    {recordScore > 0 ? formatPoints(recordScore) : '—'}
+                {isPractice ? (
+                  <span className="text-slate-400 text-[11px]">
+                    🎯 Sınırsız alıştırma • Puan tutulmaz
                   </span>
-                </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <span>🏆 En Yüksek:</span>
+                    <span className={`font-mono font-bold ${card.accentColor}`}>
+                      {recordScore > 0 ? formatPoints(recordScore) : '—'}
+                    </span>
+                  </div>
+                )}
 
                 {isLoading ? (
                   <span className="text-violet-300 font-bold flex items-center gap-1 animate-pulse">
@@ -193,6 +250,26 @@ export default function LevelSelectScreen({ onSelectLevel, onBack }: LevelSelect
             </button>
           )
         })}
+
+        {/* 4. Kart: Hatalarımla Çalış (Çalışma modunda görünür, şimdilik pasif) */}
+        {isPractice && (
+          <div
+            className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-50 cursor-not-allowed text-left relative"
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔁</span>
+                <span className="text-xl font-black text-slate-300">Hatalarımla Çalış</span>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Yakında
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Bilgilendirme Notu */}

@@ -27,15 +27,17 @@ import { Clock } from '../clock'
 import type { WordRepository } from '../../data/words'
 import type { GameLevel } from '../../data/levels'
 import { pickWordWithFallback, pickBonusWordWithFallback } from '../../data/levels'
-import type { GameState } from './types'
+import type { GameState, GameMode, PracticeState, PracticeSummary, QuestionResolvedEvent } from './types'
 
 export * from './types'
 
 export interface GameControllerOptions {
   words: WordRepository
   level?: GameLevel
+  mode?: GameMode
   nowFn?: () => number
   onStateChange?: (state: GameState) => void
+  onQuestionResolved?: (event: QuestionResolvedEvent) => void
   highScore?: number
 }
 
@@ -43,19 +45,28 @@ export class GameController {
   private state: GameState
   private words: WordRepository
   private level: GameLevel
+  private mode: GameMode
   private clock: Clock
   /** 4. tur kelime kaybında ~3 sn bekleme için bağımsız küçük sayaç */
   private waitClock: Clock
   private nowFn?: () => number
   private highScore: number
   private onStateChange?: (state: GameState) => void
+  private onQuestionResolved?: (event: QuestionResolvedEvent) => void
+
+  /** Soru bazlı metrik takibi (SPEC-v2 4.7 / 6 / M5 / M7 / M8) */
+  private currentWordGuessTimes: number[] = []
+  private currentWordInvalidGuesses: string[] = []
+  private bonusBilSeconds?: number
 
   constructor(options: GameControllerOptions) {
     this.words = options.words
     this.level = options.level ?? 'zor'
+    this.mode = options.mode ?? 'yarisma'
     this.nowFn = options.nowFn
     this.highScore = options.highScore ?? 0
     this.onStateChange = options.onStateChange
+    this.onQuestionResolved = options.onQuestionResolved
 
     this.clock = new Clock({
       nowFn: this.nowFn,
@@ -72,6 +83,7 @@ export class GameController {
   private createInitialState(): GameState {
     return {
       screen: 'menu',
+      mode: this.mode,
       treasury: 0,
       currentRoundPoints: 0,
       usedWords: new Set<string>(),
@@ -98,17 +110,70 @@ export class GameController {
     this.onStateChange?.(this.state)
   }
 
+  private publishQuestionResolved(event: QuestionResolvedEvent): void {
+    this.onQuestionResolved?.(event)
+  }
+
   // ─── Oyun Başlatma & Akış ─────────────────────────────────────────
 
   /** Yeni bir oyun başlatır (Ana menüden veya Seviye Seçiminden) */
-  startNewGame(level?: GameLevel): void {
+  startNewGame(level?: GameLevel, mode?: GameMode): void {
     if (level) {
       this.level = level
     }
+    if (mode) {
+      this.mode = mode
+    }
     this.clock.stop()
     this.waitClock.stop()
+    this.currentWordGuessTimes = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
+    if (this.mode === 'calisma') {
+      const practiceState: PracticeState = {
+        cycle: 1,
+        questionIndexInCycle: 1,
+        totalAsked: 0,
+        totalWon: 0,
+        totalLost: 0,
+        totalPassed: 0,
+        byLetter: {
+          4: { asked: 0, won: 0 },
+          5: { asked: 0, won: 0 },
+          6: { asked: 0, won: 0 },
+          7: { asked: 0, won: 0 },
+          8: { asked: 0, won: 0 },
+        },
+        bonusWonCount: 0,
+        bonusLostCount: 0,
+        missedWords: [],
+        currentWordInvalidGuesses: [],
+        currentWordGuessTimes: [],
+      }
+
+      this.state = {
+        screen: 'countdown',
+        mode: 'calisma',
+        treasury: 0,
+        currentRoundPoints: 0,
+        usedWords: new Set<string>(),
+        countdownValue: 3,
+        countdownTarget: 'playing_round',
+        finalScore: 0,
+        isNewRecord: false,
+        level: this.level,
+        practiceState,
+      }
+      this.setupPracticeWord(4)
+      this.emitState()
+      return
+    }
+
+    // Yarışma Modu
     this.state = {
       screen: 'countdown',
+      mode: 'yarisma',
       treasury: 0,
       currentRoundPoints: 0,
       usedWords: new Set<string>(),
@@ -122,9 +187,9 @@ export class GameController {
     this.emitState()
   }
 
-  /** SPEC-v2 startGame(level) desteği */
-  startGame(level?: GameLevel): void {
-    this.startNewGame(level)
+  /** SPEC-v2 startGame(level, mode) desteği */
+  startGame(level?: GameLevel, mode?: GameMode): void {
+    this.startNewGame(level, mode)
   }
 
   /**
@@ -164,6 +229,10 @@ export class GameController {
   // ─── 1–3. Tur Kelime Hazırlığı ─────────────────────────────────────
 
   private setupRoundWord(round: 1 | 2 | 3, wordIndex: number): void {
+    this.currentWordGuessTimes = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
     const config = ROUND_CONFIGS[round - 1]
     const len = config.letterCount
     const pool = this.words.getWords(len)
@@ -192,6 +261,97 @@ export class GameController {
       wordWon: false,
       wordLost: false,
       wordsWonInRound: prevWon,
+    }
+  }
+
+  // ─── Çalışma Modu Kelime Hazırlığı (SPEC-v2 Bölüm 6) ───────────────
+
+  private setupPracticeWord(len: number): void {
+    this.currentWordGuessTimes = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
+    const pool = this.words.getWords(len)
+    const levelData = this.words.getLevelData?.(len) ?? null
+    let res = this.words.pickWordByLevel
+      ? this.words.pickWordByLevel(len, this.state.level, this.state.usedWords)
+      : pickWordWithFallback(pool, levelData, this.state.level, this.state.usedWords)
+
+    if (!res) {
+      // SPEC 6 / 4.3: Havuz tükendiğinde bu harf sayısı için kullanılmışlar sıfırlanır
+      for (const w of Array.from(this.state.usedWords)) {
+        if (letterCount(w) === len) {
+          this.state.usedWords.delete(w)
+        }
+      }
+      res = this.words.pickWordByLevel
+        ? this.words.pickWordByLevel(len, this.state.level, this.state.usedWords)
+        : pickWordWithFallback(pool, levelData, this.state.level, this.state.usedWords)
+    }
+
+    if (!res) {
+      throw new Error(`Çalışma modu ${len} harfli kelime havuzu bulunamadı!`)
+    }
+
+    const word = res.word
+    this.state.usedWords.add(word)
+
+    const qIndex = this.state.practiceState?.questionIndexInCycle ?? 1
+    this.state.roundState = {
+      round: 1,
+      wordIndex: qIndex,
+      letterCount: len,
+      currentWord: word,
+      guesses: [],
+      currentInput: Array.from(word)[0],
+      wordWon: false,
+      wordLost: false,
+      wordsWonInRound: this.state.practiceState?.totalWon ?? 0,
+    }
+  }
+
+  private setupPracticeBonus(bonusLength: number = 8): void {
+    this.currentWordGuessTimes = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
+    const bonusPool = this.words.getBonusWords()
+    const levelData = this.words.getLevelData?.(bonusLength) ?? null
+    let res = this.words.pickBonusWordByLevel
+      ? this.words.pickBonusWordByLevel(this.state.level, this.state.usedWords)
+      : pickBonusWordWithFallback(bonusPool, levelData, this.state.level, this.state.usedWords)
+
+    if (!res) {
+      // SPEC 6 / 4.3: Bonus havuzu tükendiğinde bonus harf sayısı için kullanılmışlar sıfırlanır
+      for (const w of Array.from(this.state.usedWords)) {
+        if (letterCount(w) === bonusLength) {
+          this.state.usedWords.delete(w)
+        }
+      }
+      res = this.words.pickBonusWordByLevel
+        ? this.words.pickBonusWordByLevel(this.state.level, this.state.usedWords)
+        : pickBonusWordWithFallback(bonusPool, levelData, this.state.level, this.state.usedWords)
+    }
+
+    if (!res) {
+      throw new Error('Çalışma modu bonus kelime havuzu bulunamadı!')
+    }
+
+    this.state.usedWords.add(res.word)
+    const actualLen = letterCount(res.word)
+
+    this.state.bonusState = {
+      word: res.word,
+      definition: res.definition,
+      length: actualLen,
+      revealOrder: shuffleRevealOrder(actualLen),
+      revealedCount: 0,
+      currentScore: 3000,
+      frozenScore: 0,
+      bilPressed: false,
+      userInput: '',
+      won: false,
+      answered: false,
     }
   }
 
@@ -269,7 +429,7 @@ export class GameController {
   }
 
   /**
-   * 1–3. turlarda tahmin gönderir.
+   * 1–3. turlarda (ve çalışma modunda) tahmin gönderir.
    * @param guessRaw Tahmin metni
    * @param autoStartNextTimer UI animasyonu varsa false verilir, animasyon bitince startGuessTimer() çağrılır.
    */
@@ -287,11 +447,15 @@ export class GameController {
     const expectedFirstChar = Array.from(rs.currentWord)[0]
     if (Array.from(guess)[0] !== expectedFirstChar) return
 
+    const elapsed = Math.round(Math.max(0, GUESS_TIME_LIMIT - this.clock.getRemainingSeconds()) * 10) / 10
+    this.currentWordGuessTimes.push(elapsed)
+
     // 1) Sözlükte var mı? (TDK geçerlilik kontrolü)
     const isValid = this.words.isValidWord(guess, rs.letterCount)
 
     if (!isValid) {
       // SPEC Bölüm 4.2-3: Geçersiz tahmin -> anında kaybedilir, tüm kutular kırmızı
+      this.currentWordInvalidGuesses.push(guess)
       this.clock.stop()
       rs.wordLost = true
       rs.lossReason = 'invalid_word'
@@ -299,6 +463,33 @@ export class GameController {
         guess,
         marks: Array(rs.letterCount).fill('red'),
       })
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: rs.letterCount,
+        result: 'lost',
+        attemptCount: rs.guesses.length,
+        lossReason: 'invalid_word',
+        word: rs.currentWord,
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidGuesses: [...this.currentWordInvalidGuesses],
+      })
+
+      if (this.state.mode === 'calisma' && this.state.practiceState) {
+        const ps = this.state.practiceState
+        ps.totalAsked++
+        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
+        ps.byLetter[rs.letterCount].asked++
+        ps.totalLost++
+        ps.missedWords.push({
+          word: rs.currentWord,
+          letterCount: rs.letterCount,
+          reason: 'lost',
+          correctWord: rs.currentWord,
+        })
+      }
+
       this.state.screen = 'word_result'
       this.emitState()
       return
@@ -315,10 +506,33 @@ export class GameController {
       this.clock.stop()
       rs.wordWon = true
       rs.wordsWonInRound++
-      const config = ROUND_CONFIGS[rs.round - 1]
-      const points = config.pointsPerWord
-      this.state.currentRoundPoints += points
-      this.state.treasury += points
+      if (this.state.mode === 'yarisma') {
+        const config = ROUND_CONFIGS[rs.round - 1]
+        const points = config.pointsPerWord
+        this.state.currentRoundPoints += points
+        this.state.treasury += points
+      }
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: rs.letterCount,
+        result: 'won',
+        attemptCount: rs.guesses.length,
+        word: rs.currentWord,
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidGuesses: [...this.currentWordInvalidGuesses],
+      })
+
+      if (this.state.mode === 'calisma' && this.state.practiceState) {
+        const ps = this.state.practiceState
+        ps.totalAsked++
+        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
+        ps.byLetter[rs.letterCount].asked++
+        ps.totalWon++
+        ps.byLetter[rs.letterCount].won++
+      }
+
       this.state.screen = 'word_result'
       this.emitState()
       return
@@ -329,6 +543,33 @@ export class GameController {
       this.clock.stop()
       rs.wordLost = true
       rs.lossReason = 'max_attempts'
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: rs.letterCount,
+        result: 'lost',
+        attemptCount: rs.guesses.length,
+        lossReason: 'max_attempts',
+        word: rs.currentWord,
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidGuesses: [...this.currentWordInvalidGuesses],
+      })
+
+      if (this.state.mode === 'calisma' && this.state.practiceState) {
+        const ps = this.state.practiceState
+        ps.totalAsked++
+        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
+        ps.byLetter[rs.letterCount].asked++
+        ps.totalLost++
+        ps.missedWords.push({
+          word: rs.currentWord,
+          letterCount: rs.letterCount,
+          reason: 'lost',
+          correctWord: rs.currentWord,
+        })
+      }
+
       this.state.screen = 'word_result'
       this.emitState()
       return
@@ -344,21 +585,49 @@ export class GameController {
     this.emitState()
   }
 
-  /** 1–3. tur tahmin süresi dolunca */
+  /** 1–3. tur (ve çalışma) tahmin süresi dolunca */
   onGuessTimeout(): void {
     if (this.state.screen !== 'playing_round' || !this.state.roundState) return
     const rs = this.state.roundState
 
+    this.currentWordGuessTimes.push(GUESS_TIME_LIMIT)
     this.clock.stop()
     rs.wordLost = true
     rs.lossReason = 'time_out'
+
+    this.publishQuestionResolved({
+      mode: this.state.mode,
+      level: this.state.level,
+      letterCount: rs.letterCount,
+      result: 'lost',
+      attemptCount: rs.guesses.length,
+      lossReason: 'time_out',
+      word: rs.currentWord,
+      guessTimes: [...this.currentWordGuessTimes],
+      invalidGuesses: [...this.currentWordInvalidGuesses],
+    })
+
+    if (this.state.mode === 'calisma' && this.state.practiceState) {
+      const ps = this.state.practiceState
+      ps.totalAsked++
+      if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
+      ps.byLetter[rs.letterCount].asked++
+      ps.totalLost++
+      ps.missedWords.push({
+        word: rs.currentWord,
+        letterCount: rs.letterCount,
+        reason: 'lost',
+        correctWord: rs.currentWord,
+      })
+    }
+
     this.state.screen = 'word_result'
     this.emitState()
   }
 
   /**
    * SPEC-v2 Bölüm 10: PAS eylemi
-   * 1–3. turda kelime kaybedilir (neden: 'pass', 0 puan, sonuç kartı -> Devam Et -> 3-2-1).
+   * 1–3. turda ve Çalışma modunda kelime kaybedilir (neden: 'pass', 0 puan, sonuç kartı -> Devam Et -> 3-2-1).
    * 4. turda kelime kaybedilir (doğru cevap ~3 sn gösterilir, sayaç donar, yeni kelime).
    * Bonus modunda veya uygunsuz ekranlarda yok sayılır.
    */
@@ -370,6 +639,33 @@ export class GameController {
       this.clock.stop()
       rs.wordLost = true
       rs.lossReason = 'pass'
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: rs.letterCount,
+        result: 'pass',
+        attemptCount: rs.guesses.length,
+        lossReason: 'pass',
+        word: rs.currentWord,
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidGuesses: [...this.currentWordInvalidGuesses],
+      })
+
+      if (this.state.mode === 'calisma' && this.state.practiceState) {
+        const ps = this.state.practiceState
+        ps.totalAsked++
+        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
+        ps.byLetter[rs.letterCount].asked++
+        ps.totalPassed++
+        ps.missedWords.push({
+          word: rs.currentWord,
+          letterCount: rs.letterCount,
+          reason: 'pass',
+          correctWord: rs.currentWord,
+        })
+      }
+
       this.state.screen = 'word_result'
       this.emitState()
       return true
@@ -380,6 +676,19 @@ export class GameController {
       this.clock.pause()
       r4.lostWord = r4.currentWord
       r4.wordsAttemptedInStage++
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: r4.stage,
+        result: 'pass',
+        attemptCount: r4.guesses.length,
+        lossReason: 'pass',
+        word: r4.currentWord,
+        guessTimes: [],
+        invalidGuesses: [],
+      })
+
       this.state.screen = 'round4_word_lost'
       this.waitClock.start(3, () => this.onRound4WordLostExpire())
       this.emitState()
@@ -391,11 +700,42 @@ export class GameController {
 
   /**
    * Sonuç kartından "Devam Et" butonuna basıldığında çağrılır.
-   * SPEC 4.5: 3 saniyelik geri sayım (3-2-1) çıkar, sonra yeni kelimeye geçer.
+   * SPEC 4.5 & 6.2: 3 saniyelik geri sayım (3-2-1) çıkar, sonra yeni kelimeye geçer.
    */
   dismissWordResult(): void {
     if (this.state.screen !== 'word_result' || !this.state.roundState) return
     const rs = this.state.roundState
+
+    if (this.state.mode === 'calisma') {
+      const ps = this.state.practiceState!
+      if (ps.questionIndexInCycle === 1) {
+        ps.questionIndexInCycle = 2
+        this.setupPracticeWord(5)
+        this.state.screen = 'countdown'
+        this.state.countdownValue = 3
+        this.state.countdownTarget = 'playing_round'
+      } else if (ps.questionIndexInCycle === 2) {
+        ps.questionIndexInCycle = 3
+        this.setupPracticeWord(6)
+        this.state.screen = 'countdown'
+        this.state.countdownValue = 3
+        this.state.countdownTarget = 'playing_round'
+      } else if (ps.questionIndexInCycle === 3) {
+        ps.questionIndexInCycle = 4
+        this.setupPracticeWord(7)
+        this.state.screen = 'countdown'
+        this.state.countdownValue = 3
+        this.state.countdownTarget = 'playing_round'
+      } else if (ps.questionIndexInCycle === 4) {
+        ps.questionIndexInCycle = 5
+        this.setupPracticeBonus(8)
+        this.state.screen = 'countdown'
+        this.state.countdownValue = 3
+        this.state.countdownTarget = 'bonus_reading'
+      }
+      this.emitState()
+      return
+    }
 
     if (rs.wordIndex < 5) {
       // Tur içinde sıradaki kelimeye geç
@@ -414,9 +754,13 @@ export class GameController {
     }
   }
 
-  // ─── Bonus Soru Akışı (SPEC Bölüm 4.6) ─────────────────────────────
+  // ─── Bonus Soru Akışı (SPEC Bölüm 4.6 & 6) ──────────────────────────
 
   private setupBonusQuestion(): void {
+    this.currentWordGuessTimes = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
     const bonusPool = this.words.getBonusWords()
     const levelData = this.words.getLevelData?.(8) ?? null
     const res = this.words.pickBonusWordByLevel
@@ -428,11 +772,13 @@ export class GameController {
     }
 
     this.state.usedWords.add(res.word)
+    const len = letterCount(res.word)
 
     this.state.bonusState = {
       word: res.word,
       definition: res.definition,
-      revealOrder: shuffleRevealOrder(8),
+      length: len,
+      revealOrder: shuffleRevealOrder(len),
       revealedCount: 0,
       currentScore: 3000,
       frozenScore: 0,
@@ -451,7 +797,8 @@ export class GameController {
     const bs = this.state.bonusState
     if (bs.bilPressed) return
 
-    bs.revealedCount = bonusRevealedAtTime(elapsedSeconds)
+    const maxRevealed = (bs.length || bs.word.length) - 1
+    bs.revealedCount = bonusRevealedAtTime(elapsedSeconds, maxRevealed)
     bs.currentScore = bonusScore(bs.revealedCount)
 
     if (elapsedSeconds >= BONUS_TOTAL_TIME) {
@@ -471,6 +818,7 @@ export class GameController {
     if (this.state.screen !== 'bonus_reading' || !this.state.bonusState) return
     const bs = this.state.bonusState
 
+    this.bonusBilSeconds = Math.round(Math.max(0, BONUS_TOTAL_TIME - this.clock.getRemainingSeconds()) * 10) / 10
     this.clock.stop()
     bs.bilPressed = true
     bs.frozenScore = bs.currentScore
@@ -489,16 +837,72 @@ export class GameController {
     const bs = this.state.bonusState
 
     this.clock.stop()
+    const elapsed = Math.round(Math.max(0, BONUS_WRITE_TIME - this.clock.getRemainingSeconds()) * 10) / 10
+    this.currentWordGuessTimes.push(elapsed)
     const answer = normalize(answerRaw)
     bs.userInput = answer
     bs.answered = true
+    const len = bs.length || bs.word.length
 
     if (answer === bs.word) {
       bs.won = true
-      this.state.currentRoundPoints += bs.frozenScore
-      this.state.treasury += bs.frozenScore
+      if (this.state.mode === 'yarisma') {
+        this.state.currentRoundPoints += bs.frozenScore
+        this.state.treasury += bs.frozenScore
+      }
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: len,
+        result: 'won',
+        attemptCount: 1,
+        word: bs.word,
+        guessTimes: [...this.currentWordGuessTimes],
+        bonusBilSeconds: this.bonusBilSeconds,
+        bonusPoints: bs.frozenScore,
+        invalidGuesses: [],
+      })
+
+      if (this.state.mode === 'calisma' && this.state.practiceState) {
+        const ps = this.state.practiceState
+        ps.totalAsked++
+        if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
+        ps.byLetter[len].asked++
+        ps.totalWon++
+        ps.bonusWonCount++
+        ps.byLetter[len].won++
+      }
     } else {
       bs.won = false
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: len,
+        result: 'lost',
+        attemptCount: 1,
+        lossReason: 'invalid_word',
+        word: bs.word,
+        guessTimes: [...this.currentWordGuessTimes],
+        bonusBilSeconds: this.bonusBilSeconds,
+        bonusPoints: 0,
+        invalidGuesses: [answer],
+      })
+
+      if (this.state.mode === 'calisma' && this.state.practiceState) {
+        const ps = this.state.practiceState
+        ps.totalAsked++
+        if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
+        ps.byLetter[len].asked++
+        ps.totalLost++
+        ps.bonusLostCount++
+        ps.missedWords.push({
+          word: bs.word,
+          letterCount: len,
+          reason: 'lost',
+          correctWord: bs.word,
+        })
+      }
     }
 
     this.state.screen = 'bonus_result'
@@ -511,8 +915,40 @@ export class GameController {
     const bs = this.state.bonusState
 
     this.clock.stop()
+    this.currentWordGuessTimes.push(BONUS_WRITE_TIME)
     bs.won = false
     bs.answered = true
+    const len = bs.length || bs.word.length
+
+    this.publishQuestionResolved({
+      mode: this.state.mode,
+      level: this.state.level,
+      letterCount: len,
+      result: 'lost',
+      attemptCount: 1,
+      lossReason: 'time_out',
+      word: bs.word,
+      guessTimes: [...this.currentWordGuessTimes],
+      bonusBilSeconds: this.bonusBilSeconds,
+      bonusPoints: 0,
+      invalidGuesses: [],
+    })
+
+    if (this.state.mode === 'calisma' && this.state.practiceState) {
+      const ps = this.state.practiceState
+      ps.totalAsked++
+      if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
+      ps.byLetter[len].asked++
+      ps.totalLost++
+      ps.bonusLostCount++
+      ps.missedWords.push({
+        word: bs.word,
+        letterCount: len,
+        reason: 'lost',
+        correctWord: bs.word,
+      })
+    }
+
     this.state.screen = 'bonus_result'
     this.emitState()
   }
@@ -525,15 +961,58 @@ export class GameController {
     this.clock.stop()
     bs.won = false
     bs.answered = true
-    bs.revealedCount = 7
+    const len = bs.length || bs.word.length
+    bs.revealedCount = len - 1
     bs.currentScore = 0
+
+    this.publishQuestionResolved({
+      mode: this.state.mode,
+      level: this.state.level,
+      letterCount: len,
+      result: 'lost',
+      attemptCount: 0,
+      lossReason: 'time_out',
+      word: bs.word,
+      guessTimes: [],
+      bonusPoints: 0,
+      invalidGuesses: [],
+    })
+
+    if (this.state.mode === 'calisma' && this.state.practiceState) {
+      const ps = this.state.practiceState
+      ps.totalAsked++
+      if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
+      ps.byLetter[len].asked++
+      ps.totalLost++
+      ps.bonusLostCount++
+      ps.missedWords.push({
+        word: bs.word,
+        letterCount: len,
+        reason: 'lost',
+        correctWord: bs.word,
+      })
+    }
+
     this.state.screen = 'bonus_result'
     this.emitState()
   }
 
-  /** Bonus sonuç kartından sonra tur özetine geç */
+  /** Bonus sonuç kartından sonra tur özetine (yarışma) veya sonraki döngüye (çalışma) geç */
   dismissBonusResult(): void {
     if (this.state.screen !== 'bonus_result') return
+
+    if (this.state.mode === 'calisma') {
+      const ps = this.state.practiceState!
+      ps.cycle++
+      ps.questionIndexInCycle = 1
+      this.setupPracticeWord(4)
+      this.state.screen = 'countdown'
+      this.state.countdownValue = 3
+      this.state.countdownTarget = 'playing_round'
+      this.emitState()
+      return
+    }
+
     // SPEC M7: 1–3. tur sonlarında bonus sonrası tur özet ekranı gösterilir
     this.state.screen = 'round_summary'
     this.emitState()
@@ -577,13 +1056,15 @@ export class GameController {
 
   /**
    * Bonus yazma fazında boş kutuların pozisyon indekslerini soldan sağa sıralı döndürür.
+   * Parametrik uzunluk destekler (SPEC 6 / M5 / M8).
    */
   getEmptyPositions(): number[] {
     const bs = this.state.bonusState
     if (!bs) return []
+    const len = bs.length || bs.word.length
     const locked = this.getLockedPositions()
     const empty: number[] = []
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < len; i++) {
       if (!locked.has(i)) empty.push(i)
     }
     return empty
@@ -634,19 +1115,20 @@ export class GameController {
 
   /**
    * Tüm kutular dolunca otomatik olarak bonus cevabını oluşturup gönderir.
+   * Parametrik uzunluk destekler (SPEC 6 / M5 / M8).
    */
   private autoSubmitBonus(): void {
     if (!this.state.bonusState) return
     const bs = this.state.bonusState
+    const len = bs.length || bs.word.length
     const locked = this.getLockedPositions()
     const emptyPositions = this.getEmptyPositions()
 
-    // 8 harfli kelimeyi birleştir
     const wordChars = Array.from(bs.word)
-    const result: string[] = new Array(8)
+    const result: string[] = new Array(len)
 
     // Kilitli pozisyonlara doğru harfleri koy
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < len; i++) {
       if (locked.has(i)) {
         result[i] = wordChars[i]
       }
@@ -724,7 +1206,7 @@ export class GameController {
     const isValid = this.words.isValidWord(guess, r4.stage)
 
     if (!isValid) {
-      // Yeni kural (değiştirildi): Geçersiz kelime -> tüm kutular kırmızı,
+      // Yeni kural: Geçersiz kelime -> tüm kutular kırmızı,
       // doğru cevap ~3 sn gösterilir, ana sayaç DONDURULUR, bekleme sonrası yeni kelimeye geçilir.
       this.clock.pause()
       r4.lostWord = r4.currentWord
@@ -733,6 +1215,19 @@ export class GameController {
         guess,
         marks: Array(r4.stage).fill('red'),
       })
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: r4.stage,
+        result: 'lost',
+        attemptCount: r4.guesses.length,
+        lossReason: 'invalid_word',
+        word: r4.currentWord,
+        guessTimes: [],
+        invalidGuesses: [guess],
+      })
+
       this.state.screen = 'round4_word_lost'
       this.waitClock.start(3, () => this.onRound4WordLostExpire())
       this.emitState()
@@ -750,6 +1245,17 @@ export class GameController {
       // SPEC 4.8: Kelime bilinirse oyun (ve sayaç) DONAR
       this.clock.pause()
       r4.lastCompletedStage = r4.stage
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: r4.stage,
+        result: 'won',
+        attemptCount: r4.guesses.length,
+        word: r4.currentWord,
+        guessTimes: [],
+        invalidGuesses: [],
+      })
 
       if (r4.stage === 7) {
         // 7 harfli bilinirse oyun biter!
@@ -770,6 +1276,19 @@ export class GameController {
       this.clock.pause()
       r4.lostWord = r4.currentWord
       r4.wordsAttemptedInStage++
+
+      this.publishQuestionResolved({
+        mode: this.state.mode,
+        level: this.state.level,
+        letterCount: r4.stage,
+        result: 'lost',
+        attemptCount: 5,
+        lossReason: 'max_attempts',
+        word: r4.currentWord,
+        guessTimes: [],
+        invalidGuesses: [],
+      })
+
       this.state.screen = 'round4_word_lost'
       this.waitClock.start(3, () => this.onRound4WordLostExpire())
       this.emitState()
@@ -838,11 +1357,57 @@ export class GameController {
     this.emitState()
   }
 
+  // ─── Çalışma Modu Bitir (SPEC-v2 Bölüm 6.3) ─────────────────────────
+
+  /**
+   * Çalışma modunu sonlandırır ve oturum özetini oluşturur.
+   */
+  endPractice(): PracticeSummary {
+    this.clock.stop()
+    this.waitClock.stop()
+
+    const ps = this.state.practiceState || {
+      cycle: 1,
+      questionIndexInCycle: 1,
+      totalAsked: 0,
+      totalWon: 0,
+      totalLost: 0,
+      totalPassed: 0,
+      byLetter: {},
+      bonusWonCount: 0,
+      bonusLostCount: 0,
+      missedWords: [],
+      currentWordInvalidGuesses: [],
+      currentWordGuessTimes: [],
+    }
+
+    const summary: PracticeSummary = {
+      totalQuestions: ps.totalAsked,
+      wonCount: ps.totalWon,
+      lostCount: ps.totalLost,
+      passCount: ps.totalPassed,
+      byLetter: { ...ps.byLetter },
+      bonusWonCount: ps.bonusWonCount,
+      bonusLostCount: ps.bonusLostCount,
+      missedWords: [...ps.missedWords],
+    }
+
+    this.state.practiceSummary = summary
+    this.state.screen = 'practice_summary'
+    this.emitState()
+    return summary
+  }
+
   // ─── Duraklat / Devam (Background / Pause) ─────────────────────────
 
   /** Oyunu duraklatır (sekme gizlenince / menüden) */
   pauseGame(): void {
-    if (this.state.screen === 'paused' || this.state.screen === 'menu' || this.state.screen === 'game_over') {
+    if (
+      this.state.screen === 'paused' ||
+      this.state.screen === 'menu' ||
+      this.state.screen === 'game_over' ||
+      this.state.screen === 'practice_summary'
+    ) {
       return
     }
 

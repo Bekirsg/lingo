@@ -6,6 +6,8 @@
 import type { Mark } from '../engine'
 import type { GameLevel } from '../../data/levels'
 
+export type GameMode = 'yarisma' | 'calisma'
+
 export type GameScreen =
   | 'menu'                     // Ana menü
   | 'countdown'                // 3-2-1 geri sayım
@@ -20,6 +22,7 @@ export type GameScreen =
   | 'round4_word_lost'         // 4. tur kelime kaybedildi (doğru cevap ~3 sn gösterilir, sayaç dondurulmuş)
   | 'round4_stage_cleared'     // 4. tur etap bilindi (duraklama ekranı)
   | 'game_over'                // Oyun sonu / Final skor ekranı
+  | 'practice_summary'         // Çalışma modu oturum özeti
   | 'paused'                   // Duraklatıldı katmanı (arka plan / kullanıcı duraklatması)
 
 export interface GuessAttempt {
@@ -52,9 +55,11 @@ export interface RoundState {
 export interface BonusState {
   word: string
   definition: string
+  /** Kelime harf uzunluğu (varsayılan 8, parametrik) */
+  length: number
   /** Açılan harf indeksleri (0 hariç, sırasıyla) */
   revealOrder: number[]
-  /** Kaç rastgele harf açıldı (0..7) */
+  /** Kaç rastgele harf açıldı (0..length-1) */
   revealedCount: number
   /** Anlık puan (3000 -> 0) */
   currentScore: number
@@ -87,8 +92,57 @@ export interface Round4State {
   lostWord?: string
 }
 
+export interface MissedWordItem {
+  word: string
+  letterCount: number
+  reason: 'lost' | 'pass'
+  correctWord: string
+}
+
+export interface PracticeSummary {
+  totalQuestions: number
+  wonCount: number
+  lostCount: number
+  passCount: number
+  byLetter: Record<number, { asked: number; won: number }>
+  bonusWonCount: number
+  bonusLostCount: number
+  missedWords: MissedWordItem[]
+}
+
+export interface PracticeState {
+  cycle: number
+  questionIndexInCycle: number // 1: 4h, 2: 5h, 3: 6h, 4: 7h, 5: 8h bonus
+  totalAsked: number
+  totalWon: number
+  totalLost: number
+  totalPassed: number
+  byLetter: Record<number, { asked: number; won: number }>
+  bonusWonCount: number
+  bonusLostCount: number
+  missedWords: MissedWordItem[]
+  currentWordInvalidGuesses: string[]
+  currentWordGuessTimes: number[]
+}
+
+export interface QuestionResolvedEvent {
+  mode: GameMode
+  level: GameLevel
+  letterCount: number
+  result: 'won' | 'lost' | 'pass'
+  attemptCount: number
+  lossReason?: 'invalid_word' | 'time_out' | 'max_attempts' | 'pass'
+  word: string
+  guessTimes: number[]
+  bonusBilSeconds?: number
+  bonusPoints?: number
+  invalidGuesses: string[]
+}
+
 export interface GameState {
   screen: GameScreen
+  /** Oyun modu: yarışma veya çalışma (SPEC-v2 Bölüm 6) */
+  mode: GameMode
   /** Duraklatılmadan önceki ekran */
   previousScreen?: GameScreen
   /** 1–3. turlarda biriken toplam kasa (maks 39.000) */
@@ -102,12 +156,17 @@ export interface GameState {
   /** Geri sayımdan sonra geçilecek hedef ekran */
   countdownTarget?: 'playing_round' | 'round4_playing' | 'bonus_reading'
 
-  /** 1–3. tur durumu */
+  /** 1–3. tur durumu (çalışma modunda normal kelimeler için de kullanılır) */
   roundState?: RoundState
   /** Bonus soru durumu */
   bonusState?: BonusState
   /** 4. tur durumu */
   round4State?: Round4State
+
+  /** Çalışma modu durumu (SPEC-v2 Bölüm 6) */
+  practiceState?: PracticeState
+  /** Çalışma modu tamamlanma / oturum özeti */
+  practiceSummary?: PracticeSummary
 
   /** Final skoru (oyun bittiğinde) */
   finalScore: number

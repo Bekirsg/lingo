@@ -203,7 +203,7 @@ Sonsuz döngü: 1 adet 4 harfli → 1 adet 5 harfli → 1 adet 6 harfli → 1 ad
 
 ### 6.2 Kurallar ve süreler (Yarışma ile aynı)
 - Normal kelimeler: ilk harf kilitli/yeşil, 5 tahmin hakkı, tahmin başına 15 sn, sözlük dışı kelime veya süre aşımı kelimeyi anında kaybettirir, renk algoritması aynı. PAS vardır (Bölüm 10).
-- Bonus (8 harfli): 3 sn okuma + 7 sn harf açılması, BİL sonrası 10 sn yazma süresi, açılan harfler kilitli, tek hak. Puan gösterilmez; üst çubukta puan yerine "Açılan harf: n/7" gösterilir. Zaman çizelgesi birebir aynıdır. Bonusta PAS yoktur.
+- Bonus (8 harfli veya parametrik N harfli): 3 sn okuma + 7 sn harf açılması, BİL sonrası 10 sn yazma süresi, açılan harfler kilitli, tek hak. Puan gösterilmez; üst çubukta puan yerine "Açılan harf: n/(uzunluk-1)" gösterilir. Zaman çizelgesi birebir aynıdır. Bonusta PAS yoktur.
 - 7 harfli kelime normal bir kelimedir (final turu kuralları uygulanmaz).
 
 ### 6.3 Akış
@@ -434,7 +434,7 @@ Her aşama sonunda testleri, `tsc` ve build'i çalıştır, commit'le, PROGRESS.
    - **M2c:** Kalite kapıları (4.8), denetim örneği, `kelime-listesi.csv` ve `level-decisions.csv`, `build-levels` ile `levels-*.json` üretimi, rapor. Bu dosyalar `v2-gelistirme` dalına girer.
 3. **V2-M3 — Klavye ve PAS:** Bölüm 9 ve 10; ergonomi analizi; regresyon testleri.
 4. **V2-M4 — Menü ve Yarışma:** yeni ana menü, seviye seçimi, Yarışma akışını seviyeye bağlama, seviye başına rekor, eski veri taşıma, HUD seviye rozeti.
-5. **V2-M5 — Çalışma modu:** döngü, kurallar, Bitir, oturum özeti.
+5. **V2-M5 — Çalışma modu:** döngü, kurallar, Bitir, oturum özeti, parametrik bonus. (✅ Tamamlandı)
 6. **V2-M6 — Analiz kaydı:** analytics modülü, kova şeması, olay kaydı (üç mod), sınırlar, testler.
 7. **V2-M7 — Analizler ekranı:** tüm sekmeler, Mod/Seviye filtreleri, öneriler, tembel yükleme.
 8. **V2-M8 — Hatalarımla çalış:** seçici, öğrenildi mantığı, Analizler'den geçiş düğmesi.

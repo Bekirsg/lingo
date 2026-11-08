@@ -4,16 +4,16 @@ import { triggerHaptic } from '../haptics/vibration'
 export type AppScreen = 'splash' | 'menu' | 'level_select' | 'game' | 'howtoplay' | 'settings'
 
 interface MainMenuProps {
-  onNavigate: (screen: AppScreen) => void
+  onNavigate: (screen: AppScreen, mode?: 'yarisma' | 'calisma') => void
 }
 
 export default function MainMenu({ onNavigate }: MainMenuProps) {
   const menuItems = [
-    { label: '🎮  Yarışma', screen: 'level_select' as AppScreen, primary: true, disabled: false, badge: null },
-    { label: '📚  Çalışma', screen: 'menu' as AppScreen, primary: false, disabled: true, badge: 'Yakında' },
-    { label: '📊  Analizler', screen: 'menu' as AppScreen, primary: false, disabled: true, badge: 'Yakında' },
-    { label: '📖  Nasıl Oynanır', screen: 'howtoplay' as AppScreen, primary: false, disabled: false, badge: null },
-    { label: '⚙️  Ayarlar', screen: 'settings' as AppScreen, primary: false, disabled: false, badge: null },
+    { label: '🎮  Yarışma', screen: 'level_select' as AppScreen, mode: 'yarisma' as const, primary: true, disabled: false, badge: null },
+    { label: '📚  Çalışma', screen: 'level_select' as AppScreen, mode: 'calisma' as const, primary: false, disabled: false, badge: null },
+    { label: '📊  Analizler', screen: 'menu' as AppScreen, mode: undefined, primary: false, disabled: true, badge: 'Yakında' },
+    { label: '📖  Nasıl Oynanır', screen: 'howtoplay' as AppScreen, mode: undefined, primary: false, disabled: false, badge: null },
+    { label: '⚙️  Ayarlar', screen: 'settings' as AppScreen, mode: undefined, primary: false, disabled: false, badge: null },
   ]
 
   return (
@@ -42,7 +42,7 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
               if (!item.disabled) {
                 playSound('key_press')
                 triggerHaptic('tap')
-                onNavigate(item.screen)
+                onNavigate(item.screen, item.mode)
               }
             }}
             className={`

@@ -154,14 +154,15 @@ export function bonusScore(revealedCount: number): number {
  * Bonus zamandan açılan harf sayısını hesaplar.
  * SPEC Bölüm 4.6 zaman çizelgesi:
  * - 0 ≤ t < 3: okuma süresi, harf açılmaz → n=0
- * - t = 4: 1. harf, t = 5: 2. harf, ..., t = 10: 7. harf
- * - Yani t ≥ 4 ise n = t - 3, maks 7
+ * - t = 4: 1. harf, t = 5: 2. harf, ..., t = 10: 7. harf (veya maxRevealed)
+ * - Yani t ≥ 4 ise n = t - 3, maks maxRevealed
  *
  * @param elapsedSeconds Bonus başlangıcından geçen süre (saniye)
+ * @param maxRevealed Maksimum açılabilecek rastgele harf sayısı (varsayılan 7, kelimeUzunluğu - 1)
  */
-export function bonusRevealedAtTime(elapsedSeconds: number): number {
+export function bonusRevealedAtTime(elapsedSeconds: number, maxRevealed: number = 7): number {
   if (elapsedSeconds < 4) return 0
-  return Math.min(Math.floor(elapsedSeconds) - 3, 7)
+  return Math.min(Math.floor(elapsedSeconds) - 3, maxRevealed)
 }
 
 /**

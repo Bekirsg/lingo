@@ -29,7 +29,7 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
 
   // Yazma modunda boş pozisyonlar (soldan sağa)
   const emptyPositions: number[] = []
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < wordChars.length; i++) {
     if (!lockedPositions.has(i)) emptyPositions.push(i)
   }
 
@@ -51,7 +51,7 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
 
   return (
     <div
-      className="flex justify-center gap-1 sm:gap-1.5 w-full max-w-[380px] px-1.5 sm:px-2"
+      className="flex justify-center gap-1 sm:gap-1.5 w-full max-w-[430px] px-1 sm:px-2"
       role="row"
       aria-label="Bonus kelime kutuları"
     >
@@ -83,7 +83,7 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
             className={`
               flex-1 min-w-0 max-w-[42px] sm:max-w-[46px] aspect-square
               flex items-center justify-center
-              rounded-xl text-base sm:text-xl font-black
+              rounded-xl text-sm sm:text-lg md:text-xl font-black
               border-2 transition-all duration-300
               ${bgClass}
             `}

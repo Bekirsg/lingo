@@ -12,6 +12,7 @@ import type { GameLevel } from './data/levels'
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('splash')
   const [selectedLevel, setSelectedLevel] = useState<GameLevel>('zor')
+  const [selectedMode, setSelectedMode] = useState<'yarisma' | 'calisma'>('yarisma')
   useVisualViewport()
 
   // v1 verilerini ilk açılışta güvenle taşı (SPEC-v2 Bölüm 5.1)
@@ -19,7 +20,12 @@ export default function App() {
     migrateV1ToV2()
   }, [])
 
-  const navigate = useCallback((s: AppScreen) => setScreen(s), [])
+  const navigate = useCallback((s: AppScreen, mode?: 'yarisma' | 'calisma') => {
+    if (mode) {
+      setSelectedMode(mode)
+    }
+    setScreen(s)
+  }, [])
 
   const handleLevelSelect = useCallback((level: GameLevel) => {
     setSelectedLevel(level)
@@ -34,12 +40,19 @@ export default function App() {
     case 'level_select':
       return (
         <LevelSelectScreen
+          mode={selectedMode}
           onSelectLevel={handleLevelSelect}
           onBack={() => navigate('menu')}
         />
       )
     case 'game':
-      return <GameScreen level={selectedLevel} onBackToMenu={() => navigate('menu')} />
+      return (
+        <GameScreen
+          level={selectedLevel}
+          mode={selectedMode}
+          onBackToMenu={() => navigate('menu')}
+        />
+      )
     case 'howtoplay':
       return <HowToPlay onBack={() => navigate('menu')} />
     case 'settings':

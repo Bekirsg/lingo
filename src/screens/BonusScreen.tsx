@@ -24,15 +24,20 @@ interface BonusScreenProps {
   state: GameState
   controller: GameController
   clock: Clock
+  onEndPractice?: () => void
 }
 
-export default function BonusScreen({ state, controller, clock }: BonusScreenProps) {
+export default function BonusScreen({ state, controller, clock, onEndPractice }: BonusScreenProps) {
   const bs = state.bonusState
   if (!bs) return null
 
   const isReading = state.screen === 'bonus_reading'
   const isWriting = state.screen === 'bonus_writing'
   const isResult = state.screen === 'bonus_result'
+  const isCalisma = state.mode === 'calisma'
+  const ps = state.practiceState
+  const bonusLen = bs.length || bs.word.length
+  const maxLetters = bonusLen - 1
 
   // ─── Canlı Süre ve Puan Göstergesi (50ms tick ile sadece kendini render eder) ───
   const [liveRemaining, setLiveRemaining] = useState(() => Math.ceil(clock.getRemainingSeconds()))
@@ -138,12 +143,18 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
           </h2>
 
           {bs.won ? (
-            <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
-              +{formatPoints(bs.frozenScore)} PUAN
-            </p>
+            isCalisma ? (
+              <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                Tebrikler! Bildin
+              </p>
+            ) : (
+              <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                +{formatPoints(bs.frozenScore)} PUAN
+              </p>
+            )
           ) : (
             <p className="text-rose-400 font-medium text-xs sm:text-sm mb-2">
-              {bs.answered ? 'Yanlış cevap veya süre doldu' : 'Süre doldu — 0 puan'}
+              {bs.answered ? 'Yanlış cevap veya süre doldu' : 'Süre doldu'}
             </p>
           )}
 
@@ -185,7 +196,7 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
   // ─── Okuma ve Yazma Fazları ────────────────────────────────────
 
   const lockedCount = 1 + bs.revealedCount
-  const emptyCount = 8 - lockedCount
+  const emptyCount = bonusLen - lockedCount
   const allFilled = isWriting && bs.userInput.length >= emptyCount
 
   return (
@@ -202,22 +213,45 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
                   ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
                   : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
             }`}>
-              {state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'}
+              {isCalisma
+                ? `Çalışma • ${state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'}`
+                : state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'
+              }
             </span>
+            {isCalisma && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-violet-600/30 text-violet-300 border border-violet-500/30 backdrop-blur-md">
+                Döngü {ps?.cycle ?? 1}
+              </span>
+            )}
             <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md">
               ⭐ BONUS SORU
             </span>
           </div>
 
-          <div className="flex items-baseline gap-1 text-right">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-400">KASA:</span>
-            <span className="font-mono font-black text-emerald-400 text-xs sm:text-sm">
-              {formatPoints(state.treasury)}
-            </span>
+          <div className="flex items-center gap-2">
+            {isCalisma ? (
+              onEndPractice && (
+                <button
+                  type="button"
+                  onClick={onEndPractice}
+                  className="px-2.5 py-1 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 font-bold text-[11px] sm:text-xs transition-all border border-rose-500/30 active:scale-95 shadow-sm"
+                  title="Çalışmayı Bitir"
+                >
+                  Bitir
+                </button>
+              )
+            ) : (
+              <div className="flex items-baseline gap-1 text-right">
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-400">KASA:</span>
+                <span className="font-mono font-black text-emerald-400 text-xs sm:text-sm">
+                  {formatPoints(state.treasury)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Canlı Süre ve Puan Göstergesi */}
+        {/* Canlı Süre ve Puan / Açılan Harf Göstergesi */}
         <div className="flex items-center justify-center gap-4 sm:gap-6">
           {/* Süre */}
           <div className={`flex items-center bg-black/40 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border backdrop-blur-md shadow-inner ${
@@ -233,23 +267,34 @@ export default function BonusScreen({ state, controller, clock }: BonusScreenPro
             <span className="text-xs ml-0.5 opacity-70 font-sans text-slate-400">sn</span>
           </div>
 
-          {/* Anlık Puan */}
-          <div className="flex flex-col items-center">
-            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-500">
-              {isWriting ? 'DONMUŞ PUAN' : 'ANLIK PUAN'}
-            </span>
-            <span className={`font-mono font-black text-xl sm:text-2xl leading-tight tabular-nums ${
-              displayScore >= 2000
-                ? 'text-emerald-400'
-                : displayScore >= 1000
-                  ? 'text-amber-400'
-                  : displayScore > 0
-                    ? 'text-orange-400'
-                    : 'text-red-400'
-            }`}>
-              {formatPoints(displayScore)}
-            </span>
-          </div>
+          {/* Anlık Puan veya Çalışma Modunda Açılan Harf */}
+          {isCalisma ? (
+            <div className="flex flex-col items-center">
+              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                AÇILAN HARF
+              </span>
+              <span className="font-mono font-black text-xl sm:text-2xl leading-tight tabular-nums text-amber-400">
+                {bs.revealedCount}/{maxLetters}
+              </span>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                {isWriting ? 'DONMUŞ PUAN' : 'ANLIK PUAN'}
+              </span>
+              <span className={`font-mono font-black text-xl sm:text-2xl leading-tight tabular-nums ${
+                displayScore >= 2000
+                  ? 'text-emerald-400'
+                  : displayScore >= 1000
+                    ? 'text-amber-400'
+                    : displayScore > 0
+                      ? 'text-orange-400'
+                      : 'text-red-400'
+              }`}>
+                {formatPoints(displayScore)}
+              </span>
+            </div>
+          )}
         </div>
       </header>
 

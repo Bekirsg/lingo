@@ -9,9 +9,10 @@ import { triggerHaptic } from '../haptics/vibration'
 interface WordResultModalProps {
   roundState: RoundState
   onContinue: () => void
+  isCalisma?: boolean
 }
 
-export default function WordResultModal({ roundState, onContinue }: WordResultModalProps) {
+export default function WordResultModal({ roundState, onContinue, isCalisma = false }: WordResultModalProps) {
   const { round, currentWord, wordWon, lossReason } = roundState
   const points = ROUND_CONFIGS[round - 1]?.pointsPerWord ?? 1000
 
@@ -60,9 +61,15 @@ export default function WordResultModal({ roundState, onContinue }: WordResultMo
 
         {/* Alt Açıklama */}
         {wordWon ? (
-          <p className="text-emerald-400 font-bold text-lg mb-4">
-            +{formatPoints(points)} PUAN
-          </p>
+          isCalisma ? (
+            <p className="text-emerald-400 font-bold text-lg mb-4">
+              Doğru!
+            </p>
+          ) : (
+            <p className="text-emerald-400 font-bold text-lg mb-4">
+              +{formatPoints(points)} PUAN
+            </p>
+          )
         ) : (
           <div className="flex flex-col items-center gap-1 mb-5">
             <span className="text-xs uppercase font-medium text-slate-400 tracking-wider">

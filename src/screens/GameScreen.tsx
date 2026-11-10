@@ -3,6 +3,12 @@ import { GameController, type GameState, type GameMode } from '../game/state'
 import { getKeyboardStatuses, ROUND_CONFIGS } from '../game/engine'
 import { loadWordRepository, ensureBonusLoaded, ensureLevelsLoaded, ensureBonusLevelLoaded } from '../data/wordsLoader'
 import { getLevelRecords } from '../data/storage'
+import {
+  recordQuestionResolved,
+  recordGameCompleted,
+  recordSessionCompleted,
+  flushPendingAnalyticsSave,
+} from '../analytics'
 import type { GameLevel } from '../data/levels'
 import Hud from '../components/Hud'
 import Board from '../components/Board'
@@ -79,6 +85,9 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
           onStateChange: (state) => {
             setGameState({ ...state })
           },
+          onQuestionResolved: recordQuestionResolved,
+          onGameCompleted: recordGameCompleted,
+          onSessionCompleted: recordSessionCompleted,
         })
 
         setController(game)
@@ -101,6 +110,7 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
 
     return () => {
       active = false
+      flushPendingAnalyticsSave()
     }
   }, [level, mode, reloadKey])
 

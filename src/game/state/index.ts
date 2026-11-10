@@ -27,7 +27,15 @@ import { Clock } from '../clock'
 import type { WordRepository } from '../../data/words'
 import type { GameLevel } from '../../data/levels'
 import { pickWordWithFallback, pickBonusWordWithFallback } from '../../data/levels'
-import type { GameState, GameMode, PracticeState, PracticeSummary, QuestionResolvedEvent } from './types'
+import type {
+  GameState,
+  GameMode,
+  PracticeState,
+  PracticeSummary,
+  QuestionResolvedEvent,
+  GameCompletedEvent,
+  SessionCompletedEvent,
+} from './types'
 
 export * from './types'
 
@@ -38,6 +46,8 @@ export interface GameControllerOptions {
   nowFn?: () => number
   onStateChange?: (state: GameState) => void
   onQuestionResolved?: (event: QuestionResolvedEvent) => void
+  onGameCompleted?: (event: GameCompletedEvent) => void
+  onSessionCompleted?: (event: SessionCompletedEvent) => void
   highScore?: number
 }
 
@@ -53,11 +63,19 @@ export class GameController {
   private highScore: number
   private onStateChange?: (state: GameState) => void
   private onQuestionResolved?: (event: QuestionResolvedEvent) => void
+  private onGameCompleted?: (event: GameCompletedEvent) => void
+  private onSessionCompleted?: (event: SessionCompletedEvent) => void
 
   /** Soru bazlı metrik takibi (SPEC-v2 4.7 / 6 / M5 / M7 / M8) */
   private currentWordGuessTimes: number[] = []
+  private currentWordGuessDurationsMs: number[] = []
   private currentWordInvalidGuesses: string[] = []
   private bonusBilSeconds?: number
+  private round4LastGuessRemainingSeconds: number = ROUND4_TIME_LIMIT
+
+  /** Oyun geneli çözülen/kaybedilen sayaçları (Yarışma) */
+  private gameSolvedWordsCount: number = 0
+  private gameLostWordsCount: number = 0
 
   constructor(options: GameControllerOptions) {
     this.words = options.words
@@ -67,6 +85,8 @@ export class GameController {
     this.highScore = options.highScore ?? 0
     this.onStateChange = options.onStateChange
     this.onQuestionResolved = options.onQuestionResolved
+    this.onGameCompleted = options.onGameCompleted
+    this.onSessionCompleted = options.onSessionCompleted
 
     this.clock = new Clock({
       nowFn: this.nowFn,
@@ -111,6 +131,13 @@ export class GameController {
   }
 
   private publishQuestionResolved(event: QuestionResolvedEvent): void {
+    if (this.state.mode === 'yarisma') {
+      if (event.result === 'won') {
+        this.gameSolvedWordsCount++
+      } else if (event.result === 'lost' || event.result === 'pass') {
+        this.gameLostWordsCount++
+      }
+    }
     this.onQuestionResolved?.(event)
   }
 
@@ -127,8 +154,12 @@ export class GameController {
     this.clock.stop()
     this.waitClock.stop()
     this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
     this.currentWordInvalidGuesses = []
     this.bonusBilSeconds = undefined
+    this.round4LastGuessRemainingSeconds = ROUND4_TIME_LIMIT
+    this.gameSolvedWordsCount = 0
+    this.gameLostWordsCount = 0
 
     if (this.mode === 'calisma') {
       const practiceState: PracticeState = {
@@ -230,6 +261,7 @@ export class GameController {
 
   private setupRoundWord(round: 1 | 2 | 3, wordIndex: number): void {
     this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
     this.currentWordInvalidGuesses = []
     this.bonusBilSeconds = undefined
 
@@ -268,6 +300,7 @@ export class GameController {
 
   private setupPracticeWord(len: number): void {
     this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
     this.currentWordInvalidGuesses = []
     this.bonusBilSeconds = undefined
 
@@ -312,6 +345,7 @@ export class GameController {
 
   private setupPracticeBonus(bonusLength: number = 8): void {
     this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
     this.currentWordInvalidGuesses = []
     this.bonusBilSeconds = undefined
 
@@ -448,7 +482,9 @@ export class GameController {
     if (Array.from(guess)[0] !== expectedFirstChar) return
 
     const elapsed = Math.round(Math.max(0, GUESS_TIME_LIMIT - this.clock.getRemainingSeconds()) * 10) / 10
+    const elapsedMs = Math.round(Math.max(0, (GUESS_TIME_LIMIT - this.clock.getRemainingSeconds()) * 1000))
     this.currentWordGuessTimes.push(elapsed)
+    this.currentWordGuessDurationsMs.push(elapsedMs)
 
     // 1) Sözlükte var mı? (TDK geçerlilik kontrolü)
     const isValid = this.words.isValidWord(guess, rs.letterCount)
@@ -472,7 +508,11 @@ export class GameController {
         attemptCount: rs.guesses.length,
         lossReason: 'invalid_word',
         word: rs.currentWord,
+        guesses: rs.guesses.map(g => g.guess),
+        guessMarks: rs.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
         guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [...this.currentWordInvalidGuesses],
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
@@ -520,7 +560,11 @@ export class GameController {
         result: 'won',
         attemptCount: rs.guesses.length,
         word: rs.currentWord,
+        guesses: rs.guesses.map(g => g.guess),
+        guessMarks: rs.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
         guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [...this.currentWordInvalidGuesses],
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
@@ -550,9 +594,13 @@ export class GameController {
         letterCount: rs.letterCount,
         result: 'lost',
         attemptCount: rs.guesses.length,
-        lossReason: 'max_attempts',
+        lossReason: 'five_guesses',
         word: rs.currentWord,
+        guesses: rs.guesses.map(g => g.guess),
+        guessMarks: rs.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
         guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [...this.currentWordInvalidGuesses],
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
@@ -591,6 +639,7 @@ export class GameController {
     const rs = this.state.roundState
 
     this.currentWordGuessTimes.push(GUESS_TIME_LIMIT)
+    this.currentWordGuessDurationsMs.push(GUESS_TIME_LIMIT * 1000)
     this.clock.stop()
     rs.wordLost = true
     rs.lossReason = 'time_out'
@@ -601,9 +650,13 @@ export class GameController {
       letterCount: rs.letterCount,
       result: 'lost',
       attemptCount: rs.guesses.length,
-      lossReason: 'time_out',
+      lossReason: 'timeout',
       word: rs.currentWord,
+      guesses: rs.guesses.map(g => g.guess),
+      guessMarks: rs.guesses.map(g => g.marks.slice(1)),
+      guessDurationsMs: [...this.currentWordGuessDurationsMs],
       guessTimes: [...this.currentWordGuessTimes],
+      invalidWords: [...this.currentWordInvalidGuesses],
       invalidGuesses: [...this.currentWordInvalidGuesses],
     })
 
@@ -648,7 +701,11 @@ export class GameController {
         attemptCount: rs.guesses.length,
         lossReason: 'pass',
         word: rs.currentWord,
+        guesses: rs.guesses.map(g => g.guess),
+        guessMarks: rs.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
         guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [...this.currentWordInvalidGuesses],
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
@@ -685,8 +742,12 @@ export class GameController {
         attemptCount: r4.guesses.length,
         lossReason: 'pass',
         word: r4.currentWord,
-        guessTimes: [],
-        invalidGuesses: [],
+        guesses: r4.guesses.map(g => g.guess),
+        guessMarks: r4.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [...this.currentWordInvalidGuesses],
+        invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
       this.state.screen = 'round4_word_lost'
@@ -758,6 +819,7 @@ export class GameController {
 
   private setupBonusQuestion(): void {
     this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
     this.currentWordInvalidGuesses = []
     this.bonusBilSeconds = undefined
 
@@ -838,7 +900,9 @@ export class GameController {
 
     this.clock.stop()
     const elapsed = Math.round(Math.max(0, BONUS_WRITE_TIME - this.clock.getRemainingSeconds()) * 10) / 10
+    const elapsedMs = Math.round(Math.max(0, (BONUS_WRITE_TIME - this.clock.getRemainingSeconds()) * 1000))
     this.currentWordGuessTimes.push(elapsed)
+    this.currentWordGuessDurationsMs.push(elapsedMs)
     const answer = normalize(answerRaw)
     bs.userInput = answer
     bs.answered = true
@@ -858,9 +922,15 @@ export class GameController {
         result: 'won',
         attemptCount: 1,
         word: bs.word,
+        guesses: [answer],
+        guessMarks: [],
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
         guessTimes: [...this.currentWordGuessTimes],
+        bonusResultType: 'correct',
+        bonusLettersOpened: bs.revealedCount,
         bonusBilSeconds: this.bonusBilSeconds,
         bonusPoints: bs.frozenScore,
+        invalidWords: [],
         invalidGuesses: [],
       })
 
@@ -875,6 +945,7 @@ export class GameController {
       }
     } else {
       bs.won = false
+      this.currentWordInvalidGuesses.push(answer)
       this.publishQuestionResolved({
         mode: this.state.mode,
         level: this.state.level,
@@ -883,9 +954,15 @@ export class GameController {
         attemptCount: 1,
         lossReason: 'invalid_word',
         word: bs.word,
+        guesses: [answer],
+        guessMarks: [],
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
         guessTimes: [...this.currentWordGuessTimes],
+        bonusResultType: 'wrong',
+        bonusLettersOpened: bs.revealedCount,
         bonusBilSeconds: this.bonusBilSeconds,
         bonusPoints: 0,
+        invalidWords: [answer],
         invalidGuesses: [answer],
       })
 
@@ -916,6 +993,7 @@ export class GameController {
 
     this.clock.stop()
     this.currentWordGuessTimes.push(BONUS_WRITE_TIME)
+    this.currentWordGuessDurationsMs.push(BONUS_WRITE_TIME * 1000)
     bs.won = false
     bs.answered = true
     const len = bs.length || bs.word.length
@@ -926,11 +1004,17 @@ export class GameController {
       letterCount: len,
       result: 'lost',
       attemptCount: 1,
-      lossReason: 'time_out',
+      lossReason: 'timeout',
       word: bs.word,
+      guesses: [],
+      guessMarks: [],
+      guessDurationsMs: [...this.currentWordGuessDurationsMs],
       guessTimes: [...this.currentWordGuessTimes],
+      bonusResultType: 'write_timeout',
+      bonusLettersOpened: bs.revealedCount,
       bonusBilSeconds: this.bonusBilSeconds,
       bonusPoints: 0,
+      invalidWords: [],
       invalidGuesses: [],
     })
 
@@ -971,10 +1055,17 @@ export class GameController {
       letterCount: len,
       result: 'lost',
       attemptCount: 0,
-      lossReason: 'time_out',
+      lossReason: 'timeout',
       word: bs.word,
+      guesses: [],
+      guessMarks: [],
+      guessDurationsMs: [],
       guessTimes: [],
+      bonusResultType: 'not_pressed',
+      bonusLettersOpened: bs.revealedCount,
+      bonusBilSeconds: undefined,
       bonusPoints: 0,
+      invalidWords: [],
       invalidGuesses: [],
     })
 
@@ -1171,6 +1262,11 @@ export class GameController {
 
   private setupRound4Word(stage: number): void {
     if (!this.state.round4State) return
+    this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
+    this.currentWordInvalidGuesses = []
+    this.round4LastGuessRemainingSeconds = this.clock.getRemainingSeconds()
+
     const pool = this.words.getWords(stage)
     const levelData = this.words.getLevelData?.(stage) ?? null
     const res = this.words.pickWordByLevel
@@ -1202,6 +1298,13 @@ export class GameController {
     const expectedFirstChar = Array.from(r4.currentWord)[0]
     if (Array.from(guess)[0] !== expectedFirstChar) return
 
+    const currentRemaining = this.clock.getRemainingSeconds()
+    const elapsedSec = Math.max(0, this.round4LastGuessRemainingSeconds - currentRemaining)
+    const elapsedMs = Math.round(elapsedSec * 1000)
+    this.round4LastGuessRemainingSeconds = currentRemaining
+    this.currentWordGuessTimes.push(Math.round(elapsedSec * 10) / 10)
+    this.currentWordGuessDurationsMs.push(elapsedMs)
+
     // Geçerlilik kontrolü
     const isValid = this.words.isValidWord(guess, r4.stage)
 
@@ -1224,7 +1327,11 @@ export class GameController {
         attemptCount: r4.guesses.length,
         lossReason: 'invalid_word',
         word: r4.currentWord,
-        guessTimes: [],
+        guesses: r4.guesses.map(g => g.guess),
+        guessMarks: r4.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [guess],
         invalidGuesses: [guess],
       })
 
@@ -1253,7 +1360,11 @@ export class GameController {
         result: 'won',
         attemptCount: r4.guesses.length,
         word: r4.currentWord,
-        guessTimes: [],
+        guesses: r4.guesses.map(g => g.guess),
+        guessMarks: r4.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [],
         invalidGuesses: [],
       })
 
@@ -1283,9 +1394,13 @@ export class GameController {
         letterCount: r4.stage,
         result: 'lost',
         attemptCount: 5,
-        lossReason: 'max_attempts',
+        lossReason: 'five_guesses',
         word: r4.currentWord,
-        guessTimes: [],
+        guesses: r4.guesses.map(g => g.guess),
+        guessMarks: r4.guesses.map(g => g.marks.slice(1)),
+        guessDurationsMs: [...this.currentWordGuessDurationsMs],
+        guessTimes: [...this.currentWordGuessTimes],
+        invalidWords: [],
         invalidGuesses: [],
       })
 
@@ -1347,6 +1462,7 @@ export class GameController {
   }
 
   private finishGame(): void {
+    const round4TimeLeft = Math.max(0, Math.round(this.clock.getRemainingSeconds()))
     this.clock.stop()
     const lastStage = this.state.round4State?.lastCompletedStage ?? null
     const finalScore = round4FinalScore(this.state.treasury, lastStage)
@@ -1355,6 +1471,17 @@ export class GameController {
     this.state.isNewRecord = finalScore > this.highScore
     this.state.screen = 'game_over'
     this.emitState()
+
+    this.onGameCompleted?.({
+      timestamp: this.nowFn ? this.nowFn() : Date.now(),
+      level: this.state.level,
+      finalScore,
+      treasury: this.state.treasury,
+      lastCompletedStage: lastStage,
+      solvedWordsCount: this.gameSolvedWordsCount,
+      lostWordsCount: this.gameLostWordsCount,
+      round4TimeLeft,
+    })
   }
 
   // ─── Çalışma Modu Bitir (SPEC-v2 Bölüm 6.3) ─────────────────────────
@@ -1395,6 +1522,20 @@ export class GameController {
     this.state.practiceSummary = summary
     this.state.screen = 'practice_summary'
     this.emitState()
+
+    this.onSessionCompleted?.({
+      timestamp: this.nowFn ? this.nowFn() : Date.now(),
+      mode: this.state.mode as 'calisma' | 'hatalar',
+      level: this.state.level,
+      totalQuestions: ps.totalAsked,
+      wonCount: ps.totalWon,
+      lostCount: ps.totalLost,
+      passCount: ps.totalPassed,
+      byLetter: { ...ps.byLetter },
+      bonusWonCount: ps.bonusWonCount,
+      bonusLostCount: ps.bonusLostCount,
+    })
+
     return summary
   }
 

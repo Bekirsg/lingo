@@ -7,6 +7,12 @@ import {
   devRerunMigration,
   type SettingsData,
 } from '../data/storage'
+import {
+  resetAnalytics,
+  saveAnalytics,
+  generateSampleAnalyticsData,
+  getSampleAnalyticsSizeKb,
+} from '../analytics'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
 
@@ -18,6 +24,8 @@ export default function Settings({ onBack }: SettingsProps) {
   const [settings, setSettingsState] = useState<SettingsData>(getSettings)
   const [resetConfirm, setResetConfirm] = useState(false)
   const [resetDone, setResetDone] = useState(false)
+  const [resetAnalyticsConfirm, setResetAnalyticsConfirm] = useState(false)
+  const [analyticsResetDone, setAnalyticsResetDone] = useState(false)
   const [devMessage, setDevMessage] = useState<string | null>(null)
 
   const toggle = (key: 'sound' | 'haptics') => {
@@ -49,6 +57,18 @@ export default function Settings({ onBack }: SettingsProps) {
     setResetConfirm(false)
     setResetDone(true)
     setTimeout(() => setResetDone(false), 3000)
+  }
+
+  const handleResetAnalytics = () => {
+    if (!resetAnalyticsConfirm) {
+      setResetAnalyticsConfirm(true)
+      return
+    }
+    resetAnalytics()
+    triggerHaptic('wrong')
+    setResetAnalyticsConfirm(false)
+    setAnalyticsResetDone(true)
+    setTimeout(() => setAnalyticsResetDone(false), 3000)
   }
 
   return (
@@ -164,11 +184,48 @@ export default function Settings({ onBack }: SettingsProps) {
         )}
       </div>
 
+      {/* Analiz Verisini Sıfırlama */}
+      <div className="mt-4">
+        {analyticsResetDone && (
+          <div className="mb-3 px-4 py-3 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-sm text-center font-bold animate-fade-in">
+            ✓ Analiz verisi başarıyla sıfırlandı.
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={handleResetAnalytics}
+          className={`
+            w-full py-4 px-6 rounded-2xl text-base font-bold
+            transition-all duration-200 active:scale-95 shadow-md
+            ${
+              resetAnalyticsConfirm
+                ? 'bg-rose-700 hover:bg-rose-600 text-white border border-rose-400 animate-pulse'
+                : 'bg-white/5 hover:bg-white/10 text-rose-300 border border-rose-500/30'
+            }
+          `}
+        >
+          {resetAnalyticsConfirm
+            ? '⚠️ Tüm oyun ve çalışma analiz verileriniz silinecektir. Bu işlem geri alınamaz.'
+            : '📊 Analiz Verisini Sıfırla'}
+        </button>
+
+        {resetAnalyticsConfirm && (
+          <button
+            type="button"
+            onClick={() => setResetAnalyticsConfirm(false)}
+            className="w-full mt-2 py-2 text-sm text-slate-400 hover:text-white"
+          >
+            Vazgeç
+          </button>
+        )}
+      </div>
+
       {/* Geliştirici Test Araçları (Prod derlemesinde otomatik tree-shake edilir) */}
       {import.meta.env.DEV && (
         <div className="mt-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
           <h3 className="text-xs font-black uppercase tracking-wider text-amber-400 mb-2">
-            🛠️ Geliştirici Test Araçları (DEV)
+            🛠️ Geliştirici Araçları (DEV)
           </h3>
           {devMessage && (
             <div className="mb-2 p-2 rounded-lg bg-amber-500/20 text-amber-200 text-xs">
@@ -176,6 +233,31 @@ export default function Settings({ onBack }: SettingsProps) {
             </div>
           )}
           <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                const sample = generateSampleAnalyticsData()
+                saveAnalytics(sample)
+                playSound('key_press')
+                setDevMessage(`Örnek analiz verisi üretildi (~${getSampleAnalyticsSizeKb(sample)} KB, 7 kova, 30 oyun, 40 oturum, 200 kaçırılan kelime).`)
+                setTimeout(() => setDevMessage(null), 4000)
+              }}
+              className="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold text-left border border-amber-500/30 transition-colors"
+            >
+              📊 Örnek analiz verisi üret (~30 oyun, 40 oturum, 200 kaçırılan)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                resetAnalytics()
+                playSound('key_press')
+                setDevMessage('Analiz verisi temizlendi.')
+                setTimeout(() => setDevMessage(null), 3000)
+              }}
+              className="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold text-left border border-amber-500/30 transition-colors"
+            >
+              🧹 Analiz verisini temizle
+            </button>
             <button
               type="button"
               onClick={() => {

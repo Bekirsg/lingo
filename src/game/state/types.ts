@@ -6,7 +6,7 @@
 import type { Mark } from '../engine'
 import type { GameLevel } from '../../data/levels'
 
-export type GameMode = 'yarisma' | 'calisma'
+export type GameMode = 'yarisma' | 'calisma' | 'hatalar'
 
 export type GameScreen =
   | 'menu'                     // Ana menü
@@ -127,16 +127,56 @@ export interface PracticeState {
 
 export interface QuestionResolvedEvent {
   mode: GameMode
-  level: GameLevel
+  level?: GameLevel
   letterCount: number
   result: 'won' | 'lost' | 'pass'
   attemptCount: number
-  lossReason?: 'invalid_word' | 'time_out' | 'max_attempts' | 'pass'
+  lossReason?: 'five_guesses' | 'invalid_word' | 'timeout' | 'pass' | 'max_attempts' | 'time_out'
   word: string
+  /** Gönderilen her geçerli veya geçersiz tahminin metni */
+  guesses?: string[]
+  /** Kutu sonuçları (her tahmin için tam renk dizisi) */
+  guessMarks?: Mark[][]
+  /** Her tahminin süresi (milisaniye) */
+  guessDurationsMs?: number[]
+  /** Tahmin süreleri (saniye, geriye dönük uyumluluk) */
   guessTimes: number[]
-  bonusBilSeconds?: number
-  bonusPoints?: number
+  /** Sözlük dışı gönderilen diziler */
+  invalidWords?: string[]
+  /** Sözlük dışı diziler (geriye dönük uyumluluk) */
   invalidGuesses: string[]
+  /** Bonusta sonuç türü */
+  bonusResultType?: 'correct' | 'wrong' | 'not_pressed' | 'write_timeout'
+  /** BİL anındaki (veya expire anındaki) açılmış harf sayısı */
+  bonusLettersOpened?: number
+  /** BİL saniyesi */
+  bonusBilSeconds?: number
+  /** Bonus puanı */
+  bonusPoints?: number
+}
+
+export interface GameCompletedEvent {
+  timestamp: number
+  level: GameLevel
+  finalScore: number
+  treasury: number
+  lastCompletedStage: number | null
+  solvedWordsCount: number
+  lostWordsCount: number
+  round4TimeLeft: number
+}
+
+export interface SessionCompletedEvent {
+  timestamp: number
+  mode: 'calisma' | 'hatalar'
+  level?: GameLevel
+  totalQuestions: number
+  wonCount: number
+  lostCount: number
+  passCount: number
+  byLetter: Record<number, { asked: number; won: number }>
+  bonusWonCount: number
+  bonusLostCount: number
 }
 
 export interface GameState {

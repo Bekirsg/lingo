@@ -435,8 +435,8 @@ Her aşama sonunda testleri, `tsc` ve build'i çalıştır, commit'le, PROGRESS.
 3. **V2-M3 — Klavye ve PAS:** Bölüm 9 ve 10; ergonomi analizi; regresyon testleri.
 4. **V2-M4 — Menü ve Yarışma:** yeni ana menü, seviye seçimi, Yarışma akışını seviyeye bağlama, seviye başına rekor, eski veri taşıma, HUD seviye rozeti.
 5. **V2-M5 — Çalışma modu:** döngü, kurallar, Bitir, oturum özeti, parametrik bonus. (✅ Tamamlandı)
-6. **V2-M6 — Analiz kaydı:** analytics modülü, kova şeması, olay kaydı (üç mod), sınırlar, testler.
-7. **V2-M7 — Analizler ekranı:** tüm sekmeler, Mod/Seviye filtreleri, öneriler, tembel yükleme.
+6. **V2-M6 — Analiz kaydı:** analytics modülü, kova şeması, olay kaydı (üç mod), sınırlar, testler. (✅ Tamamlandı)
+7. **V2-M7 — Analizler ekranı:** tüm sekmeler, Mod/Seviye filtreleri, öneriler, tembel yükleme. (✅ Tamamlandı)
 8. **V2-M8 — Hatalarımla çalış:** seçici, öğrenildi mantığı, Analizler'den geçiş düğmesi.
 9. **V2-M9 — Cila:** Nasıl Oynanır ve metinler, PWA önbelleği (`levels-*.json` dahil) ve v1→v2 güncelleme yolu (autoUpdate, kurulu uygulamanın yenilenmesi), performans, sürüm v2.0.0.
 10. **V2-M10 — Son kalite kontrol ve yayın:** Bölüm 11 tam geçişi, denetim örneği sonucu (kullanıcı doldurduysa) ve gerekirse seviye düzeltmeleri, rapor. Kullanıcı onaylayınca `main`'e birleştir ve push et (Vercel yayınlar).

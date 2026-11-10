@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react'
 import SplashScreen from './screens/SplashScreen'
 import MainMenu, { type AppScreen } from './screens/MainMenu'
 import LevelSelectScreen from './screens/LevelSelectScreen'
@@ -8,6 +8,8 @@ import GameScreen from './screens/GameScreen'
 import { useVisualViewport } from './hooks/useVisualViewport'
 import { migrateV1ToV2 } from './data/storage'
 import type { GameLevel } from './data/levels'
+
+const AnalyticsScreen = lazy(() => import('./screens/AnalyticsScreen'))
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('splash')
@@ -57,6 +59,18 @@ export default function App() {
       return <HowToPlay onBack={() => navigate('menu')} />
     case 'settings':
       return <Settings onBack={() => navigate('menu')} />
+    case 'analytics':
+      return (
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center min-h-dvh bg-[var(--color-bg-primary)] text-slate-400 text-sm">
+              Analizler yükleniyor...
+            </div>
+          }
+        >
+          <AnalyticsScreen onBack={() => navigate('menu')} />
+        </Suspense>
+      )
     default:
       return <MainMenu onNavigate={navigate} />
   }

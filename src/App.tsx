@@ -14,7 +14,7 @@ const AnalyticsScreen = lazy(() => import('./screens/AnalyticsScreen'))
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('splash')
   const [selectedLevel, setSelectedLevel] = useState<GameLevel>('zor')
-  const [selectedMode, setSelectedMode] = useState<'yarisma' | 'calisma'>('yarisma')
+  const [selectedMode, setSelectedMode] = useState<'yarisma' | 'calisma' | 'hatalar'>('yarisma')
   useVisualViewport()
 
   // v1 verilerini ilk açılışta güvenle taşı (SPEC-v2 Bölüm 5.1)
@@ -22,7 +22,7 @@ export default function App() {
     migrateV1ToV2()
   }, [])
 
-  const navigate = useCallback((s: AppScreen, mode?: 'yarisma' | 'calisma') => {
+  const navigate = useCallback((s: AppScreen, mode?: 'yarisma' | 'calisma' | 'hatalar') => {
     if (mode) {
       setSelectedMode(mode)
     }
@@ -34,6 +34,12 @@ export default function App() {
     setScreen('game')
   }, [])
 
+  const handleStartMistakes = useCallback(() => {
+    setSelectedMode('hatalar')
+    setSelectedLevel('zor')
+    setScreen('game')
+  }, [])
+
   switch (screen) {
     case 'splash':
       return <SplashScreen onReady={() => navigate('menu')} />
@@ -42,8 +48,9 @@ export default function App() {
     case 'level_select':
       return (
         <LevelSelectScreen
-          mode={selectedMode}
+          mode={selectedMode === 'hatalar' ? 'calisma' : selectedMode}
           onSelectLevel={handleLevelSelect}
+          onSelectMistakes={handleStartMistakes}
           onBack={() => navigate('menu')}
         />
       )
@@ -68,7 +75,10 @@ export default function App() {
             </div>
           }
         >
-          <AnalyticsScreen onBack={() => navigate('menu')} />
+          <AnalyticsScreen
+            onBack={() => navigate('menu')}
+            onStartMistakes={handleStartMistakes}
+          />
         </Suspense>
       )
     default:

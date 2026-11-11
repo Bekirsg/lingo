@@ -13,6 +13,7 @@ import {
   generateSampleAnalyticsData,
   getSampleAnalyticsSizeKb,
 } from '../analytics'
+import { generateMistakesDevData } from '../game/mistakes/devMistakes'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
 
@@ -245,6 +246,18 @@ export default function Settings({ onBack }: SettingsProps) {
               className="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold text-left border border-amber-500/30 transition-colors"
             >
               📊 Örnek analiz verisi üret (~30 oyun, 40 oturum, 200 kaçırılan)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                generateMistakesDevData()
+                playSound('key_press')
+                setDevMessage('Hatalarımla için 15 gerçek kelime eklendi (bazıları streak=1).')
+                setTimeout(() => setDevMessage(null), 4000)
+              }}
+              className="py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-bold text-left border border-rose-500/30 transition-colors"
+            >
+              🎯 Hatalarımla için örnek veri (15 kelime)
             </button>
             <button
               type="button"

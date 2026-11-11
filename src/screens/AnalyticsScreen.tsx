@@ -27,9 +27,10 @@ export type AnalyticsTabKey =
 
 interface AnalyticsScreenProps {
   onBack: () => void
+  onStartMistakes?: () => void
 }
 
-export default function AnalyticsScreen({ onBack }: AnalyticsScreenProps) {
+export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsScreenProps) {
   const [activeTab, setActiveTab] = useState<AnalyticsTabKey>('overview')
   const [modeFilter, setModeFilter] = useState<FilterMode>('all')
   const [levelFilter, setLevelFilter] = useState<FilterLevel>('all')
@@ -209,8 +210,12 @@ export default function AnalyticsScreen({ onBack }: AnalyticsScreenProps) {
 
       {/* ─── Sekme İçeriği (Tab Content) ─── */}
       <main className="flex-1 px-4 pt-4">
-        {activeTab === 'overview' && <OverviewTab overview={overview} filter={filter} />}
-        {activeTab === 'words' && <WordsTab rawData={rawData} filter={filter} />}
+        {activeTab === 'overview' && (
+          <OverviewTab overview={overview} filter={filter} onStartMistakes={onStartMistakes} />
+        )}
+        {activeTab === 'words' && (
+          <WordsTab rawData={rawData} filter={filter} onStartMistakes={onStartMistakes} />
+        )}
         {activeTab === 'invalid' && <InvalidWordsTab rawData={rawData} filter={filter} />}
         {activeTab === 'performance' && <PerformanceTab merged={merged} />}
         {activeTab === 'letters' && <LettersTab merged={merged} />}

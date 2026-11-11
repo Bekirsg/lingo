@@ -10,9 +10,10 @@ import { EmptyState } from './EmptyState'
 interface OverviewTabProps {
   overview: OverviewMetrics
   filter: AnalyticsFilter
+  onStartMistakes?: () => void
 }
 
-export function OverviewTab({ overview }: OverviewTabProps) {
+export function OverviewTab({ overview, onStartMistakes }: OverviewTabProps) {
   if (!overview.hasData) {
     return <EmptyState message="Henüz veri yok" subtext="Yarışma veya Çalışma modunda oynadıkça özet istatistiklerin ve önerilerin burada görünecek." />
   }
@@ -245,6 +246,16 @@ export function OverviewTab({ overview }: OverviewTabProps) {
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed">{item.message}</p>
+                    {item.id === 'review_errors' && onStartMistakes && (
+                      <button
+                        type="button"
+                        onClick={onStartMistakes}
+                        className="mt-2 px-3 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+                      >
+                        <span>🎯 Bu Kelimelerle Çalış</span>
+                        <span>➔</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               )

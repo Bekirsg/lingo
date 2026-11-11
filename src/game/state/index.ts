@@ -24,6 +24,13 @@ import {
   BONUS_WRITE_TIME,
 } from '../engine'
 import { Clock } from '../clock'
+import { loadAnalytics } from '../../analytics/storage'
+import { loadStudyData, recordMistakeAnswer } from '../mistakes/studyStorage'
+import {
+  getStudyableCandidates,
+  getNextMistakeStep,
+  type StudyCandidate,
+} from '../mistakes/mistakeSelector'
 import type { WordRepository } from '../../data/words'
 import type { GameLevel } from '../../data/levels'
 import { pickWordWithFallback, pickBonusWordWithFallback } from '../../data/levels'
@@ -138,6 +145,9 @@ export class GameController {
         this.gameLostWordsCount++
       }
     }
+    if (event.mode === 'hatalar') {
+      event.level = undefined
+    }
     this.onQuestionResolved?.(event)
   }
 
@@ -197,6 +207,67 @@ export class GameController {
         practiceState,
       }
       this.setupPracticeWord(4)
+      this.emitState()
+      return
+    }
+
+    if (this.mode === 'hatalar') {
+      const missedWords = loadAnalytics().missedWords
+      const study = loadStudyData()
+      const pool = getStudyableCandidates(missedWords, study.learned, this.words)
+
+      const practiceState: PracticeState = {
+        cycle: 1,
+        questionIndexInCycle: 1,
+        totalAsked: 0,
+        totalWon: 0,
+        totalLost: 0,
+        totalPassed: 0,
+        byLetter: {
+          4: { asked: 0, won: 0 },
+          5: { asked: 0, won: 0 },
+          6: { asked: 0, won: 0 },
+          7: { asked: 0, won: 0 },
+          8: { asked: 0, won: 0 },
+        },
+        bonusWonCount: 0,
+        bonusLostCount: 0,
+        missedWords: [],
+        currentWordInvalidGuesses: [],
+        currentWordGuessTimes: [],
+        remainingCount: pool.totalCount,
+        learnedThisSession: [],
+      }
+
+      this.state = {
+        screen: 'countdown',
+        mode: 'hatalar',
+        treasury: 0,
+        currentRoundPoints: 0,
+        usedWords: new Set<string>(),
+        countdownValue: 3,
+        countdownTarget: 'playing_round',
+        finalScore: 0,
+        isNewRecord: false,
+        level: this.level,
+        practiceState,
+      }
+
+      const next = getNextMistakeStep(undefined, pool)
+      if (!next) {
+        this.finishPractice(true)
+        return
+      }
+
+      practiceState.currentMistakeStep = next.nextStep
+      if (next.nextStep === 'bonus') {
+        this.setupMistakeBonus(next.candidate)
+        this.state.countdownTarget = 'bonus_reading'
+      } else {
+        this.setupMistakeWord(next.candidate)
+        this.state.countdownTarget = 'playing_round'
+      }
+
       this.emitState()
       return
     }
@@ -389,6 +460,149 @@ export class GameController {
     }
   }
 
+  // ─── Hatalarımla Çalış Modu Hazırlığı ve Döngü Yönetimi (SPEC-v2 Bölüm 6.5 & M8) ───
+
+  private setupMistakeWord(candidate: StudyCandidate): void {
+    this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
+    const word = candidate.word
+    this.state.usedWords.add(word)
+
+    const len = candidate.letterCount
+    const qIndex = this.state.practiceState?.questionIndexInCycle ?? 1
+    this.state.roundState = {
+      round: 1,
+      wordIndex: qIndex,
+      letterCount: len,
+      currentWord: word,
+      guesses: [],
+      currentInput: Array.from(word)[0],
+      wordWon: false,
+      wordLost: false,
+      wordsWonInRound: this.state.practiceState?.totalWon ?? 0,
+    }
+  }
+
+  private setupMistakeBonus(candidate: StudyCandidate): void {
+    this.currentWordGuessTimes = []
+    this.currentWordGuessDurationsMs = []
+    this.currentWordInvalidGuesses = []
+    this.bonusBilSeconds = undefined
+
+    const word = candidate.word
+    const definition = candidate.definition || ''
+    this.state.usedWords.add(word)
+
+    const actualLen = candidate.letterCount
+    this.state.bonusState = {
+      word,
+      definition,
+      length: actualLen,
+      revealOrder: shuffleRevealOrder(actualLen),
+      revealedCount: 0,
+      currentScore: 3000,
+      frozenScore: 0,
+      bilPressed: false,
+      userInput: '',
+      won: false,
+      answered: false,
+    }
+  }
+
+  private advanceMistakeStep(): void {
+    const ps = this.state.practiceState!
+    const missedWords = loadAnalytics().missedWords
+    const study = loadStudyData()
+    const pool = getStudyableCandidates(missedWords, study.learned, this.words, this.state.usedWords)
+
+    ps.remainingCount = pool.totalCount
+
+    const next = getNextMistakeStep(ps.currentMistakeStep, pool)
+    if (!next) {
+      // Oturumda çalışılabilecek kelime kalmadı! Oturum otomatik biter.
+      this.finishPractice(true)
+      return
+    }
+
+    const stepOrder = { 4: 1, 5: 2, 6: 3, 7: 4, bonus: 5 }
+    const prevOrder = ps.currentMistakeStep ? stepOrder[ps.currentMistakeStep] : 0
+    const nextOrder = stepOrder[next.nextStep]
+    if (nextOrder <= prevOrder) {
+      ps.cycle++
+    }
+    ps.currentMistakeStep = next.nextStep
+
+    if (next.nextStep === 'bonus') {
+      this.setupMistakeBonus(next.candidate)
+      this.state.screen = 'countdown'
+      this.state.countdownValue = 3
+      this.state.countdownTarget = 'bonus_reading'
+    } else {
+      this.setupMistakeWord(next.candidate)
+      this.state.screen = 'countdown'
+      this.state.countdownValue = 3
+      this.state.countdownTarget = 'playing_round'
+    }
+    this.emitState()
+  }
+
+  // ─── Çalışma & Hatalarımla Modu Ortak Soru Bitiş İşleyicisi ─────────
+
+  private onPracticeOrMistakeQuestionFinished(
+    word: string,
+    len: number,
+    result: 'won' | 'lost' | 'pass',
+    isBonus: boolean = false
+  ): void {
+    if (!this.state.practiceState) return
+    const ps = this.state.practiceState
+    ps.totalAsked++
+    if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
+    ps.byLetter[len].asked++
+
+    if (result === 'won') {
+      ps.totalWon++
+      ps.byLetter[len].won++
+      if (isBonus) ps.bonusWonCount++
+    } else if (result === 'pass') {
+      ps.totalPassed++
+      ps.missedWords.push({
+        word,
+        letterCount: len,
+        reason: 'pass',
+        correctWord: word,
+      })
+    } else {
+      ps.totalLost++
+      if (isBonus) ps.bonusLostCount++
+      ps.missedWords.push({
+        word,
+        letterCount: len,
+        reason: 'lost',
+        correctWord: word,
+      })
+    }
+
+    // Hatalarımla Çalış moduna özel öğrenildi (study) mantığı (SPEC M8)
+    if (this.state.mode === 'hatalar') {
+      const isWon = result === 'won'
+      const streakRes = recordMistakeAnswer(word, isWon)
+      ps.streakInfo = streakRes
+      if (streakRes.justLearned) {
+        if (!ps.learnedThisSession) ps.learnedThisSession = []
+        ps.learnedThisSession.push(word)
+      }
+      // Havuzda kalan çalışılabilir kelime sayısını güncelle
+      const missedWords = loadAnalytics().missedWords
+      const study = loadStudyData()
+      const pool = getStudyableCandidates(missedWords, study.learned, this.words, this.state.usedWords)
+      ps.remainingCount = pool.totalCount
+    }
+  }
+
   // ─── 1–3. Tur Tahmin Gönderme ──────────────────────────────────────
 
   /**
@@ -516,19 +730,7 @@ export class GameController {
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
-      if (this.state.mode === 'calisma' && this.state.practiceState) {
-        const ps = this.state.practiceState
-        ps.totalAsked++
-        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
-        ps.byLetter[rs.letterCount].asked++
-        ps.totalLost++
-        ps.missedWords.push({
-          word: rs.currentWord,
-          letterCount: rs.letterCount,
-          reason: 'lost',
-          correctWord: rs.currentWord,
-        })
-      }
+      this.onPracticeOrMistakeQuestionFinished(rs.currentWord, rs.letterCount, 'lost', false)
 
       this.state.screen = 'word_result'
       this.emitState()
@@ -568,14 +770,7 @@ export class GameController {
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
-      if (this.state.mode === 'calisma' && this.state.practiceState) {
-        const ps = this.state.practiceState
-        ps.totalAsked++
-        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
-        ps.byLetter[rs.letterCount].asked++
-        ps.totalWon++
-        ps.byLetter[rs.letterCount].won++
-      }
+      this.onPracticeOrMistakeQuestionFinished(rs.currentWord, rs.letterCount, 'won', false)
 
       this.state.screen = 'word_result'
       this.emitState()
@@ -604,19 +799,7 @@ export class GameController {
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
-      if (this.state.mode === 'calisma' && this.state.practiceState) {
-        const ps = this.state.practiceState
-        ps.totalAsked++
-        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
-        ps.byLetter[rs.letterCount].asked++
-        ps.totalLost++
-        ps.missedWords.push({
-          word: rs.currentWord,
-          letterCount: rs.letterCount,
-          reason: 'lost',
-          correctWord: rs.currentWord,
-        })
-      }
+      this.onPracticeOrMistakeQuestionFinished(rs.currentWord, rs.letterCount, 'lost', false)
 
       this.state.screen = 'word_result'
       this.emitState()
@@ -660,19 +843,7 @@ export class GameController {
       invalidGuesses: [...this.currentWordInvalidGuesses],
     })
 
-    if (this.state.mode === 'calisma' && this.state.practiceState) {
-      const ps = this.state.practiceState
-      ps.totalAsked++
-      if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
-      ps.byLetter[rs.letterCount].asked++
-      ps.totalLost++
-      ps.missedWords.push({
-        word: rs.currentWord,
-        letterCount: rs.letterCount,
-        reason: 'lost',
-        correctWord: rs.currentWord,
-      })
-    }
+    this.onPracticeOrMistakeQuestionFinished(rs.currentWord, rs.letterCount, 'lost', false)
 
     this.state.screen = 'word_result'
     this.emitState()
@@ -709,19 +880,7 @@ export class GameController {
         invalidGuesses: [...this.currentWordInvalidGuesses],
       })
 
-      if (this.state.mode === 'calisma' && this.state.practiceState) {
-        const ps = this.state.practiceState
-        ps.totalAsked++
-        if (!ps.byLetter[rs.letterCount]) ps.byLetter[rs.letterCount] = { asked: 0, won: 0 }
-        ps.byLetter[rs.letterCount].asked++
-        ps.totalPassed++
-        ps.missedWords.push({
-          word: rs.currentWord,
-          letterCount: rs.letterCount,
-          reason: 'pass',
-          correctWord: rs.currentWord,
-        })
-      }
+      this.onPracticeOrMistakeQuestionFinished(rs.currentWord, rs.letterCount, 'pass', false)
 
       this.state.screen = 'word_result'
       this.emitState()
@@ -795,6 +954,11 @@ export class GameController {
         this.state.countdownTarget = 'bonus_reading'
       }
       this.emitState()
+      return
+    }
+
+    if (this.state.mode === 'hatalar') {
+      this.advanceMistakeStep()
       return
     }
 
@@ -934,15 +1098,7 @@ export class GameController {
         invalidGuesses: [],
       })
 
-      if (this.state.mode === 'calisma' && this.state.practiceState) {
-        const ps = this.state.practiceState
-        ps.totalAsked++
-        if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
-        ps.byLetter[len].asked++
-        ps.totalWon++
-        ps.bonusWonCount++
-        ps.byLetter[len].won++
-      }
+      this.onPracticeOrMistakeQuestionFinished(bs.word, len, 'won', true)
     } else {
       bs.won = false
       this.currentWordInvalidGuesses.push(answer)
@@ -966,20 +1122,7 @@ export class GameController {
         invalidGuesses: [answer],
       })
 
-      if (this.state.mode === 'calisma' && this.state.practiceState) {
-        const ps = this.state.practiceState
-        ps.totalAsked++
-        if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
-        ps.byLetter[len].asked++
-        ps.totalLost++
-        ps.bonusLostCount++
-        ps.missedWords.push({
-          word: bs.word,
-          letterCount: len,
-          reason: 'lost',
-          correctWord: bs.word,
-        })
-      }
+      this.onPracticeOrMistakeQuestionFinished(bs.word, len, 'lost', true)
     }
 
     this.state.screen = 'bonus_result'
@@ -1018,20 +1161,7 @@ export class GameController {
       invalidGuesses: [],
     })
 
-    if (this.state.mode === 'calisma' && this.state.practiceState) {
-      const ps = this.state.practiceState
-      ps.totalAsked++
-      if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
-      ps.byLetter[len].asked++
-      ps.totalLost++
-      ps.bonusLostCount++
-      ps.missedWords.push({
-        word: bs.word,
-        letterCount: len,
-        reason: 'lost',
-        correctWord: bs.word,
-      })
-    }
+    this.onPracticeOrMistakeQuestionFinished(bs.word, len, 'lost', true)
 
     this.state.screen = 'bonus_result'
     this.emitState()
@@ -1069,26 +1199,13 @@ export class GameController {
       invalidGuesses: [],
     })
 
-    if (this.state.mode === 'calisma' && this.state.practiceState) {
-      const ps = this.state.practiceState
-      ps.totalAsked++
-      if (!ps.byLetter[len]) ps.byLetter[len] = { asked: 0, won: 0 }
-      ps.byLetter[len].asked++
-      ps.totalLost++
-      ps.bonusLostCount++
-      ps.missedWords.push({
-        word: bs.word,
-        letterCount: len,
-        reason: 'lost',
-        correctWord: bs.word,
-      })
-    }
+    this.onPracticeOrMistakeQuestionFinished(bs.word, len, 'lost', true)
 
     this.state.screen = 'bonus_result'
     this.emitState()
   }
 
-  /** Bonus sonuç kartından sonra tur özetine (yarışma) veya sonraki döngüye (çalışma) geç */
+  /** Bonus sonuç kartından sonra tur özetine (yarışma) veya sonraki döngüye (çalışma / hatalar) geç */
   dismissBonusResult(): void {
     if (this.state.screen !== 'bonus_result') return
 
@@ -1101,6 +1218,11 @@ export class GameController {
       this.state.countdownValue = 3
       this.state.countdownTarget = 'playing_round'
       this.emitState()
+      return
+    }
+
+    if (this.state.mode === 'hatalar') {
+      this.advanceMistakeStep()
       return
     }
 
@@ -1484,12 +1606,16 @@ export class GameController {
     })
   }
 
-  // ─── Çalışma Modu Bitir (SPEC-v2 Bölüm 6.3) ─────────────────────────
+  // ─── Çalışma Modu Bitir (SPEC-v2 Bölüm 6.3 & 6.5) ───────────────────
+
+  finishPractice(autoEnded: boolean = false): PracticeSummary {
+    return this.endPractice(autoEnded)
+  }
 
   /**
-   * Çalışma modunu sonlandırır ve oturum özetini oluşturur.
+   * Çalışma / Hatalarımla modunu sonlandırır ve oturum özetini oluşturur.
    */
-  endPractice(): PracticeSummary {
+  endPractice(autoEnded: boolean = false): PracticeSummary {
     this.clock.stop()
     this.waitClock.stop()
 
@@ -1508,6 +1634,10 @@ export class GameController {
       currentWordGuessTimes: [],
     }
 
+    if (autoEnded) {
+      ps.autoEnded = true
+    }
+
     const summary: PracticeSummary = {
       totalQuestions: ps.totalAsked,
       wonCount: ps.totalWon,
@@ -1517,6 +1647,9 @@ export class GameController {
       bonusWonCount: ps.bonusWonCount,
       bonusLostCount: ps.bonusLostCount,
       missedWords: [...ps.missedWords],
+      learnedWords: ps.learnedThisSession ? [...ps.learnedThisSession] : [],
+      autoEnded: Boolean(ps.autoEnded),
+      remainingCount: ps.remainingCount,
     }
 
     this.state.practiceSummary = summary
@@ -1526,7 +1659,7 @@ export class GameController {
     this.onSessionCompleted?.({
       timestamp: this.nowFn ? this.nowFn() : Date.now(),
       mode: this.state.mode as 'calisma' | 'hatalar',
-      level: this.state.level,
+      level: this.state.mode === 'hatalar' ? undefined : this.state.level,
       totalQuestions: ps.totalAsked,
       wonCount: ps.totalWon,
       lostCount: ps.totalLost,

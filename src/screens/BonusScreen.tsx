@@ -35,6 +35,7 @@ export default function BonusScreen({ state, controller, clock, onEndPractice }:
   const isWriting = state.screen === 'bonus_writing'
   const isResult = state.screen === 'bonus_result'
   const isCalisma = state.mode === 'calisma'
+  const isHatalar = state.mode === 'hatalar'
   const ps = state.practiceState
   const bonusLen = bs.length || bs.word.length
   const maxLetters = bonusLen - 1
@@ -143,7 +144,17 @@ export default function BonusScreen({ state, controller, clock, onEndPractice }:
           </h2>
 
           {bs.won ? (
-            isCalisma ? (
+            isHatalar ? (
+              ps?.streakInfo?.justLearned ? (
+                <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                  ✓ Öğrenildi!
+                </p>
+              ) : (
+                <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                  Ardışık doğru: {ps?.streakInfo?.streak ?? 1}/2
+                </p>
+              )
+            ) : isCalisma ? (
               <p className="text-emerald-400 font-bold text-base sm:text-lg mb-2 sm:mb-3">
                 Tebrikler! Bildin
               </p>
@@ -206,19 +217,25 @@ export default function BonusScreen({ state, controller, clock, onEndPractice }:
       <header className="w-full px-3 sm:px-4 pt-2 sm:pt-3 pb-1 flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 ${
-              state.level === 'kolay'
-                ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40'
-                : state.level === 'orta'
-                  ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
-                  : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
-            }`}>
-              {isCalisma
-                ? `Çalışma • ${state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'}`
-                : state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'
-              }
-            </span>
-            {isCalisma && (
+            {isHatalar ? (
+              <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 bg-rose-600/30 text-rose-300 border-rose-500/40">
+                Hatalarımla çalış
+              </span>
+            ) : (
+              <span className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 ${
+                state.level === 'kolay'
+                  ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40'
+                  : state.level === 'orta'
+                    ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
+                    : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
+              }`}>
+                {isCalisma
+                  ? `Çalışma • ${state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'}`
+                  : state.level === 'kolay' ? 'Kolay' : state.level === 'orta' ? 'Orta' : 'Zor'
+                }
+              </span>
+            )}
+            {(isCalisma || isHatalar) && (
               <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-violet-600/30 text-violet-300 border border-violet-500/30 backdrop-blur-md">
                 Döngü {ps?.cycle ?? 1}
               </span>
@@ -226,10 +243,15 @@ export default function BonusScreen({ state, controller, clock, onEndPractice }:
             <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md">
               ⭐ BONUS SORU
             </span>
+            {isHatalar && (
+              <span className="text-[10px] sm:text-[11px] font-bold text-amber-300/90 ml-1">
+                Kalan: {ps?.remainingCount ?? 0}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
-            {isCalisma ? (
+            {(isCalisma || isHatalar) ? (
               onEndPractice && (
                 <button
                   type="button"
@@ -267,8 +289,8 @@ export default function BonusScreen({ state, controller, clock, onEndPractice }:
             <span className="text-xs ml-0.5 opacity-70 font-sans text-slate-400">sn</span>
           </div>
 
-          {/* Anlık Puan veya Çalışma Modunda Açılan Harf */}
-          {isCalisma ? (
+          {/* Anlık Puan veya Çalışma/Hatalar Modunda Açılan Harf */}
+          {(isCalisma || isHatalar) ? (
             <div className="flex flex-col items-center">
               <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-500">
                 AÇILAN HARF

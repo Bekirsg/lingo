@@ -10,9 +10,17 @@ interface WordResultModalProps {
   roundState: RoundState
   onContinue: () => void
   isCalisma?: boolean
+  isHatalar?: boolean
+  streakInfo?: { streak: number; justLearned: boolean }
 }
 
-export default function WordResultModal({ roundState, onContinue, isCalisma = false }: WordResultModalProps) {
+export default function WordResultModal({
+  roundState,
+  onContinue,
+  isCalisma = false,
+  isHatalar = false,
+  streakInfo,
+}: WordResultModalProps) {
   const { round, currentWord, wordWon, lossReason } = roundState
   const points = ROUND_CONFIGS[round - 1]?.pointsPerWord ?? 1000
 
@@ -61,7 +69,17 @@ export default function WordResultModal({ roundState, onContinue, isCalisma = fa
 
         {/* Alt Açıklama */}
         {wordWon ? (
-          isCalisma ? (
+          isHatalar ? (
+            streakInfo?.justLearned ? (
+              <p className="text-emerald-400 font-bold text-lg mb-4">
+                ✓ Öğrenildi!
+              </p>
+            ) : (
+              <p className="text-emerald-400 font-bold text-lg mb-4">
+                Ardışık doğru: {streakInfo?.streak ?? 1}/2
+              </p>
+            )
+          ) : isCalisma ? (
             <p className="text-emerald-400 font-bold text-lg mb-4">
               Doğru!
             </p>

@@ -108,6 +108,12 @@ export interface PracticeSummary {
   bonusWonCount: number
   bonusLostCount: number
   missedWords: MissedWordItem[]
+  /** Hatalarımla modunda bu oturumda öğrenilen kelimeler (SPEC M8) */
+  learnedWords?: string[]
+  /** Oturum çalışılacak kelime kalmadığı için otomatik mi bitti? */
+  autoEnded?: boolean
+  /** Oturum bittiğinde havuzda kalan çalışılabilir kelime sayısı */
+  remainingCount?: number
 }
 
 export interface PracticeState {
@@ -123,6 +129,16 @@ export interface PracticeState {
   missedWords: MissedWordItem[]
   currentWordInvalidGuesses: string[]
   currentWordGuessTimes: number[]
+  /** Hatalarımla modunda havuzda kalan çalışılabilir kelime sayısı */
+  remainingCount?: number
+  /** Hatalarımla modunda soru sonuç kartında gösterilecek ardışık doğru / öğrenildi bilgisi */
+  streakInfo?: { streak: number; justLearned: boolean }
+  /** Hatalarımla modunda bu oturumda öğrenilen kelimeler listesi */
+  learnedThisSession?: string[]
+  /** Hatalarımla modunda mevcut adım (4, 5, 6, 7 veya 'bonus') */
+  currentMistakeStep?: 4 | 5 | 6 | 7 | 'bonus'
+  /** Çalışılacak kelime kalmadığı için otomatik bitirildi mi? */
+  autoEnded?: boolean
 }
 
 export interface QuestionResolvedEvent {

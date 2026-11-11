@@ -11,14 +11,16 @@ import { triggerHaptic } from '../haptics/vibration'
 
 interface PracticeSummaryModalProps {
   summary: PracticeSummary
-  level: GameLevel
+  level?: GameLevel
+  isHatalar?: boolean
   onRestart: () => void
   onBackToMenu: () => void
 }
 
 export default function PracticeSummaryModal({
   summary,
-  level,
+  level = 'zor',
+  isHatalar = false,
   onRestart,
   onBackToMenu,
 }: PracticeSummaryModalProps) {
@@ -35,25 +37,43 @@ export default function PracticeSummaryModal({
         <div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
           <div>
             <h2 className="text-xl sm:text-2xl font-black tracking-wide text-white">
-              Çalışma Özeti
+              {isHatalar ? 'Hatalarımla Çalış Özeti' : 'Çalışma Özeti'}
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               Oturum Performansı
             </p>
           </div>
-          <span className={`px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
-            level === 'kolay'
-              ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40'
-              : level === 'orta'
-                ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
-                : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
-          }`}>
-            {levelLabel}
-          </span>
+          {isHatalar ? (
+            <span className="px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border bg-rose-600/30 text-rose-300 border-rose-500/40">
+              Hatalarımla
+            </span>
+          ) : (
+            <span className={`px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
+              level === 'kolay'
+                ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40'
+                : level === 'orta'
+                  ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
+                  : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
+            }`}>
+              {levelLabel}
+            </span>
+          )}
         </div>
 
         {/* Kaydırılabilir İçerik */}
         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
+          {/* Otomatik Bitiş Tebrik Bildirimi */}
+          {summary.autoEnded && (
+            <div className="bg-emerald-500/15 border border-emerald-500/40 rounded-2xl p-3.5 text-center">
+              <p className="text-sm font-black text-emerald-300">
+                🎉 Tebrikler, çalışılacak kelime kalmadı!
+              </p>
+              <p className="text-[11px] text-emerald-400/80 mt-0.5">
+                Tüm hatalarını başarıyla pekiştirdin.
+              </p>
+            </div>
+          )}
+
           {/* Ana İstatistikler Grid */}
           <div className="grid grid-cols-4 gap-2 text-center">
             <div className="bg-white/5 rounded-2xl p-2.5 border border-white/10">
@@ -148,21 +168,48 @@ export default function PracticeSummaryModal({
               </div>
             )}
           </div>
+
+          {/* Hatalarımla Modu: Bu Oturumda Öğrenilenler (SPEC M8) */}
+          {isHatalar && (
+            <div className="bg-white/5 rounded-2xl p-3 border border-white/10">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                Bu Oturumda Öğrenilenler ({summary.learnedWords?.length ?? 0})
+              </h3>
+              {!summary.learnedWords || summary.learnedWords.length === 0 ? (
+                <p className="text-xs text-slate-400 italic py-1">
+                  Henüz öğrenilen kelime yok (öğrenmek için 2 kez ardışık doğru bilmelisin).
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
+                  {summary.learnedWords.map((w) => (
+                    <span
+                      key={w}
+                      className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold text-xs"
+                    >
+                      ✓ {turkishUpper(w)}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Eylem Butonları */}
         <div className="pt-3 border-t border-white/10 flex flex-col gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              playSound('key_press')
-              triggerHaptic('tap')
-              onRestart()
-            }}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-violet-600/30 transition-all active:scale-95"
-          >
-            🔄 Yeniden Çalış
-          </button>
+          {!summary.autoEnded && (
+            <button
+              type="button"
+              onClick={() => {
+                playSound('key_press')
+                triggerHaptic('tap')
+                onRestart()
+              }}
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-violet-600/30 transition-all active:scale-95"
+            >
+              🔄 Yeniden Çalış
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
@@ -170,7 +217,11 @@ export default function PracticeSummaryModal({
               triggerHaptic('tap')
               onBackToMenu()
             }}
-            className="w-full py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 text-slate-300 font-semibold text-xs transition-all active:scale-95"
+            className={`w-full rounded-2xl font-bold transition-all active:scale-95 ${
+              summary.autoEnded
+                ? 'py-3.5 bg-violet-600 hover:bg-violet-500 text-white text-sm shadow-lg shadow-violet-600/30'
+                : 'py-2.5 bg-white/10 hover:bg-white/15 text-slate-300 font-semibold text-xs'
+            }`}
           >
             Ana Menü
           </button>

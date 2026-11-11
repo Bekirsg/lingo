@@ -12,6 +12,7 @@ import {
   recordSessionToAnalytics,
 } from './reducer'
 import type { QuestionResolvedEvent, GameCompletedEvent, SessionCompletedEvent } from '../game/state/types'
+import { unlearnMistakeWord, resetStudyData } from '../game/mistakes/studyStorage'
 
 export const ANALYTICS_STORAGE_KEY = 'be:v2:analytics'
 export const STUDY_STORAGE_KEY = 'be:v2:study'
@@ -116,6 +117,7 @@ export function flushPendingAnalyticsSave(): void {
 export function resetAnalytics(): void {
   flushPendingAnalyticsSave()
   cachedAnalytics = createEmptyAnalyticsData()
+  resetStudyData()
   try {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(ANALYTICS_STORAGE_KEY)
@@ -144,6 +146,15 @@ export function recordQuestionResolved(event: QuestionResolvedEvent): void {
   const current = loadAnalytics()
   recordQuestionToAnalytics(current, event)
   scheduleAnalyticsSave(current)
+
+  // SPEC-v2 Bölüm 6.5 / M8: Öğrenildi sayılan bir kelime Yarışma veya Çalışma'da tekrar kaçırılırsa
+  // learned durumu ve sayaç sıfırlanır (kelime havuza geri döner)
+  if (
+    (event.mode === 'yarisma' || event.mode === 'calisma') &&
+    (event.result === 'lost' || event.result === 'pass')
+  ) {
+    unlearnMistakeWord(event.word)
+  }
 }
 
 export function recordGameCompleted(event: GameCompletedEvent): void {

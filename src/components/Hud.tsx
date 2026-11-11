@@ -54,19 +54,41 @@ export default function Hud({ state, clock, onPause, onEndPractice }: HudProps) 
         : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
 
   const isCalisma = state.mode === 'calisma'
+  const isHatalar = state.mode === 'hatalar'
   const ps = state.practiceState
 
   return (
     <header className="w-full px-2.5 sm:px-4 pt-1.5 sm:pt-2.5 pb-1 flex flex-col gap-1.5 select-none shrink-0">
-      {/* Üst Satır: Tur ve Sıra / Etap / Çalışma | Kasa / Kazanç / Bitir | Duraklat */}
+      {/* Üst Satır: Tur ve Sıra / Etap / Çalışma / Hatalar | Kasa / Kazanç / Bitir | Duraklat */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          {/* Seviye Rozeti */}
-          <span className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 ${levelBadgeClass}`}>
-            {isCalisma ? `Çalışma • ${levelLabel}` : levelLabel}
-          </span>
+          {/* Seviye veya Hatalar Rozeti */}
+          {isHatalar ? (
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 bg-rose-600/30 text-rose-300 border-rose-500/40">
+              Hatalarımla çalış
+            </span>
+          ) : (
+            <span className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 ${levelBadgeClass}`}>
+              {isCalisma ? `Çalışma • ${levelLabel}` : levelLabel}
+            </span>
+          )}
 
-          {isCalisma ? (
+          {isHatalar ? (
+            <>
+              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-rose-600/20 text-rose-300 border border-rose-500/30 backdrop-blur-md shrink-0">
+                Döngü {ps?.cycle ?? 1}
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-slate-400 shrink-0">
+                {rs!.letterCount} Harfli
+              </span>
+              <span className="hidden xs:inline text-[10px] sm:text-[11px] font-semibold text-slate-400 shrink-0 ml-1">
+                Bilinen {ps?.totalWon ?? 0} / Sorulan {ps?.totalAsked ?? 0}
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-amber-300/90 shrink-0">
+                Kalan: {ps?.remainingCount ?? 0}
+              </span>
+            </>
+          ) : isCalisma ? (
             <>
               <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-violet-600/30 text-violet-300 border border-violet-500/30 backdrop-blur-md shrink-0">
                 Döngü {ps?.cycle ?? 1}
@@ -100,7 +122,7 @@ export default function Hud({ state, clock, onPause, onEndPractice }: HudProps) 
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {isCalisma ? (
+          {(isCalisma || isHatalar) ? (
             onEndPractice && (
               <button
                 type="button"

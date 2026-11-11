@@ -3,19 +3,24 @@
  * SPEC-v2 Bölüm 3.2, 3.3, 4.6, 5, 6 & V2-M4 / V2-M5
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { GameLevel } from '../data/levels'
 import { getLevelRecords } from '../data/storage'
-import { loadWordRepository, ensureLevelsLoaded, ensureBonusLevelLoaded } from '../data/wordsLoader'
+import { loadWordRepository, ensureLevelsLoaded, ensureBonusLevelLoaded, ensureBonusLoaded } from '../data/wordsLoader'
 import { formatPoints } from '../components/Hud'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
+import { loadAnalytics } from '../analytics/storage'
+import { loadStudyData } from '../game/mistakes/studyStorage'
+import { getStudyableCandidates, MISTAKE_POOL_SOURCES } from '../game/mistakes/mistakeSelector'
 
+export { MISTAKE_POOL_SOURCES }
 export type GameMode = 'yarisma' | 'calisma'
 
 interface LevelSelectScreenProps {
   mode?: GameMode
   onSelectLevel: (level: GameLevel) => void
+  onSelectMistakes?: () => void
   onBack: () => void
 }
 
@@ -66,13 +71,39 @@ const LEVEL_CARDS: LevelCardConfig[] = [
 export default function LevelSelectScreen({
   mode = 'yarisma',
   onSelectLevel,
+  onSelectMistakes,
   onBack,
 }: LevelSelectScreenProps) {
   const [loadingLevel, setLoadingLevel] = useState<GameLevel | null>(null)
   const [loadError, setLoadError] = useState<{ level: GameLevel; message: string } | null>(null)
+  const [studyableCount, setStudyableCount] = useState<number | null>(null)
   const records = getLevelRecords()
 
   const isPractice = mode === 'calisma'
+
+  // Hatalarımla Çalış kartı için çalışılabilir kelime sayısını hesapla
+  useEffect(() => {
+    if (!isPractice) return
+    let active = true
+
+    loadWordRepository()
+      .then(async (repo) => {
+        await ensureBonusLoaded(repo)
+        if (!active) return
+        const analytics = loadAnalytics()
+        const study = loadStudyData()
+        const pool = getStudyableCandidates(analytics.missedWords, study.learned, repo)
+        setStudyableCount(pool.totalCount)
+      })
+      .catch((err) => {
+        console.warn('[LevelSelectScreen] Kelime havuzu okunamadı:', err)
+        if (active) setStudyableCount(0)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [isPractice])
 
   const handleSelect = async (level: GameLevel) => {
     if (loadingLevel) return
@@ -251,24 +282,62 @@ export default function LevelSelectScreen({
           )
         })}
 
-        {/* 4. Kart: Hatalarımla Çalış (Çalışma modunda görünür, şimdilik pasif) */}
+        {/* 4. Kart: Hatalarımla Çalış (Çalışma modunda görünür, SPEC-v2 6.5 & M8) */}
         {isPractice && (
-          <div
-            className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-50 cursor-not-allowed text-left relative"
-          >
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🔁</span>
-                <span className="text-xl font-black text-slate-300">Hatalarımla Çalış</span>
+          studyableCount !== null && studyableCount > 0 ? (
+            <button
+              type="button"
+              disabled={Boolean(loadingLevel)}
+              onClick={() => {
+                if (loadingLevel) return
+                playSound('key_press')
+                triggerHaptic('tap')
+                onSelectMistakes?.()
+              }}
+              className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-rose-500/30 hover:border-rose-400/70 text-left transition-all duration-200 active:scale-98 relative overflow-hidden group hover:bg-white/5"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🔁</span>
+                  <span className="text-xl font-black text-white">Hatalarımla Çalış</span>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-rose-500/20 text-rose-300 border-rose-500/40">
+                  {studyableCount} kelime
+                </span>
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                Yakında
-              </span>
+              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+                Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
+              </p>
+              <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
+                <span className="text-slate-400 text-[11px]">
+                  🎯 Hedefli tekrar • Puan tutulmaz
+                </span>
+                <span className="text-slate-400 text-[11px] group-hover:text-white">
+                  Başla ➔
+                </span>
+              </div>
+            </button>
+          ) : (
+            <div
+              className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-50 cursor-not-allowed text-left relative"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🔁</span>
+                  <span className="text-xl font-black text-slate-300">Hatalarımla Çalış</span>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-500/20 text-slate-400 border border-slate-500/30">
+                  {studyableCount === 0 ? '0 kelime' : 'Yükleniyor...'}
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed mb-2">
+                Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
+              </p>
+              <p className="text-[11px] text-amber-300/80 font-medium">
+                Önce Yarışma veya Çalışma modunda oyna
+              </p>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
-            </p>
-          </div>
+          )
         )}
       </div>
 

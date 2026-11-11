@@ -145,7 +145,7 @@ describe('V2-M7 Analizler Ekranı (AnalyticsScreen) Render Testleri', () => {
     expect(html).toContain('kitap')
     expect(html).toContain('Kaçırılan Kelime')
     expect(html).toContain('Bu kelimelerle çalış')
-    expect(html).toContain('YAKINDA')
+    expect(html).toContain('2')
   })
 
   it('InvalidWordsTab: Sözlük dışı dizileri ve uyarı kutusunu render etmelidir', () => {

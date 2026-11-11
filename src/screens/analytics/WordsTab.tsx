@@ -7,13 +7,16 @@ import { useState, useEffect, useMemo } from 'react'
 import type { AnalyticsData, AnalyticsFilter } from '../../analytics/types'
 import { filterAndSortMissedWords } from '../../analytics/selectors'
 import { EmptyState } from './EmptyState'
+import { playSound } from '../../audio/sound'
+import { triggerHaptic } from '../../haptics/vibration'
 
 interface WordsTabProps {
   rawData: AnalyticsData
   filter: AnalyticsFilter
+  onStartMistakes?: () => void
 }
 
-export function WordsTab({ rawData, filter }: WordsTabProps) {
+export function WordsTab({ rawData, filter, onStartMistakes }: WordsTabProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [letterFilter, setLetterFilter] = useState<number | 'all'>('all')
   const [levelFilter, setLevelFilter] = useState<'all' | 'kolay' | 'orta' | 'zor'>('all')
@@ -100,6 +103,16 @@ export function WordsTab({ rawData, filter }: WordsTabProps) {
     return filteredItems.slice(0, pageLimit)
   }, [filteredItems, pageLimit])
 
+  const studyableCount = useMemo(() => {
+    let count = 0
+    for (const [w, entry] of Object.entries(rawData.missedWords || {})) {
+      if ((entry.y > 0 || entry.c > 0) && !learnedSet.has(w)) {
+        count++
+      }
+    }
+    return count
+  }, [rawData.missedWords, learnedSet])
+
   const hasAnyMissed = Object.keys(rawData.missedWords || {}).length > 0
 
   if (!hasAnyMissed) {
@@ -115,14 +128,27 @@ export function WordsTab({ rawData, filter }: WordsTabProps) {
         </div>
         <button
           type="button"
-          disabled
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-600/30 text-violet-300 border border-violet-500/30 text-xs font-bold opacity-60 cursor-not-allowed"
-          title="V2-M8 aşamasında bağlanacaktır"
+          disabled={!onStartMistakes || studyableCount === 0}
+          onClick={() => {
+            playSound('key_press')
+            triggerHaptic('tap')
+            onStartMistakes?.()
+          }}
+          className={`
+            flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all
+            ${studyableCount > 0
+              ? 'bg-violet-600 hover:bg-violet-500 text-white shadow-md shadow-violet-600/30 active:scale-95'
+              : 'bg-white/5 text-slate-500 border border-white/5 opacity-50 cursor-not-allowed'
+            }
+          `}
+          title={studyableCount > 0 ? 'Bu kelimelerle pratik yap' : 'Çalışılabilecek kelime yok'}
         >
           <span>🎯 Bu kelimelerle çalış</span>
-          <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-black">
-            YAKINDA
-          </span>
+          {studyableCount > 0 && (
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white font-mono font-black">
+              {studyableCount}
+            </span>
+          )}
         </button>
       </div>
 

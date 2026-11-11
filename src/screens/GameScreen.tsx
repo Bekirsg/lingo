@@ -57,8 +57,15 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
       .then(async (repo) => {
         if (!active) return
 
+        // Hatalarımla modunda seviye dosyası İNDİRİLMEZ (SPEC M8)
         // Kolay veya Orta ise seviye dosyalarının hazır olduğundan emin ol (Zor hiçbir şey indirmez)
-        if (level !== 'zor') {
+        if (mode === 'hatalar') {
+          try {
+            await ensureBonusLoaded(repo)
+          } catch (err) {
+            console.error('[LİNGO v2] Bonus kelime verisi yüklenemedi:', err)
+          }
+        } else if (level !== 'zor') {
           try {
             await Promise.all([
               ensureLevelsLoaded(repo, level),
@@ -289,12 +296,13 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
     )
   }
 
-  // ─── Çalışma Modu Oturum Özeti Ekranı ─────────────────────────
+  // ─── Çalışma / Hatalarımla Modu Oturum Özeti Ekranı ───────────
   if (gameState.screen === 'practice_summary' && gameState.practiceSummary) {
     return (
       <PracticeSummaryModal
         summary={gameState.practiceSummary}
         level={gameState.level}
+        isHatalar={gameState.mode === 'hatalar'}
         onRestart={() => controller.startNewGame(level, mode)}
         onBackToMenu={onBackToMenu}
       />
@@ -541,18 +549,20 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
               ? 'Bonus Soru Başlıyor!'
               : gameState.countdownTarget === 'round4_playing'
                 ? 'Büyük Final Başlıyor!'
-                : gameState.mode === 'calisma'
+                : gameState.mode === 'calisma' || gameState.mode === 'hatalar'
                   ? `${rs?.letterCount ?? 4} Harfli Kelime`
                   : `${rs?.round ?? 1}. Tur Hazırlanıyor`
           }
         />
       )}
 
-      {/* Kelime Sonuç Kartı (1–3. Tur ve Çalışma Modu) */}
+      {/* Kelime Sonuç Kartı (1–3. Tur, Çalışma ve Hatalarımla Modu) */}
       {gameState.screen === 'word_result' && rs && (
         <WordResultModal
           roundState={rs}
           isCalisma={gameState.mode === 'calisma'}
+          isHatalar={gameState.mode === 'hatalar'}
+          streakInfo={gameState.practiceState?.streakInfo}
           onContinue={() => controller.dismissWordResult()}
         />
       )}

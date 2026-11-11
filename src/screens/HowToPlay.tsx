@@ -28,14 +28,31 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
 
       {/* İçerik */}
       <div className="flex-1 overflow-y-auto space-y-5 text-[var(--color-text-secondary)] text-sm leading-relaxed pb-8">
+
+        {/* Modlar */}
+        <Section title="🎮 Oyun Modları">
+          <ul className="list-disc list-inside space-y-1 mt-2">
+            <li><strong>Yarışma:</strong> Puanlı klasik mod; 4 tur + büyük final. Rekor kaydedilir.</li>
+            <li><strong>Çalışma:</strong> Puan yok, sonsuz döngü. Kelime bilmecelerini stres olmadan çöz.</li>
+            <li><strong>Hatalarımla Çalış:</strong> Daha önce kaçırdığın kelimeler karşına çıkar. 2 kez üst üste doğru bilince kelime "öğrenildi" sayılır.</li>
+          </ul>
+        </Section>
+
+        {/* Seviye seçimi */}
+        <Section title="📊 Seviye Seçimi">
+          Yarışma ve Çalışma modlarında <strong>Kolay</strong>, <strong>Orta</strong> veya <strong>Zor</strong> seçebilirsin.
+          Kolay kelimeler günlük hayatta sık kullanılanlardır; Zor kelimeler tüm TDK sözlüğünden gelir.
+          Tahmin olarak her zaman TDK'daki herhangi bir kelimeyi yazabilirsin.
+        </Section>
+
         {/* Genel */}
-        <Section title="🎯 Amaç">
+        <Section title="🎯 Yarışma — Amaç">
           Türkçe kelimeleri tahmin ederek puan topla! 4 tur boyunca kasanı büyüt ve
           büyük finalde tüm puanını katla.
         </Section>
 
         {/* Turlar */}
-        <Section title="📋 Turlar">
+        <Section title="📋 Yarışma — Turlar">
           <ul className="list-disc list-inside space-y-1 mt-2">
             <li><strong>1. Tur:</strong> 5 adet 4 harfli kelime (1.000 puan/kelime)</li>
             <li><strong>2. Tur:</strong> 5 adet 5 harfli kelime (2.000 puan/kelime)</li>
@@ -63,6 +80,14 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
           </ul>
         </Section>
 
+        {/* PAS */}
+        <Section title="⏭️ PAS">
+          Bilmediğin bir kelimeyi geçmek için <strong>PAS</strong> tuşuna bas. Yanlışlıkla
+          basmaya karşı iki aşamalıdır: ilk dokunuşta onay istenir, ikinci dokunuşta
+          kelimeden geçilir. Kelime kaybedilir ve doğru cevap gösterilir.{' '}
+          <span className="text-[var(--color-text-secondary)]">Bonus sorularında PAS yoktur.</span>
+        </Section>
+
         {/* Bonus */}
         <Section title="⭐ Bonus Soru">
           Her turun sonunda 8 harfli bir kelimenin tanımı verilir. Harfler birer birer
@@ -80,6 +105,37 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
           <strong className="text-red-400">0 puan</strong> (kasa yanar). 7 harfli etabı bitirirsen{' '}
           <strong className="text-emerald-400">250.000 + 2×Kasa</strong> kazanırsın!
         </Section>
+
+        {/* Çalışma modu */}
+        <Section title="📚 Çalışma Modu">
+          Puan ve rekor yok. Kelimeler seçtiğin seviyeden gelir ve{' '}
+          <strong>4→5→6→7→bonus→başa dön</strong> döngüsünde tekrarsız sunulur.
+          Yarışma ile aynı kurallar geçerlidir: 5 hak, 15 sn/tahmin, PAS, bonus soru.
+          Sağ üstteki <strong>Bitir</strong> butonuyla oturumu sonlandırabilir,
+          kaçırdığın kelimelerin listesini görebilirsin.
+        </Section>
+
+        {/* Hatalarımla */}
+        <Section title="🎯 Hatalarımla Çalış">
+          Yarışma ve Çalışma'da kaçırdığın kelimeler bu modda karşına çıkar. Kelimeler
+          kaçırılma sayısına göre ağırlıklı seçilir; en çok zorlandığın kelimeler daha
+          sık gelir. Bir kelimeyi <strong>2 kez üst üste</strong> doğru bilirsen
+          "✓ Öğrenildi" sayılır ve havuzdan düşer. Tüm kelimeler öğrenilince oturum
+          otomatik biter.
+        </Section>
+
+        {/* Analizler */}
+        <Section title="📈 Analizler">
+          Tüm istatistiklerin Analizler ekranında toplanır:{' '}
+          <strong>Özet</strong> (rekorlar, genel başarı),{' '}
+          <strong>Kelimeler</strong> (kaçırdıkların),{' '}
+          <strong>Sözlük Dışı</strong> (hatalı yazdıkların),{' '}
+          <strong>Performans</strong> (harf ve tahmin dağılımı),{' '}
+          <strong>Harfler</strong> (en çok yanıldığın harfler),{' '}
+          <strong>İlerleme</strong> (son oyunlar ve eğilimler).
+          Mod ve Seviye filtreleriyle dilediğin kesiti incele.
+        </Section>
+
       </div>
     </div>
   )

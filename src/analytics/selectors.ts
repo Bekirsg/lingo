@@ -894,3 +894,450 @@ export function filterAndSortInvalidWords(
 
   return list
 }
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// YENİDEN TASARLANAN ANALİZ MODÜLÜ SEÇİCİLERİ (SAF FONKSİYONLAR)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const TURKISH_ALPHABET_LETTERS = [
+  'A', 'B', 'C', 'Ç', 'D', 'E', 'F', 'G', 'Ğ', 'H',
+  'I', 'İ', 'J', 'K', 'L', 'M', 'N', 'O', 'Ö', 'P',
+  'R', 'S', 'Ş', 'T', 'U', 'Ü', 'V', 'Y', 'Z',
+] as const
+
+export interface SimplifiedSummaryMetrics {
+  totalSeen: number
+  totalSolved: number
+  totalLost: number
+  successRate: number | null
+  totalPass: number
+  totalInvalidAttempts: number
+  summaryText: string
+  bestLength: number | null
+  worstLength: number | null
+  hasData: boolean
+}
+
+export function computeSimplifiedSummary(
+  merged: MergedAnalytics,
+  rawData: AnalyticsData,
+  filter: AnalyticsFilter
+): SimplifiedSummaryMetrics {
+  let totalSeen = 0
+  let totalSolved = 0
+  let totalLost = 0
+  let totalPass = 0
+  let totalInvalidAttempts = 0
+
+  const lengthsToInspect = [4, 5, 6, 7]
+  const lengthStats: { length: number; seen: number; solved: number; rate: number }[] = []
+
+  for (const len of lengthsToInspect) {
+    const b = merged.byLength[len]
+    if (b) {
+      if (filter.type === 'length' && filter.length && filter.length !== len) {
+        continue
+      }
+      totalSeen += b.seen
+      totalSolved += b.solved
+      totalLost += b.lost
+      totalPass += b.lossReasons?.pass || 0
+      totalInvalidAttempts += b.lossReasons?.invalid_word || 0
+      if (b.seen > 0) {
+        const rate = Math.round((b.solved / b.seen) * 100)
+        lengthStats.push({ length: len, seen: b.seen, solved: b.solved, rate })
+      }
+    }
+  }
+
+  if (filter.type === 'initial' && filter.initial) {
+    const init = filter.initial.toLocaleLowerCase('tr-TR')
+    let missedForInitial = 0
+    for (const [w, rec] of Object.entries(rawData.missedWords || {})) {
+      if (w.toLocaleLowerCase('tr-TR').startsWith(init)) {
+        missedForInitial += ((rec.y || 0) + (rec.c || 0))
+      }
+    }
+    const hasData = missedForInitial > 0 || totalSeen > 0
+    const charUpper = filter.initial.toLocaleUpperCase('tr-TR')
+    const summaryText = missedForInitial > 0
+      ? `"${charUpper}" harfiyle başlayan kelimelerde toplam ${missedForInitial} kez hata kaydedildi.`
+      : `"${charUpper}" harfiyle başlayan kelimeler için henüz kayıtlı hata bulunmuyor.`
+
+    return {
+      totalSeen,
+      totalSolved,
+      totalLost,
+      successRate: totalSeen > 0 ? Math.round((totalSolved / totalSeen) * 100) : null,
+      totalPass,
+      totalInvalidAttempts,
+      summaryText,
+      bestLength: null,
+      worstLength: null,
+      hasData,
+    }
+  }
+
+  const successRate = totalSeen > 0 ? Math.round((totalSolved / totalSeen) * 100) : null
+
+  let bestLength: number | null = null
+  let worstLength: number | null = null
+  if (lengthStats.length > 1) {
+    lengthStats.sort((a, b) => b.rate - a.rate || b.seen - a.seen)
+    bestLength = lengthStats[0].length
+    worstLength = lengthStats[lengthStats.length - 1].length
+  } else if (lengthStats.length === 1) {
+    bestLength = lengthStats[0].length
+  }
+
+  let summaryText = 'Henüz oynanmış oyun veya çalışma verisi bulunmuyor.'
+  if (totalSeen > 0 && successRate !== null) {
+    if (filter.type === 'length' && filter.length) {
+      summaryText = `${filter.length} harfli kelimelerde toplam ${totalSeen} soru yanıtladın. Başarı oranın %${successRate}.`
+    } else if (bestLength && worstLength && bestLength !== worstLength) {
+      const bestRate = lengthStats[0].rate
+      const worstRate = lengthStats[lengthStats.length - 1].rate
+      summaryText = `Genel başarı oranın %${successRate}. En iyi performansını ${bestLength} harflilerde (%${bestRate}) gösteriyorsun; ${worstLength} harflilere (%${worstRate}) odaklanabilirsin.`
+    } else {
+      summaryText = `Toplam ${totalSeen} soruda genel başarı oranın %${successRate}.`
+    }
+  }
+
+  return {
+    totalSeen,
+    totalSolved,
+    totalLost,
+    successRate,
+    totalPass,
+    totalInvalidAttempts,
+    summaryText,
+    bestLength,
+    worstLength,
+    hasData: totalSeen > 0 || Object.keys(rawData.missedWords || {}).length > 0,
+  }
+}
+
+export interface LengthRankingItem {
+  length: number
+  seen: number
+  solved: number
+  lost: number
+  successRate: number | null
+  avgGuess: number | null
+  passCount: number
+  invalidCount: number
+  rank: number
+}
+
+export function computeRankingByLength(merged: MergedAnalytics): LengthRankingItem[] {
+  const items: LengthRankingItem[] = []
+
+  for (const len of [4, 5, 6, 7]) {
+    const b = merged.byLength[len]
+    const seen = b?.seen || 0
+    const solved = b?.solved || 0
+    const lost = b?.lost || 0
+    const successRate = seen > 0 ? Math.round((solved / seen) * 100) : null
+    const guessSum = b?.guessSum || 0
+    const avgGuess = solved > 0 ? Math.round((guessSum / solved) * 10) / 10 : null
+    const passCount = b?.lossReasons?.pass || 0
+    const invalidCount = b?.lossReasons?.invalid_word || 0
+
+    items.push({
+      length: len,
+      seen,
+      solved,
+      lost,
+      successRate,
+      avgGuess,
+      passCount,
+      invalidCount,
+      rank: 1,
+    })
+  }
+
+  items.sort((a, b) => {
+    if (a.successRate === null && b.successRate === null) return a.length - b.length
+    if (a.successRate === null) return 1
+    if (b.successRate === null) return -1
+    return b.successRate - a.successRate || b.seen - a.seen || a.length - b.length
+  })
+
+  items.forEach((it, idx) => {
+    it.rank = idx + 1
+  })
+
+  return items
+}
+
+export interface SimplifiedMissedWord {
+  word: string
+  total: number
+  y: number
+  c: number
+  last: number
+  length: number
+  firstLetter: string
+}
+
+export function computeMissedWords(
+  missedWordsMap: Record<string, { y: number; c: number; last: number }>,
+  filter: AnalyticsFilter,
+  minThreshold = 2
+): SimplifiedMissedWord[] {
+  const list: SimplifiedMissedWord[] = []
+  const initialLower = filter.initial?.toLocaleLowerCase('tr-TR')
+
+  for (const [word, rec] of Object.entries(missedWordsMap || {})) {
+    const total = (rec.y || 0) + (rec.c || 0)
+    if (total < minThreshold) continue
+
+    const len = Array.from(word).length
+    if (filter.type === 'length' && filter.length && len !== filter.length) {
+      continue
+    }
+
+    const firstLetter = word.charAt(0).toLocaleLowerCase('tr-TR')
+    if (filter.type === 'initial' && initialLower && firstLetter !== initialLower) {
+      continue
+    }
+
+    list.push({
+      word,
+      total,
+      y: rec.y || 0,
+      c: rec.c || 0,
+      last: rec.last || 0,
+      length: len,
+      firstLetter,
+    })
+  }
+
+  list.sort((a, b) => b.total - a.total || b.last - a.last || a.word.localeCompare(b.word, 'tr-TR'))
+
+  return list
+}
+
+export interface SimplifiedInvalidWord {
+  word: string
+  total: number
+  y: number
+  c: number
+  h: number
+  last: number
+  length: number
+  firstLetter: string
+}
+
+export interface SimplifiedInvalidWordsResult {
+  totalAttempts: number
+  uniqueCount: number
+  items: SimplifiedInvalidWord[]
+}
+
+export function computeInvalidWords(
+  invalidWordsMap: Record<string, { y: number; c: number; h: number; last: number }>,
+  filter: AnalyticsFilter,
+  minThreshold = 2
+): SimplifiedInvalidWordsResult {
+  let totalAttempts = 0
+  let uniqueCount = 0
+  const list: SimplifiedInvalidWord[] = []
+  const initialLower = filter.initial?.toLocaleLowerCase('tr-TR')
+
+  for (const [word, rec] of Object.entries(invalidWordsMap || {})) {
+    const total = (rec.y || 0) + (rec.c || 0) + (rec.h || 0)
+    if (total <= 0) continue
+
+    const len = Array.from(word).length
+    if (filter.type === 'length' && filter.length && len !== filter.length) {
+      continue
+    }
+
+    const firstLetter = word.charAt(0).toLocaleLowerCase('tr-TR')
+    if (filter.type === 'initial' && initialLower && firstLetter !== initialLower) {
+      continue
+    }
+
+    totalAttempts += total
+    uniqueCount++
+
+    if (total >= minThreshold) {
+      list.push({
+        word,
+        total,
+        y: rec.y || 0,
+        c: rec.c || 0,
+        h: rec.h || 0,
+        last: rec.last || 0,
+        length: len,
+        firstLetter,
+      })
+    }
+  }
+
+  list.sort((a, b) => b.total - a.total || b.last - a.last || a.word.localeCompare(b.word, 'tr-TR'))
+
+  return {
+    totalAttempts,
+    uniqueCount,
+    items: list,
+  }
+}
+
+export interface InitialLetterMissedStats {
+  char: string
+  missedCount: number
+  distinctWordsCount: number
+  topWords: { word: string; total: number }[]
+}
+
+export function computeMissedByFirstLetter(
+  missedWordsMap: Record<string, { y: number; c: number; last: number }>,
+  filter: AnalyticsFilter
+): InitialLetterMissedStats[] {
+  const groups: Record<string, {
+    char: string
+    missedCount: number
+    words: { word: string; total: number; last: number }[]
+  }> = {}
+
+  for (const [word, rec] of Object.entries(missedWordsMap || {})) {
+    const total = (rec.y || 0) + (rec.c || 0)
+    if (total <= 0) continue
+
+    const len = Array.from(word).length
+    if (filter.type === 'length' && filter.length && len !== filter.length) {
+      continue
+    }
+
+    const firstChar = word.charAt(0).toLocaleUpperCase('tr-TR')
+    if (filter.type === 'initial' && filter.initial) {
+      if (firstChar !== filter.initial.toLocaleUpperCase('tr-TR')) {
+        continue
+      }
+    }
+
+    if (!groups[firstChar]) {
+      groups[firstChar] = { char: firstChar, missedCount: 0, words: [] }
+    }
+    groups[firstChar].missedCount += total
+    groups[firstChar].words.push({ word, total, last: rec.last || 0 })
+  }
+
+  const result: InitialLetterMissedStats[] = []
+  for (const [char, grp] of Object.entries(groups)) {
+    grp.words.sort((a, b) => b.total - a.total || b.last - a.last)
+    result.push({
+      char,
+      missedCount: grp.missedCount,
+      distinctWordsCount: grp.words.length,
+      topWords: grp.words.slice(0, 5).map((w) => ({ word: w.word, total: w.total })),
+    })
+  }
+
+  result.sort((a, b) => b.missedCount - a.missedCount || b.distinctWordsCount - a.distinctWordsCount || a.char.localeCompare(b.char, 'tr-TR'))
+
+  return result
+}
+
+export interface ActionableInsight {
+  id: string
+  title: string
+  message: string
+  type: 'tip' | 'warning' | 'info'
+}
+
+export function computeActionableInsights(
+  merged: MergedAnalytics,
+  rawData: AnalyticsData,
+  filter: AnalyticsFilter
+): ActionableInsight[] {
+  const insights: ActionableInsight[] = []
+
+  let totalSeen = 0
+  for (const len of [4, 5, 6, 7]) {
+    totalSeen += merged.byLength[len]?.seen || 0
+  }
+
+  if (totalSeen < 5 && Object.keys(rawData.missedWords || {}).length === 0) {
+    return [
+      {
+        id: 'not_enough_data',
+        type: 'info',
+        title: 'Yeterli Veri Yok',
+        message: 'Kişiselleştirilmiş gelişim önerileri için yarışma veya çalışma modunda birkaç oyun tamamlamalısın.',
+      },
+    ]
+  }
+
+  // 1) En çok hata yapılan baş harf
+  const letterStats = computeMissedByFirstLetter(rawData.missedWords || {}, filter)
+  if (letterStats.length > 0 && letterStats[0].missedCount >= 3) {
+    const worst = letterStats[0]
+    const exampleWords = worst.topWords.slice(0, 3).map((w) => `"${w.word}"`).join(', ')
+    insights.push({
+      id: 'hardest_initial_letter',
+      type: 'tip',
+      title: `${worst.char} Harfine Odaklan`,
+      message: `"${worst.char}" ile başlayan kelimelerde ${worst.missedCount} kez hata yaptın (${exampleWords}). Bu harfle pratik yapabilirsin.`,
+    })
+  }
+
+  // 2) Harf uzunluğu zayıflığı
+  const lenStats: { len: number; rate: number; seen: number }[] = []
+  for (const len of [4, 5, 6, 7]) {
+    const b = merged.byLength[len]
+    if (b && b.seen >= 5) {
+      lenStats.push({ len, rate: Math.round((b.solved / b.seen) * 100), seen: b.seen })
+    }
+  }
+  if (lenStats.length >= 2) {
+    lenStats.sort((a, b) => a.rate - b.rate)
+    const worst = lenStats[0]
+    const best = lenStats[lenStats.length - 1]
+    if (best.rate - worst.rate >= 15) {
+      insights.push({
+        id: 'weakest_length',
+        type: 'warning',
+        title: `${worst.len} Harfli Kelimeler`,
+        message: `${worst.len} harflilerde başarı oranın %${worst.rate} ile diğer uzunluklardan belirgin şekilde düşük. Çalışma modunda bu harf sayısını seçip pekiştirebilirsin.`,
+      })
+    }
+  }
+
+  // 3) TDK dışı denemeler
+  const invalidResult = computeInvalidWords(rawData.invalidWords || {}, filter, 1)
+  let totalLost = 0
+  for (const len of [4, 5, 6, 7]) {
+    totalLost += merged.byLength[len]?.lost || 0
+  }
+  if (invalidResult.totalAttempts >= 5 && totalLost > 0) {
+    const invalidRatio = invalidResult.totalAttempts / totalLost
+    if (invalidRatio >= 0.25) {
+      insights.push({
+        id: 'avoid_invalid_words',
+        type: 'warning',
+        title: 'Sözlük Dışı Denemeler',
+        message: 'Kayıtlı çok sayıda geçersiz kelime denemen var. Emin olmadığın sözcükleri denemek hak ve süre kaybettirir.',
+      })
+    }
+  }
+
+  // 4) Süre aşımı
+  let totalTimeout = 0
+  for (const len of [4, 5, 6, 7]) {
+    totalTimeout += merged.byLength[len]?.lossReasons?.timeout || 0
+  }
+  if (totalTimeout >= 3) {
+    insights.push({
+      id: 'timeout_awareness',
+      type: 'tip',
+      title: 'Hızlı Karar Ver',
+      message: `Süre aşımı nedeniyle ${totalTimeout} kelime kaybettin. Tahminlerini son saniyelere bırakmadan göndermeye çalış.`,
+    })
+  }
+
+  return insights.slice(0, 3)
+}

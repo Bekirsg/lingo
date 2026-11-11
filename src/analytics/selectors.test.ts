@@ -12,6 +12,13 @@ import {
   computeProgress,
   filterAndSortMissedWords,
   filterAndSortInvalidWords,
+  computeSimplifiedSummary,
+  computeRankingByLength,
+  computeMissedWords,
+  computeInvalidWords,
+  computeMissedByFirstLetter,
+  computeActionableInsights,
+  TURKISH_ALPHABET_LETTERS,
   INSIGHT_THRESHOLDS,
 } from './selectors'
 import { createEmptyAnalyticsData } from './reducer'
@@ -431,5 +438,186 @@ describe('V2-M7 Türkçe Sıralama ve Kelime Listesi Filtreleme', () => {
 
     expect(res[0].word).toBe('qwerty')
     expect(res[0].total).toBe(11)
+  })
+})
+
+describe('Yeniden Tasarlanan Analiz Modülü Seçicileri', () => {
+  it('TURKISH_ALPHABET_LETTERS: 29 Türk harfini eksiksiz içermelidir', () => {
+    expect(TURKISH_ALPHABET_LETTERS).toHaveLength(29)
+    expect(TURKISH_ALPHABET_LETTERS).toContain('Ç')
+    expect(TURKISH_ALPHABET_LETTERS).toContain('Ğ')
+    expect(TURKISH_ALPHABET_LETTERS).toContain('İ')
+    expect(TURKISH_ALPHABET_LETTERS).toContain('Ö')
+    expect(TURKISH_ALPHABET_LETTERS).toContain('Ş')
+    expect(TURKISH_ALPHABET_LETTERS).toContain('Ü')
+  })
+
+  it('computeSimplifiedSummary: Boş veride güvenli varsayılanlar üretmelidir', () => {
+    const raw = createEmptyAnalyticsData()
+    const filter: AnalyticsFilter = { type: 'all' }
+    const merged = mergeBuckets(raw, filter)
+    const summary = computeSimplifiedSummary(merged, raw, filter)
+
+    expect(summary.totalSeen).toBe(0)
+    expect(summary.successRate).toBeNull()
+    expect(summary.hasData).toBe(false)
+    expect(summary.summaryText).toContain('Henüz oynanmış oyun veya çalışma verisi bulunmuyor')
+  })
+
+  it('computeSimplifiedSummary: Veri varken başarı oranını ve harf karşılaştırmasını hesaplamalıdır', () => {
+    const raw = createEmptyAnalyticsData()
+    raw.buckets['yarisma:kolay'].byLength[4].seen = 10
+    raw.buckets['yarisma:kolay'].byLength[4].solved = 8
+    raw.buckets['yarisma:kolay'].byLength[5].seen = 10
+    raw.buckets['yarisma:kolay'].byLength[5].solved = 5
+
+    const filter: AnalyticsFilter = { type: 'all' }
+    const merged = mergeBuckets(raw, filter)
+    const summary = computeSimplifiedSummary(merged, raw, filter)
+
+    expect(summary.totalSeen).toBe(20)
+    expect(summary.totalSolved).toBe(13)
+    expect(summary.successRate).toBe(65)
+    expect(summary.bestLength).toBe(4)
+    expect(summary.worstLength).toBe(5)
+    expect(summary.summaryText).toContain('%65')
+    expect(summary.summaryText).toContain('4 harflilerde (%80)')
+    expect(summary.summaryText).toContain('5 harflilere (%50)')
+  })
+
+  it('computeSimplifiedSummary: Baş harf filtresinde doğru özet üretmelidir', () => {
+    const raw = createEmptyAnalyticsData()
+    raw.missedWords = {
+      kalem: { y: 2, c: 1, last: 1000 },
+      kitap: { y: 1, c: 0, last: 2000 },
+      elma: { y: 3, c: 0, last: 3000 },
+    }
+    const filter: AnalyticsFilter = { type: 'initial', initial: 'k' }
+    const merged = mergeBuckets(raw, filter)
+    const summary = computeSimplifiedSummary(merged, raw, filter)
+
+    expect(summary.hasData).toBe(true)
+    expect(summary.summaryText).toContain('"K" harfiyle başlayan kelimelerde toplam 4 kez hata kaydedildi')
+  })
+
+  it('computeRankingByLength: Harf uzunluklarını başarı oranına göre sıralamalı ve rank atamalıdır', () => {
+    const raw = createEmptyAnalyticsData()
+    const b = raw.buckets['yarisma:kolay']
+    b.byLength[4].seen = 10
+    b.byLength[4].solved = 9 // %90
+    b.byLength[5].seen = 10
+    b.byLength[5].solved = 7 // %70
+    b.byLength[6].seen = 10
+    b.byLength[6].solved = 8 // %80
+    b.byLength[7].seen = 0   // null
+
+    const merged = mergeBuckets(raw, { mode: 'all', level: 'all' })
+    const ranking = computeRankingByLength(merged)
+
+    expect(ranking).toHaveLength(4)
+    expect(ranking[0].length).toBe(4)
+    expect(ranking[0].rank).toBe(1)
+    expect(ranking[0].successRate).toBe(90)
+
+    expect(ranking[1].length).toBe(6)
+    expect(ranking[1].rank).toBe(2)
+    expect(ranking[1].successRate).toBe(80)
+
+    expect(ranking[2].length).toBe(5)
+    expect(ranking[2].rank).toBe(3)
+    expect(ranking[2].successRate).toBe(70)
+
+    expect(ranking[3].length).toBe(7)
+    expect(ranking[3].rank).toBe(4)
+    expect(ranking[3].successRate).toBeNull()
+  })
+
+  it('computeMissedWords: Eşik (total >= 2) uygulamalı, katsayıya göre sıralamalı ve filtrelemelidir', () => {
+    const missedMap = {
+      tekil: { y: 1, c: 0, last: 100 }, // total 1 -> elenmeli
+      kalem: { y: 2, c: 1, last: 200 }, // total 3, 5 harf, k
+      kapak: { y: 3, c: 2, last: 300 }, // total 5, 5 harf, k
+      elma: { y: 2, c: 2, last: 150 },  // total 4, 4 harf, e
+    }
+
+    // 1) Tümünde eşik >= 2
+    const all = computeMissedWords(missedMap, { type: 'all' }, 2)
+    expect(all).toHaveLength(3)
+    expect(all[0].word).toBe('kapak')
+    expect(all[0].total).toBe(5)
+    expect(all[1].word).toBe('elma')
+    expect(all[1].total).toBe(4)
+    expect(all[2].word).toBe('kalem')
+    expect(all[2].total).toBe(3)
+
+    // 2) Harf sayısı filtresi: 5
+    const only5 = computeMissedWords(missedMap, { type: 'length', length: 5 }, 2)
+    expect(only5).toHaveLength(2)
+    expect(only5.map((w) => w.word)).toEqual(['kapak', 'kalem'])
+
+    // 3) Baş harf filtresi: e
+    const onlyE = computeMissedWords(missedMap, { type: 'initial', initial: 'e' }, 2)
+    expect(onlyE).toHaveLength(1)
+    expect(onlyE[0].word).toBe('elma')
+  })
+
+  it('computeInvalidWords: Geçersiz denemeleri toplam ve tekrara göre süzmelidir', () => {
+    const invMap = {
+      asdf: { y: 1, c: 0, h: 0, last: 100 }, // total 1
+      xyz: { y: 2, c: 1, h: 0, last: 200 },  // total 3
+      abcde: { y: 3, c: 1, h: 2, last: 300 }, // total 6
+    }
+
+    const res = computeInvalidWords(invMap, { type: 'all' }, 2)
+    expect(res.totalAttempts).toBe(10) // 1 + 3 + 6
+    expect(res.uniqueCount).toBe(3)
+    expect(res.items).toHaveLength(2) // xyz (3), abcde (6)
+    expect(res.items[0].word).toBe('abcde')
+    expect(res.items[0].total).toBe(6)
+  })
+
+  it('computeMissedByFirstLetter: İlk harfe göre doğru gruplamalı ve sıralamalıdır', () => {
+    const missedMap = {
+      kalem: { y: 2, c: 1, last: 100 }, // k: 3
+      kutu: { y: 1, c: 1, last: 200 },  // k: 2 (toplam k: 5)
+      bardak: { y: 3, c: 1, last: 150 },// b: 4
+      çamur: { y: 1, c: 0, last: 120 }, // ç: 1
+    }
+
+    const res = computeMissedByFirstLetter(missedMap, { type: 'all' })
+    expect(res).toHaveLength(3)
+    expect(res[0].char).toBe('K')
+    expect(res[0].missedCount).toBe(5)
+    expect(res[0].distinctWordsCount).toBe(2)
+    expect(res[0].topWords[0].word).toBe('kalem')
+
+    expect(res[1].char).toBe('B')
+    expect(res[1].missedCount).toBe(4)
+
+    expect(res[2].char).toBe('Ç')
+    expect(res[2].missedCount).toBe(1)
+  })
+
+  it('computeActionableInsights: Veri yokken bilgilendirici mesaj, veri varken hedefli öneri sunmalıdır', () => {
+    const rawEmpty = createEmptyAnalyticsData()
+    const mergedEmpty = mergeBuckets(rawEmpty, { mode: 'all', level: 'all' })
+    const insightsEmpty = computeActionableInsights(mergedEmpty, rawEmpty, { type: 'all' })
+
+    expect(insightsEmpty).toHaveLength(1)
+    expect(insightsEmpty[0].id).toBe('not_enough_data')
+
+    // Veri ekle: K harfinde çok hata
+    const rawWithData = createEmptyAnalyticsData()
+    rawWithData.buckets['yarisma:kolay'].byLength[4].seen = 10
+    rawWithData.buckets['yarisma:kolay'].byLength[4].solved = 8
+    rawWithData.missedWords = {
+      kalem: { y: 3, c: 2, last: 100 },
+      kapak: { y: 2, c: 1, last: 200 },
+    }
+    const mergedWithData = mergeBuckets(rawWithData, { mode: 'all', level: 'all' })
+    const insights = computeActionableInsights(mergedWithData, rawWithData, { type: 'all' })
+
+    expect(insights.some((i) => i.id === 'hardest_initial_letter')).toBe(true)
+    expect(insights.find((i) => i.id === 'hardest_initial_letter')?.message).toContain('K')
   })
 })

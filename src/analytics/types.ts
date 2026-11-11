@@ -127,12 +127,21 @@ export interface AnalyticsData {
   sessions: SessionSummaryRecord[]
 }
 
+export type FilterType = 'all' | 'length' | 'initial'
 export type FilterMode = 'all' | 'yarisma' | 'calisma' | 'hatalar'
 export type FilterLevel = 'all' | 'kolay' | 'orta' | 'zor'
 
 export interface AnalyticsFilter {
-  mode: FilterMode
-  level: FilterLevel
+  /** Grnm tr: Tm, Harf saysna gre, Ba harfe gre */
+  type?: FilterType
+  /** SeA ilen harf uzunluYu (4, 5, 6, 7) */
+  length?: number
+  /** SeA ilen ba harf (kA Ak harf tr-TR) */
+  initial?: string
+  /** Mod filtresi (geriye dnk uyumluluk ve kova birleYtirme) */
+  mode?: FilterMode
+  /** Seviye filtresi (geriye dnk uyumluluk ve kova birleYtirme) */
+  level?: FilterLevel
 }
 
 export interface MergedAnalytics {

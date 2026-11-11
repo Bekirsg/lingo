@@ -1,29 +1,31 @@
 /**
- * LİNGO v2 — Analizler Ekranı
- * SPEC-v2 Bölüm 7 ve 3.4
+ * LİNGO v2 — Analizler Ekranı (Sadeleştirilmiş ve Yeniden Tasarlanmış)
+ * Mobil öncelikli, tek dikey akış, 3 filtre görünümü (Tümü / Harf Sayısı / Baş Harf)
  */
 
 import { useState, useMemo } from 'react'
 import { loadAnalytics } from '../analytics/storage'
 import { mergeBuckets } from '../analytics/merge'
-import { computeOverview } from '../analytics/selectors'
-import type { AnalyticsFilter, FilterMode, FilterLevel } from '../analytics/types'
-import { OverviewTab } from './analytics/OverviewTab'
-import { WordsTab } from './analytics/WordsTab'
-import { InvalidWordsTab } from './analytics/InvalidWordsTab'
-import { PerformanceTab } from './analytics/PerformanceTab'
-import { LettersTab } from './analytics/LettersTab'
-import { ProgressTab } from './analytics/ProgressTab'
+import {
+  computeSimplifiedSummary,
+  computeRankingByLength,
+  computeMissedWords,
+  computeInvalidWords,
+  computeMissedByFirstLetter,
+  computeActionableInsights,
+  TURKISH_ALPHABET_LETTERS,
+} from '../analytics/selectors'
+import type { FilterType, AnalyticsFilter } from '../analytics/types'
+import { SummarySection } from './analytics/SummarySection'
+import { RankingSection } from './analytics/RankingSection'
+import { LengthPerformanceSection } from './analytics/LengthPerformanceSection'
+import { MissedWordsSection } from './analytics/MissedWordsSection'
+import { FirstLetterSection } from './analytics/FirstLetterSection'
+import { InvalidWordsSection } from './analytics/InvalidWordsSection'
+import { InsightsSection } from './analytics/InsightsSection'
+import { EmptyState } from './analytics/EmptyState'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
-
-export type AnalyticsTabKey =
-  | 'overview'
-  | 'words'
-  | 'invalid'
-  | 'performance'
-  | 'letters'
-  | 'progress'
 
 interface AnalyticsScreenProps {
   onBack: () => void
@@ -31,45 +33,73 @@ interface AnalyticsScreenProps {
 }
 
 export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsScreenProps) {
-  const [activeTab, setActiveTab] = useState<AnalyticsTabKey>('overview')
-  const [modeFilter, setModeFilter] = useState<FilterMode>('all')
-  const [levelFilter, setLevelFilter] = useState<FilterLevel>('all')
+  // 3 Görünüm Filtresi: 'all' (Tümü) | 'length' (Harf Sayısına Göre) | 'initial' (Baş Harfe Göre)
+  const [filterType, setFilterType] = useState<FilterType>('all')
+  const [selectedLength, setSelectedLength] = useState<number>(5)
+  const [selectedInitial, setSelectedInitial] = useState<string>('A')
 
   // Veriyi be:v2:analytics'ten oku
   const rawData = useMemo(() => loadAnalytics(), [])
 
+  // Birleşik filtre nesnesi
   const filter: AnalyticsFilter = useMemo(
     () => ({
-      mode: modeFilter,
-      level: levelFilter,
+      type: filterType,
+      length: filterType === 'length' ? selectedLength : undefined,
+      initial: filterType === 'initial' ? selectedInitial.toLocaleLowerCase('tr-TR') : undefined,
+      mode: 'all',
+      level: 'all',
     }),
-    [modeFilter, levelFilter]
+    [filterType, selectedLength, selectedInitial]
   )
 
   const merged = useMemo(() => mergeBuckets(rawData, filter), [rawData, filter])
-  const overview = useMemo(() => computeOverview(merged, rawData, filter), [merged, rawData, filter])
 
-  const tabs: { key: AnalyticsTabKey; label: string; icon: string }[] = [
-    { key: 'overview', label: 'Özet', icon: '📊' },
-    { key: 'words', label: 'Kelimeler', icon: '📖' },
-    { key: 'invalid', label: 'Sözlük Dışı', icon: '❌' },
-    { key: 'performance', label: 'Performans', icon: '📈' },
-    { key: 'letters', label: 'Harfler', icon: '🔤' },
-    { key: 'progress', label: 'İlerleme', icon: '🚀' },
-  ]
+  // Hesaplamalar (Saf fonksiyonlar)
+  const summary = useMemo(
+    () => computeSimplifiedSummary(merged, rawData, filter),
+    [merged, rawData, filter]
+  )
+  const ranking = useMemo(() => computeRankingByLength(merged), [merged])
+  const missedWords = useMemo(
+    () => computeMissedWords(rawData.missedWords || {}, filter, 2),
+    [rawData.missedWords, filter]
+  )
+  const invalidWords = useMemo(
+    () => computeInvalidWords(rawData.invalidWords || {}, filter, 2),
+    [rawData.invalidWords, filter]
+  )
+  const firstLetterStats = useMemo(
+    () => computeMissedByFirstLetter(rawData.missedWords || {}, filter),
+    [rawData.missedWords, filter]
+  )
+  const insights = useMemo(
+    () => computeActionableInsights(merged, rawData, filter),
+    [merged, rawData, filter]
+  )
 
-  const isLevelIrrelevant = modeFilter === 'hatalar' && levelFilter !== 'all'
-
-  const handleTabChange = (tab: AnalyticsTabKey) => {
+  const handleFilterTypeChange = (type: FilterType) => {
     playSound('key_press')
     triggerHaptic('tap')
-    setActiveTab(tab)
+    setFilterType(type)
+  }
+
+  const handleLengthSelect = (len: number) => {
+    playSound('key_press')
+    triggerHaptic('tap')
+    setSelectedLength(len)
+  }
+
+  const handleInitialSelect = (char: string) => {
+    playSound('key_press')
+    triggerHaptic('tap')
+    setSelectedInitial(char)
   }
 
   return (
     <div className="flex flex-col min-h-dvh bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] select-none overflow-x-hidden">
       {/* ─── Sabit Üst Bar (Sticky Header) ─── */}
-      <header className="sticky top-0 z-30 bg-[var(--color-bg-primary)]/95 backdrop-blur-md border-b border-white/10 px-4 pt-3 pb-2 space-y-2.5">
+      <header className="sticky top-0 z-30 bg-[var(--color-bg-primary)]/95 backdrop-blur-md border-b border-white/10 px-4 pt-3 pb-2.5 space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
@@ -91,135 +121,140 @@ export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsSc
           </span>
         </div>
 
-        {/* ─── Filtre Satırı (Mod & Seviye) ─── */}
-        <div className="space-y-1.5 pt-1">
-          {/* Mod Seçimi */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
-            <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0 mr-1">Mod:</span>
-            {[
-              { id: 'all' as FilterMode, label: 'Tümü' },
-              { id: 'yarisma' as FilterMode, label: 'Yarışma' },
-              { id: 'calisma' as FilterMode, label: 'Çalışma' },
-              { id: 'hatalar' as FilterMode, label: 'Hatalarımla' },
-            ].map((m) => {
-              const active = modeFilter === m.id
-              return (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => {
-                    playSound('key_press')
-                    triggerHaptic('tap')
-                    setModeFilter(m.id)
-                  }}
-                  className={`
-                    px-2.5 py-1.5 rounded-xl font-bold transition-all shrink-0 text-xs
-                    ${
-                      active
-                        ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30 ring-1 ring-violet-400'
-                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
-                    }
-                  `}
-                >
-                  {m.label}
-                </button>
-              )
-            })}
+        {/* ─── 3 Görünüm Filtresi ─── */}
+        <div className="space-y-2">
+          {/* Ana Filtre Düğmeleri */}
+          <div className="grid grid-cols-3 gap-1.5 p-1 bg-white/5 rounded-xl border border-white/5 text-xs font-bold">
+            <button
+              type="button"
+              onClick={() => handleFilterTypeChange('all')}
+              className={`py-2 rounded-lg transition-all min-h-[40px] flex items-center justify-center ${
+                filterType === 'all'
+                  ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30 ring-1 ring-violet-400 font-black'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              Tümü
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFilterTypeChange('length')}
+              className={`py-2 rounded-lg transition-all min-h-[40px] flex items-center justify-center ${
+                filterType === 'length'
+                  ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30 ring-1 ring-violet-400 font-black'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              Harf Sayısı
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFilterTypeChange('initial')}
+              className={`py-2 rounded-lg transition-all min-h-[40px] flex items-center justify-center ${
+                filterType === 'initial'
+                  ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30 ring-1 ring-violet-400 font-black'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              Baş Harf
+            </button>
           </div>
 
-          {/* Seviye Seçimi */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
-            <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0 mr-1">Seviye:</span>
-            {[
-              { id: 'all' as FilterLevel, label: 'Tümü' },
-              { id: 'kolay' as FilterLevel, label: 'Kolay' },
-              { id: 'orta' as FilterLevel, label: 'Orta' },
-              { id: 'zor' as FilterLevel, label: 'Zor' },
-            ].map((lvl) => {
-              const active = levelFilter === lvl.id
-              return (
-                <button
-                  key={lvl.id}
-                  type="button"
-                  disabled={modeFilter === 'hatalar'}
-                  onClick={() => {
-                    playSound('key_press')
-                    triggerHaptic('tap')
-                    setLevelFilter(lvl.id)
-                  }}
-                  className={`
-                    px-2.5 py-1 rounded-lg font-bold transition-all shrink-0 text-xs
-                    ${
+          {/* Alt Seçici: Harf Sayısı (4, 5, 6, 7) */}
+          {filterType === 'length' && (
+            <div className="grid grid-cols-4 gap-1.5 pt-0.5 text-xs font-bold">
+              {[4, 5, 6, 7].map((len) => {
+                const active = selectedLength === len
+                return (
+                  <button
+                    key={len}
+                    type="button"
+                    onClick={() => handleLengthSelect(len)}
+                    className={`py-1.5 rounded-lg border transition-all min-h-[36px] flex items-center justify-center ${
                       active
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-1 ring-emerald-400'
-                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
-                    }
-                    ${modeFilter === 'hatalar' ? 'opacity-40 cursor-not-allowed' : ''}
-                  `}
-                >
-                  {lvl.label}
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Hatalarımla + Seviye Uyarısı */}
-          {isLevelIrrelevant && (
-            <div className="text-[10px] text-amber-300 font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">
-              ℹ️ Bu mod için seviye ayrımı yok.
+                        ? 'bg-violet-500/20 text-violet-300 border-violet-500/40 ring-1 ring-violet-500/30 font-black'
+                        : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10'
+                    }`}
+                  >
+                    {len} Harf
+                  </button>
+                )
+              })}
             </div>
           )}
 
-          {/* Mod=Tümü Bilgilendirme Notu */}
-          {modeFilter === 'all' && (
-            <p className="text-[10px] text-slate-400 leading-tight px-1">
-              * Hatalarımla çalış, zorlandığın kelimelerden oluştuğu için başarı oranını düşürebilir.
-            </p>
+          {/* Alt Seçici: Baş Harf Izgarası (29 Türk Harfi) */}
+          {filterType === 'initial' && (
+            <div className="pt-0.5">
+              <div className="grid grid-cols-10 sm:grid-cols-15 gap-1 max-h-32 overflow-y-auto no-scrollbar p-1 bg-black/20 rounded-xl border border-white/5">
+                {TURKISH_ALPHABET_LETTERS.map((char) => {
+                  const active = selectedInitial === char
+                  return (
+                    <button
+                      key={char}
+                      type="button"
+                      onClick={() => handleInitialSelect(char)}
+                      className={`h-8 rounded-md font-bold text-xs flex items-center justify-center transition-all ${
+                        active
+                          ? 'bg-violet-600 text-white shadow ring-1 ring-violet-300 font-black scale-105'
+                          : 'bg-white/5 text-slate-300 hover:bg-white/10 active:scale-95'
+                      }`}
+                    >
+                      {char}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           )}
         </div>
-
-        {/* ─── Sekmeler Çubuğu (Yatay Kaydırılabilir) ─── */}
-        <nav
-          className="flex gap-2 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-white/5 -mx-4 px-4"
-          aria-label="Analiz sekmeleri"
-        >
-          {tabs.map((t) => {
-            const active = activeTab === t.key
-            return (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => handleTabChange(t.key)}
-                className={`
-                  flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-all min-h-[44px]
-                  ${
-                    active
-                      ? 'bg-white/20 text-white border border-white/20 shadow-sm'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }
-                `}
-                aria-current={active ? 'page' : undefined}
-              >
-                <span>{t.icon}</span>
-                <span>{t.label}</span>
-              </button>
-            )
-          })}
-        </nav>
       </header>
 
-      {/* ─── Sekme İçeriği (Tab Content) ─── */}
-      <main className="flex-1 px-4 pt-4">
-        {activeTab === 'overview' && (
-          <OverviewTab overview={overview} filter={filter} onStartMistakes={onStartMistakes} />
+      {/* ─── Ana İçerik: Tek Dikey Akış (Scrollable) ─── */}
+      <main className="flex-1 p-4 space-y-4 max-w-lg mx-auto w-full pb-10">
+        {!summary.hasData && filterType !== 'all' ? (
+          <EmptyState
+            message="Bu filtrede henüz veri yok"
+            subtext="Seçilen filtre kriterine uygun tamamlanmış oyun veya hata kaydı bulunmuyor."
+          />
+        ) : !summary.hasData ? (
+          <EmptyState
+            message="Henüz veri yok"
+            subtext="Yarışma veya Çalışma modunda oynadıkça performans analizlerin burada listelenecektir."
+          />
+        ) : (
+          <>
+            {/* 1. Performans Özeti */}
+            <SummarySection summary={summary} />
+
+            {/* 2. Başarı Sıralaması (Harf Sayılarına Göre) */}
+            <RankingSection
+              ranking={ranking}
+              activeLength={filterType === 'length' ? selectedLength : undefined}
+            />
+
+            {/* 3. Harf Sayısına Göre Başarı Performansı */}
+            <LengthPerformanceSection
+              items={ranking}
+              activeLength={filterType === 'length' ? selectedLength : undefined}
+            />
+
+            {/* 4. En Çok Bilinemeyen Kelimeler (Katsayı x2, x3...) */}
+            <MissedWordsSection
+              words={missedWords}
+              onStartMistakes={onStartMistakes}
+            />
+
+            {/* 5. En Başarısız Olunan Kelimeler (İlk Harfe Göre) */}
+            <FirstLetterSection stats={firstLetterStats} />
+
+            {/* 6. TDK Dışı Kelime Denemeleri */}
+            <InvalidWordsSection data={invalidWords} />
+
+            {/* 7. Gelişim Önerileri */}
+            <InsightsSection insights={insights} />
+          </>
         )}
-        {activeTab === 'words' && (
-          <WordsTab rawData={rawData} filter={filter} onStartMistakes={onStartMistakes} />
-        )}
-        {activeTab === 'invalid' && <InvalidWordsTab rawData={rawData} filter={filter} />}
-        {activeTab === 'performance' && <PerformanceTab merged={merged} />}
-        {activeTab === 'letters' && <LettersTab merged={merged} />}
-        {activeTab === 'progress' && <ProgressTab rawData={rawData} filter={filter} />}
       </main>
     </div>
   )

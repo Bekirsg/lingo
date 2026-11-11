@@ -16,7 +16,8 @@ import type {
 } from './types'
 
 export function mergeBuckets(data: AnalyticsData, filter: AnalyticsFilter): MergedAnalytics {
-  const { mode, level } = filter
+  const mode = filter.mode || 'all'
+  const level = filter.level || 'all'
   const isLevelIrrelevant = mode === 'hatalar' && level !== 'all'
 
   // Hangi kovaların dahil edileceğini belirle

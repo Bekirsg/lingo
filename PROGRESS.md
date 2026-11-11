@@ -30,3 +30,5 @@
 | **4harf-revizyon** | 4 Harfli Kelime Listesi Revizyonu | Tamamlandi | 0 silindi, 0 eklendi, 40 satirlik/27 kelime seviye duzeltmesi (M2 tutarsizliklari). Hunspell+level-evidence TDK ref. tdk-4harf.json, rapor-4harf.md, words4-validator.test.ts (14 test) eklendi. 474/474 test, tsc-b ve build sifir hata. Commit: 9cc3418. |
 
 | **5harf-revizyon** | 5 Harfli Kelime Listesi Revizyonu | Tamamlandi | 0 silindi, 0 eklendi, 51 satirlik/50 kelime seviye duzeltmesi. tdk-5harf.json, rapor-5harf.md, words5-validator.test.ts (15 test) eklendi. 489/489 test, tsc-b ve build sifir hata. Commit: 8bb51e5. |
+
+| **analizler-redesign** | Analizler Modu Yeniden Tasarımı ve Sadeleştirme | Tamamlandı | 6 sekme kaldırıldı, mobil öncelikli tek dikey akış, 3 filtre (Tümü/Harf Sayısı/Baş Harf) ve 7 hedef bölüm uygulandı. Chunk 45 kB -> 21 kB. 500/500 test, tsc-b ve build sıfır hata. |

@@ -28,3 +28,5 @@
 | **V2-M10** | Son Kalite Kontrol ve Yayin | BEKLIYOR | M9 sonrasi durum: 460/460 test, tsc-b 0 hata, build 0 hata. SPEC 11.1 14 birim test maddesi tamamen karsilandi. 11.2 elle test listesi kullanici tarafindan telefonda yapilmali. Kullanici main'e birlestirme ve push onayini verince M10 tamamlanacak. |
 
 | **4harf-revizyon** | 4 Harfli Kelime Listesi Revizyonu | Tamamlandi | 0 silindi, 0 eklendi, 40 satirlik/27 kelime seviye duzeltmesi (M2 tutarsizliklari). Hunspell+level-evidence TDK ref. tdk-4harf.json, rapor-4harf.md, words4-validator.test.ts (14 test) eklendi. 474/474 test, tsc-b ve build sifir hata. Commit: 9cc3418. |
+
+| **5harf-revizyon** | 5 Harfli Kelime Listesi Revizyonu | Tamamlandi | 0 silindi, 0 eklendi, 51 satirlik/50 kelime seviye duzeltmesi. tdk-5harf.json, rapor-5harf.md, words5-validator.test.ts (15 test) eklendi. 489/489 test, tsc-b ve build sifir hata. Commit: 8bb51e5. |

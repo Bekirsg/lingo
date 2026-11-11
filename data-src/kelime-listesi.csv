@@ -2060,7 +2060,7 @@ abeci;5;zor
 abide;5;zor
 abiye;5;zor
 ablak;5;zor
-abone;5;kolay
+abone;5;orta
 abosa;5;zor
 abraş;5;zor
 abuli;5;zor
@@ -2229,7 +2229,7 @@ anket;5;orta
 anlak;5;zor
 anlam;5;kolay
 anlık;5;orta
-anmak;5;kolay
+anmak;5;orta
 anons;5;orta
 ansız;5;zor
 anten;5;zor
@@ -2273,7 +2273,7 @@ ariza;5;zor
 arkaç;5;zor
 arkıt;5;zor
 arkoz;5;zor
-armut;5;kolay
+armut;5;orta
 armuz;5;zor
 aroma;5;zor
 arpçı;5;zor
@@ -2286,7 +2286,7 @@ arter;5;zor
 artık;5;kolay
 artım;5;zor
 artın;5;zor
-artış;5;kolay
+artış;5;orta
 artma;5;zor
 asabi;5;orta
 ashap;5;zor
@@ -2317,7 +2317,7 @@ aşırı;5;kolay
 aşina;5;orta
 aşkın;5;kolay
 aşlık;5;zor
-aşmak;5;kolay
+aşmak;5;orta
 aşure;5;zor
 atama;5;orta
 atari;5;zor
@@ -2341,7 +2341,7 @@ avrat;5;zor
 avret;5;zor
 avunç;5;zor
 avurt;5;zor
-aydın;5;kolay
+aydın;5;orta
 ayevi;5;zor
 aygın;5;zor
 aygır;5;zor
@@ -2436,7 +2436,7 @@ bambu;5;zor
 bamya;5;zor
 banak;5;zor
 banal;5;zor
-bando;5;kolay
+bando;5;orta
 banjo;5;zor
 banka;5;kolay
 banko;5;zor
@@ -2521,7 +2521,7 @@ behey;5;zor
 behre;5;zor
 bekar;5;orta
 bekas;5;zor
-bekçi;5;kolay
+bekçi;5;orta
 bekri;5;zor
 belce;5;zor
 belde;5;orta
@@ -2546,7 +2546,7 @@ benli;5;zor
 berat;5;zor
 beril;5;zor
 berri;5;zor
-besin;5;kolay
+besin;5;orta
 besni;5;zor
 beste;5;zor
 beşer;5;orta
@@ -2560,7 +2560,7 @@ beter;5;orta
 betik;5;zor
 betim;5;zor
 beton;5;orta
-beyan;5;kolay
+beyan;5;orta
 beyaz;5;kolay
 beyin;5;orta
 beyit;5;zor
@@ -2707,7 +2707,7 @@ buket;5;zor
 bukle;5;zor
 bulak;5;zor
 bulaş;5;zor
-bulgu;5;kolay
+bulgu;5;orta
 bulma;5;orta
 buluş;5;kolay
 bulut;5;kolay
@@ -2834,7 +2834,7 @@ cidal;5;zor
 cidar;5;zor
 ciddi;5;kolay
 ciğer;5;orta
-cihan;5;kolay
+cihan;5;orta
 cihar;5;zor
 cihat;5;zor
 cihaz;5;kolay
@@ -3013,7 +3013,7 @@ cüsse;5;zor
 çilek;5;kolay
 çilli;5;zor
 çimek;5;zor
-çimen;5;kolay
+çimen;5;orta
 çimme;5;zor
 çinko;5;zor
 çipil;5;zor
@@ -3035,7 +3035,7 @@ cüsse;5;zor
 çizme;5;kolay
 çoban;5;kolay
 çocuk;5;kolay
-çoğul;5;kolay
+çoğul;5;orta
 çoğun;5;zor
 çokal;5;zor
 çokça;5;zor
@@ -3105,7 +3105,7 @@ dallı;5;zor
 dalma;5;zor
 dalsı;5;zor
 dalya;5;zor
-damak;5;kolay
+damak;5;orta
 damar;5;orta
 damat;5;orta
 damga;5;zor
@@ -3140,7 +3140,7 @@ deist;5;zor
 deizm;5;zor
 dekan;5;orta
 dekar;5;zor
-dekor;5;kolay
+dekor;5;orta
 delgi;5;zor
 delik;5;kolay
 delil;5;kolay
@@ -3149,7 +3149,7 @@ delta;5;orta
 demci;5;zor
 demeç;5;zor
 demek;5;kolay
-demet;5;kolay
+demet;5;orta
 demin;5;orta
 demir;5;kolay
 demli;5;zor
@@ -3234,7 +3234,7 @@ dişil;5;zor
 dişli;5;orta
 ditme;5;zor
 dival;5;zor
-divan;5;kolay
+divan;5;orta
 divik;5;zor
 divit;5;zor
 diyar;5;zor
@@ -3274,7 +3274,7 @@ domur;5;zor
 domuz;5;kolay
 donam;5;zor
 donlu;5;zor
-donma;5;kolay
+donma;5;zor
 donör;5;zor
 donra;5;zor
 donuk;5;kolay
@@ -3411,7 +3411,7 @@ eglog;5;zor
 egzoz;5;zor
 eğlek;5;zor
 eğmeç;5;zor
-eğmek;5;kolay
+eğmek;5;orta
 eğrez;5;zor
 eğrim;5;zor
 ehram;5;zor
@@ -3456,7 +3456,7 @@ emici;5;zor
 emlak;5;kolay
 emlik;5;zor
 emmeç;5;zor
-emmek;5;kolay
+emmek;5;orta
 emoji;5;zor
 emraz;5;zor
 emsal;5;zor
@@ -3487,7 +3487,7 @@ erbap;5;zor
 erbaş;5;zor
 erbin;5;zor
 ercik;5;zor
-erdem;5;kolay
+erdem;5;orta
 erden;5;zor
 ergen;5;kolay
 ergin;5;orta
@@ -3548,7 +3548,7 @@ etçik;5;zor
 etçil;5;zor
 etene;5;zor
 etfal;5;zor
-etken;5;kolay
+etken;5;orta
 etkin;5;orta
 etlik;5;zor
 etmek;5;kolay
@@ -3623,7 +3623,7 @@ fasih;5;zor
 fasit;5;zor
 faska;5;zor
 fason;5;zor
-fatih;5;kolay
+fatih;5;orta
 fauna;5;zor
 fayda;5;orta
 fazıl;5;zor
@@ -3720,7 +3720,7 @@ foroz;5;zor
 forsa;5;zor
 forse;5;zor
 forte;5;zor
-forum;5;zor
+forum;5;orta
 forza;5;zor
 fosil;5;zor
 frank;5;zor
@@ -4121,7 +4121,7 @@ herik;5;zor
 hertz;5;zor
 herze;5;zor
 hesap;5;kolay
-heves;5;kolay
+heves;5;orta
 heybe;5;zor
 heyet;5;orta
 hezar;5;zor
@@ -4606,7 +4606,7 @@ kavis;5;zor
 kavkı;5;zor
 kavmi;5;zor
 kavuk;5;zor
-kavun;5;kolay
+kavun;5;orta
 kavut;5;zor
 kavuz;5;zor
 kayaç;5;zor
@@ -4631,7 +4631,7 @@ kazık;5;orta
 kazıl;5;zor
 kazım;5;zor
 kazma;5;orta
-kebap;5;kolay
+kebap;5;orta
 kebir;5;zor
 kebze;5;zor
 keder;5;orta
@@ -4772,7 +4772,7 @@ kibar;5;kolay
 kibir;5;zor
 kifaf;5;zor
 kikla;5;zor
-kiler;5;kolay
+kiler;5;orta
 kilim;5;kolay
 kilit;5;orta
 kiliz;5;zor
@@ -4877,7 +4877,7 @@ koşam;5;zor
 koşin;5;zor
 koşma;5;orta
 koşuk;5;zor
-koşul;5;kolay
+koşul;5;orta
 koşum;5;zor
 koşun;5;zor
 koşut;5;zor
@@ -4900,7 +4900,7 @@ köçek;5;zor
 köfte;5;orta
 köhne;5;zor
 kökçü;5;zor
-köken;5;kolay
+köken;5;orta
 köklü;5;orta
 köksü;5;zor
 kölük;5;zor
@@ -4960,7 +4960,7 @@ kupes;5;zor
 kuple;5;zor
 kupon;5;zor
 kupür;5;zor
-kurak;5;kolay
+kurak;5;orta
 kural;5;kolay
 kuram;5;zor
 kurca;5;zor
@@ -5083,7 +5083,7 @@ lenfa;5;zor
 lento;5;zor
 lepra;5;zor
 lerze;5;zor
-levha;5;kolay
+levha;5;orta
 levye;5;zor
 leydi;5;kolay
 leyli;5;zor
@@ -5174,7 +5174,7 @@ makak;5;zor
 makam;5;orta
 makas;5;kolay
 makat;5;zor
-maket;5;kolay
+maket;5;orta
 makro;5;zor
 maksi;5;zor
 makta;5;zor
@@ -5219,7 +5219,7 @@ marki;5;zor
 maron;5;zor
 martı;5;zor
 maruf;5;zor
-marul;5;kolay
+marul;5;orta
 maruz;5;kolay
 marya;5;zor
 masaj;5;orta
@@ -5367,7 +5367,7 @@ miras;5;orta
 mirat;5;zor
 mirza;5;zor
 misak;5;zor
-misal;5;kolay
+misal;5;orta
 misel;5;zor
 misil;5;zor
 misis;5;zor
@@ -5492,7 +5492,7 @@ nakşi;5;zor
 nalan;5;zor
 nalça;5;zor
 nalın;5;zor
-namaz;5;kolay
+namaz;5;orta
 namlı;5;zor
 namlu;5;zor
 namus;5;zor
@@ -5562,7 +5562,7 @@ nihan;5;zor
 nikah;5;orta
 nikap;5;zor
 nikel;5;zor
-nimet;5;kolay
+nimet;5;orta
 ninni;5;zor
 nipel;5;zor
 nisai;5;zor
@@ -5675,7 +5675,7 @@ oyalı;5;zor
 oydaş;5;zor
 oylum;5;zor
 oymak;5;kolay
-oynak;5;kolay
+oynak;5;orta
 oynaş;5;zor
 ozmoz;5;zor
 ozuga;5;zor
@@ -5757,7 +5757,7 @@ pampa;5;zor
 pamuk;5;kolay
 panço;5;zor
 panda;5;orta
-panel;5;kolay
+panel;5;orta
 panik;5;kolay
 papak;5;zor
 papaz;5;orta
@@ -5953,7 +5953,7 @@ rayiç;5;zor
 raylı;5;zor
 reaya;5;zor
 rebap;5;zor
-recep;5;kolay
+recep;5;orta
 recim;5;zor
 reçel;5;kolay
 redif;5;zor
@@ -6205,7 +6205,7 @@ sekil;5;zor
 sekiş;5;zor
 sekiz;5;kolay
 sekme;5;zor
-seksi;5;zor
+seksi;5;orta
 sekte;5;zor
 selam;5;kolay
 selef;5;zor
@@ -6357,7 +6357,7 @@ skala;5;zor
 skink;5;zor
 slash;5;zor
 slayt;5;zor
-sofra;5;kolay
+sofra;5;orta
 softa;5;zor
 soğan;5;kolay
 soğuk;5;kolay
@@ -6418,7 +6418,7 @@ sövgü;5;zor
 sövme;5;zor
 sövüş;5;zor
 sözce;5;zor
-sözcü;5;kolay
+sözcü;5;orta
 sözde;5;orta
 sözel;5;zor
 sözlü;5;kolay
@@ -6439,7 +6439,7 @@ suare;5;zor
 subay;5;orta
 subra;5;zor
 subye;5;zor
-sucuk;5;kolay
+sucuk;5;orta
 sucul;5;zor
 suçlu;5;kolay
 sudak;5;zor
@@ -6933,7 +6933,7 @@ turba;5;zor
 turbo;5;orta
 turfa;5;zor
 turna;5;zor
-turne;5;kolay
+turne;5;orta
 turno;5;zor
 turşu;5;orta
 turta;5;orta
@@ -7022,7 +7022,7 @@ uşşak;5;zor
 utanç;5;kolay
 utmak;5;zor
 uyarı;5;kolay
-uygar;5;kolay
+uygar;5;orta
 uygun;5;kolay
 uyluk;5;zor
 uymak;5;kolay
@@ -7167,7 +7167,7 @@ voyvo;5;zor
 vukuf;5;zor
 vulva;5;zor
 vuraç;5;zor
-vurgu;5;kolay
+vurgu;5;orta
 vurma;5;orta
 vuruk;5;zor
 vuruş;5;kolay
@@ -7202,7 +7202,7 @@ yalak;5;zor
 yalan;5;kolay
 yalaz;5;zor
 yalım;5;zor
-yalın;5;kolay
+yalın;5;orta
 yalız;5;zor
 yalpa;5;zor
 yalpı;5;zor
@@ -7211,7 +7211,7 @@ yamak;5;orta
 yaman;5;zor
 yamçı;5;zor
 yamuk;5;kolay
-yanak;5;kolay
+yanak;5;orta
 yanal;5;zor
 yanay;5;zor
 yanaz;5;zor

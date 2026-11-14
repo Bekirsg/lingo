@@ -250,3 +250,37 @@
 - Bayrak ayrımı (`is_primary_*` vs `has_any_*`) SPEC-v2 Bölüm 4.7-G kurallarının doğru uygulanmasını sağlar.
 - Zor'daki 39 küfür/cinsel kelimeye dokunulmadı (karar bekleniyor).
 
+---
+
+## LİNGO v2 — 6 Harfli Kelime Listesi Revizyonu ve Seviyelendirme (Aşama 1)
+
+> Tarih: 2026-11-15 | Şube: `v2-gelistirme` | Standart: `docs/KELIME-REVIZYON-PLANI.md` (Bölüm 0, 1, 2, 3)
+
+### 1. Kullanılan Ek Bağımsız Kaynaklar ve Lisanslar
+1. **KeNet Türkçe WordNet (`StarlangSoftware/TurkishWordNet`):**
+   - **Adres:** [github.com/StarlangSoftware/TurkishWordNet](https://github.com/StarlangSoftware/TurkishWordNet)
+   - **İndirme Tarihi:** 2026-11-15
+   - **Lisans:** MIT.
+   - **Kullanım:** 9.787 adet 6 harfli kelime girişi (5.250 özel ad olmayan madde) üzerinden 2. bağımsız doğrulama katmanı (4.207 örtüşme, %69,7).
+2. **Hunspell tr_TR (LibreOffice / Hunspell Türkçe Sözlük):**
+   - **Adres:** LibreOffice tr_TR repository
+   - **İndirme Tarihi:** 2026-11-15
+   - **Lisans:** LGPL / GPL / MPL.
+   - **Kullanım:** 13.367 adet 6 harfli kök biçim ile yaygınlık doğrulaması (5.075 örtüşme, %84,1).
+3. **Resmi CEFR Beyanı:**
+   - Resmi ve makine okunur bir CEFR Türkçe sözcük listesi doğrudan mevcut değildir; seviyeler lemmatize frekans + TDK etiketleri + A1-A2 tematik rubrikleri üzerinden hesaplanan zorluk puanı $S$ (0-100) ile belirlenmiştir.
+
+### 2. 6 Harfli Kelime ve Seviye Dağılımı
+
+| Seviye | Önceki Sayı | Önceki Oran | Yeni Sayı | Yeni Oran | Hedef |
+|---|---|---|---|---|---|
+| **Kolay** | 458 | %7,6 | **1.991** | **%33,0** | %33 |
+| **Orta** | 554 | %9,2 | **1.992** | **%33,0** | %33 |
+| **Zor** | 5.021 | %83,2 | **2.050** | **%34,0** | %34 |
+| **Toplam** | **6.033** | **%100** | **6.033** | **%100** | **%100** |
+
+- Silinen / Eklenen: **0 / 0** (Tüm 6.033 kelime TDK GTS v12 bağımsız madde başı olarak onaylanmıştır).
+- 40 Kolay, 40 Orta ve 40 Zor sağduyu (sanity) kelimeleri `%100` başarıyla doğrulanmıştır (`src/data/words6-validator.test.ts`).
+- Tüm vitest testleri (519/519), `tsc -b` ve `npm run build` temiz şekilde geçmektedir.
+
+

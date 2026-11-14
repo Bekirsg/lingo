@@ -25,6 +25,7 @@ dist-ssr
 
 # Raw TDK data (büyük dosyalar, repoya dahil değil)
 scripts/raw-data/
+data-src/cache/
 
 # Environment
 .env

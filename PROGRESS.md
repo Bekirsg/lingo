@@ -32,3 +32,5 @@
 | **5harf-revizyon** | 5 Harfli Kelime Listesi Revizyonu | Tamamlandi | 0 silindi, 0 eklendi, 51 satirlik/50 kelime seviye duzeltmesi. tdk-5harf.json, rapor-5harf.md, words5-validator.test.ts (15 test) eklendi. 489/489 test, tsc-b ve build sifir hata. Commit: 8bb51e5. |
 
 | **analizler-redesign** | Analizler Modu Yeniden Tasarımı ve Sadeleştirme | Tamamlandı | 6 sekme kaldırıldı, mobil öncelikli tek dikey akış, 3 filtre (Tümü/Harf Sayısı/Baş Harf) ve 7 hedef bölüm uygulandı. Chunk 45 kB -> 21 kB. 500/500 test, tsc-b ve build sıfır hata. |
+
+| **6harf-revizyon** | 6 Harfli Kelime Listesi Revizyonu (Aşama 1) | Tamamlandı | 0 silindi, 0 eklendi (6.033 kelime GTS v12 onaylı). Dağılım dengelendi: Kolay 1.991 (%33.0), Orta 1.992 (%33.0), Zor 2.050 (%34.0). Genel betik revise-length.mjs --len N oluşturuldu. 40 Kolay, 40 Orta, 40 Zor sağduyu seti doğrulandı. tdk-6harf.json, rapor-6harf.md, words6-validator.test.ts (19 test) eklendi. 519/519 test, tsc-b ve build sıfır hata. Sıradaki: Kullanıcı onayı sonrası Aşama 2 (7 harfli). |

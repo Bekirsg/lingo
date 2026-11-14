@@ -65,7 +65,7 @@ describe('PWA, Manifest ve Üretim Güvenliği Doğrulaması (M8)', () => {
       'data/words-5.json',
       'data/words-6.json',
       'data/words-7.json',
-      'data/bonus-8.json',
+      'data/bonus.json',
     ]
 
     for (const file of dataFiles) {

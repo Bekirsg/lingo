@@ -54,24 +54,32 @@ describe('Yerel Veri (localStorage) Servisi - SPEC Bölüm 8', () => {
   })
 
   describe('Ayarlar (be:settings)', () => {
-    it('varsayılanda ses ve titreşim açık döner', () => {
-      expect(getSettings()).toEqual({ sound: true, haptics: true })
+    it('varsayılanda ses ve titreşim açık, klavye oyun modu döner', () => {
+      expect(getSettings()).toEqual({ sound: true, haptics: true, keyboard: 'game' })
     })
 
-    it('ses ve titreşimi günceller ve kaydeder', () => {
+    it('ses, titreşim ve klavye ayarlarını günceller ve kaydeder', () => {
       setSettings({ sound: false })
-      expect(getSettings()).toEqual({ sound: false, haptics: true })
+      expect(getSettings()).toEqual({ sound: false, haptics: true, keyboard: 'game' })
 
       setSettings({ haptics: false })
-      expect(getSettings()).toEqual({ sound: false, haptics: false })
+      expect(getSettings()).toEqual({ sound: false, haptics: false, keyboard: 'game' })
 
-      setSettings({ sound: true })
-      expect(getSettings()).toEqual({ sound: true, haptics: false })
+      setSettings({ keyboard: 'system' })
+      expect(getSettings()).toEqual({ sound: false, haptics: false, keyboard: 'system' })
+
+      setSettings({ sound: true, keyboard: 'game' })
+      expect(getSettings()).toEqual({ sound: true, haptics: false, keyboard: 'game' })
     })
 
     it('bozuk JSON verisinde varsayılan ayarları döner', () => {
       localStorage.setItem(SETTINGS_KEY, '{bozuk: json')
-      expect(getSettings()).toEqual({ sound: true, haptics: true })
+      expect(getSettings()).toEqual({ sound: true, haptics: true, keyboard: 'game' })
+    })
+
+    it('geçersiz klavye değerinde varsayılan game döner', () => {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ sound: true, haptics: true, keyboard: 'bilinmeyen' }))
+      expect(getSettings().keyboard).toBe('game')
     })
   })
 

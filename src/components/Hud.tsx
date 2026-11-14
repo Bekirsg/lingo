@@ -7,6 +7,7 @@ interface HudProps {
   state: GameState
   clock: Clock
   onPause?: () => void
+  onEndPractice?: () => void
 }
 
 /**
@@ -16,7 +17,7 @@ export function formatPoints(num: number): string {
   return num.toLocaleString('tr-TR')
 }
 
-export default function Hud({ state, clock, onPause }: HudProps) {
+export default function Hud({ state, clock, onPause, onEndPractice }: HudProps) {
   const rs = state.roundState
   const r4 = state.round4State
   const isRound4 = Boolean(
@@ -42,12 +43,64 @@ export default function Hud({ state, clock, onPause }: HudProps) {
   const guessNumber = roundGuessesLen + (isFinishedWord ? 0 : 1)
   const currentHak = Math.min(guessNumber, 5)
 
+  // Seviye Rozeti Bilgileri (SPEC-v2 Bölüm 5)
+  const level = state.level ?? 'zor'
+  const levelLabel = level === 'kolay' ? 'Kolay' : level === 'orta' ? 'Orta' : 'Zor'
+  const levelBadgeClass =
+    level === 'kolay'
+      ? 'bg-emerald-600/30 text-emerald-300 border-emerald-500/40'
+      : level === 'orta'
+        ? 'bg-amber-600/30 text-amber-300 border-amber-500/40'
+        : 'bg-violet-600/30 text-violet-300 border-violet-500/40'
+
+  const isCalisma = state.mode === 'calisma'
+  const isHatalar = state.mode === 'hatalar'
+  const ps = state.practiceState
+
   return (
     <header className="w-full px-2.5 sm:px-4 pt-1.5 sm:pt-2.5 pb-1 flex flex-col gap-1.5 select-none shrink-0">
-      {/* Üst Satır: Tur ve Sıra / Etap | Kasa / Kazanç | Duraklat */}
+      {/* Üst Satır: Tur ve Sıra / Etap / Çalışma / Hatalar | Kasa / Kazanç / Bitir | Duraklat */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          {isRound4 ? (
+          {/* Seviye veya Hatalar Rozeti */}
+          {isHatalar ? (
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 bg-rose-600/30 text-rose-300 border-rose-500/40">
+              Hatalarımla çalış
+            </span>
+          ) : (
+            <span className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider border backdrop-blur-md shrink-0 ${levelBadgeClass}`}>
+              {isCalisma ? `Çalışma • ${levelLabel}` : levelLabel}
+            </span>
+          )}
+
+          {isHatalar ? (
+            <>
+              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-rose-600/20 text-rose-300 border border-rose-500/30 backdrop-blur-md shrink-0">
+                Döngü {ps?.cycle ?? 1}
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-slate-400 shrink-0">
+                {rs!.letterCount} Harfli
+              </span>
+              <span className="hidden xs:inline text-[10px] sm:text-[11px] font-semibold text-slate-400 shrink-0 ml-1">
+                Bilinen {ps?.totalWon ?? 0} / Sorulan {ps?.totalAsked ?? 0}
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-amber-300/90 shrink-0">
+                Kalan: {ps?.remainingCount ?? 0}
+              </span>
+            </>
+          ) : isCalisma ? (
+            <>
+              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-violet-600/30 text-violet-300 border border-violet-500/30 backdrop-blur-md shrink-0">
+                Döngü {ps?.cycle ?? 1}
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-slate-400 shrink-0">
+                {rs!.letterCount} Harfli
+              </span>
+              <span className="hidden xs:inline text-[10px] sm:text-[11px] font-semibold text-slate-400 shrink-0 ml-1">
+                Bilinen {ps?.totalWon ?? 0} / Sorulan {ps?.totalAsked ?? 0}
+              </span>
+            </>
+          ) : isRound4 ? (
             <>
               <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-600/30 text-amber-300 border border-amber-500/30 backdrop-blur-md shrink-0">
                 4. TUR • Etap {stageIndex}/4
@@ -69,7 +122,18 @@ export default function Hud({ state, clock, onPause }: HudProps) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {isRound4 ? (
+          {(isCalisma || isHatalar) ? (
+            onEndPractice && (
+              <button
+                type="button"
+                onClick={onEndPractice}
+                className="px-2.5 py-1 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 font-bold text-[11px] sm:text-xs transition-all border border-rose-500/30 active:scale-95 shadow-sm"
+                title="Çalışmayı Bitir"
+              >
+                Bitir
+              </button>
+            )
+          ) : isRound4 ? (
             <div className="flex flex-col items-end text-right">
               <div className="flex items-baseline gap-1">
                 <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-400">

@@ -9,9 +9,18 @@ import { triggerHaptic } from '../haptics/vibration'
 interface WordResultModalProps {
   roundState: RoundState
   onContinue: () => void
+  isCalisma?: boolean
+  isHatalar?: boolean
+  streakInfo?: { streak: number; justLearned: boolean }
 }
 
-export default function WordResultModal({ roundState, onContinue }: WordResultModalProps) {
+export default function WordResultModal({
+  roundState,
+  onContinue,
+  isCalisma = false,
+  isHatalar = false,
+  streakInfo,
+}: WordResultModalProps) {
   const { round, currentWord, wordWon, lossReason } = roundState
   const points = ROUND_CONFIGS[round - 1]?.pointsPerWord ?? 1000
 
@@ -60,9 +69,25 @@ export default function WordResultModal({ roundState, onContinue }: WordResultMo
 
         {/* Alt Açıklama */}
         {wordWon ? (
-          <p className="text-emerald-400 font-bold text-lg mb-4">
-            +{formatPoints(points)} PUAN
-          </p>
+          isHatalar ? (
+            streakInfo?.justLearned ? (
+              <p className="text-emerald-400 font-bold text-lg mb-4">
+                ✓ Öğrenildi!
+              </p>
+            ) : (
+              <p className="text-emerald-400 font-bold text-lg mb-4">
+                Ardışık doğru: {streakInfo?.streak ?? 1}/2
+              </p>
+            )
+          ) : isCalisma ? (
+            <p className="text-emerald-400 font-bold text-lg mb-4">
+              Doğru!
+            </p>
+          ) : (
+            <p className="text-emerald-400 font-bold text-lg mb-4">
+              +{formatPoints(points)} PUAN
+            </p>
+          )
         ) : (
           <div className="flex flex-col items-center gap-1 mb-5">
             <span className="text-xs uppercase font-medium text-slate-400 tracking-wider">
@@ -70,7 +95,9 @@ export default function WordResultModal({ roundState, onContinue }: WordResultMo
                 ? 'Geçersiz Kelime (Sözlükte Yok)'
                 : lossReason === 'time_out'
                   ? 'Süre Doldu'
-                  : '5 Tahmin Hakkı Bitti'}
+                  : lossReason === 'pass'
+                    ? 'PAS Geçildi'
+                    : '5 Tahmin Hakkı Bitti'}
             </span>
             <div className="mt-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10">
               <span className="text-xs text-slate-400 mr-2">Doğru Kelime:</span>

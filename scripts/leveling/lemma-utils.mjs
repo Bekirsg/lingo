@@ -145,7 +145,10 @@ export function getVerbLemmaCounts() {
   const words5 = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/data/words-5.json'), 'utf-8'))
   const words6 = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/data/words-6.json'), 'utf-8'))
   const words7 = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/data/words-7.json'), 'utf-8'))
-  const words8 = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/data/bonus-8.json'), 'utf-8')).map(b => b.w)
+  const bonusPath = fs.existsSync(path.join(ROOT, 'public/data/bonus.json'))
+    ? path.join(ROOT, 'public/data/bonus.json')
+    : path.join(ROOT, 'public/data/bonus-8.json')
+  const words8 = JSON.parse(fs.readFileSync(bonusPath, 'utf-8')).map(b => b.w)
   const allPool = [...words4, ...words5, ...words6, ...words7, ...words8]
 
   for (const w of allPool) {

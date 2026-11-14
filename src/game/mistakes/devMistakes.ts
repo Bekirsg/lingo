@@ -33,7 +33,7 @@ export function generateMistakesDevData(): void {
     { word: 'pencere', y: 2, c: 4, streak: 1 },
     { word: 'kelebek', y: 4, c: 1, streak: 0 },
     { word: 'makarna', y: 1, c: 2, streak: 1 },
-    // Bonus (8 Harfli, bonus-8.json'da tanımlı gerçek kelimeler)
+    // Bonus (8-11 Harfli, bonus.json'da tanımlı gerçek kelimeler)
     { word: 'apartman', y: 3, c: 1, streak: 1 },
     { word: 'bisiklet', y: 2, c: 2, streak: 0 },
     { word: 'çikolata', y: 1, c: 1, streak: 1 },

@@ -76,7 +76,10 @@ export function buildLevelsData(options = {}) {
     6: new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-6.json'), 'utf-8'))),
     7: new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-7.json'), 'utf-8'))),
     8: new Set(
-      JSON.parse(fs.readFileSync(path.join(publicDir, 'bonus-8.json'), 'utf-8')).map(b => b.w)
+      (fs.existsSync(path.join(publicDir, 'bonus.json'))
+        ? JSON.parse(fs.readFileSync(path.join(publicDir, 'bonus.json'), 'utf-8'))
+        : JSON.parse(fs.readFileSync(path.join(publicDir, 'bonus-8.json'), 'utf-8'))
+      ).map(b => b.w)
     ),
   }
 

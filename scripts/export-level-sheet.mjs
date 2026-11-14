@@ -53,7 +53,10 @@ export function exportLevelSheet(options = {}) {
     6: JSON.parse(fs.readFileSync(path.join(publicDir, 'words-6.json'), 'utf-8')),
     7: JSON.parse(fs.readFileSync(path.join(publicDir, 'words-7.json'), 'utf-8')),
     8: (() => {
-      const bonus = JSON.parse(fs.readFileSync(path.join(publicDir, 'bonus-8.json'), 'utf-8'))
+      const bonusPath = fs.existsSync(path.join(publicDir, 'bonus.json'))
+        ? path.join(publicDir, 'bonus.json')
+        : path.join(publicDir, 'bonus-8.json')
+      const bonus = JSON.parse(fs.readFileSync(bonusPath, 'utf-8'))
       const set = new Set(bonus.map(b => b.w))
       return Array.from(set)
     })(),

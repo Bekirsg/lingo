@@ -36,15 +36,18 @@ export async function loadWordRepository(): Promise<WordRepository> {
 
 /**
  * Bonus kelimelerini lazy olarak yükler.
- * SPEC: bonus-8.json sadece bonusa gelince yüklensin.
+ * SPEC: bonus.json sadece bonusa gelince yüklensin.
  */
 export async function ensureBonusLoaded(repo: WordRepository): Promise<void> {
   if (bonusLoaded) return
 
-  const bonus8 = await fetch('/data/bonus-8.json')
-    .then(r => r.json() as Promise<BonusWordItem[]>)
+  const res = await fetch('/data/bonus.json')
+  if (!res.ok) {
+    throw new Error(`bonus.json yüklenemedi (HTTP ${res.status})`)
+  }
+  const bonus = (await res.json()) as BonusWordItem[]
 
-  repo.loadBonusWords?.(bonus8)
+  repo.loadBonusWords?.(bonus)
   bonusLoaded = true
 }
 
@@ -78,7 +81,7 @@ export async function ensureLevelsLoaded(
 }
 
 /**
- * Bonus seviye verisini (levels-8.json) lazy olarak yükler.
+ * Bonus seviye verisini (levels-bonus.json) lazy olarak yükler.
  * Yüklenemezse hata fırlatır.
  */
 export async function ensureBonusLevelLoaded(
@@ -88,9 +91,9 @@ export async function ensureBonusLevelLoaded(
   if (level === 'zor') return
   if (loadedLevelLengths.has(8)) return
 
-  const res = await fetch('/data/levels-8.json')
+  const res = await fetch('/data/levels-bonus.json')
   if (!res.ok) {
-    throw new Error(`levels-8.json yüklenemedi (HTTP ${res.status})`)
+    throw new Error(`levels-bonus.json yüklenemedi (HTTP ${res.status})`)
   }
   const data = (await res.json()) as LevelData
   repo.loadLevelData?.(8, data)

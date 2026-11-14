@@ -49,9 +49,15 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
     ? emptyPositions[bonusState.userInput.length] ?? -1
     : -1
 
+  // 10 ve 11 harfli kelimelerde 320px ekranda taşmayı önleyici kompakt yerleşim
+  const isCompact = wordChars.length >= 10
+  const gapClass = isCompact ? 'gap-0.5 sm:gap-1' : 'gap-1 sm:gap-1.5'
+  const textClass = isCompact ? 'text-xs sm:text-base md:text-xl' : 'text-sm sm:text-lg md:text-xl'
+  const roundedClass = isCompact ? 'rounded-lg sm:rounded-xl' : 'rounded-xl'
+
   return (
     <div
-      className="flex justify-center gap-1 sm:gap-1.5 w-full max-w-[430px] px-1 sm:px-2"
+      className={`flex justify-center ${gapClass} w-full max-w-[430px] px-1 sm:px-2`}
       role="row"
       aria-label="Bonus kelime kutuları"
     >
@@ -83,7 +89,7 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
             className={`
               flex-1 min-w-0 max-w-[42px] sm:max-w-[46px] aspect-square
               flex items-center justify-center
-              rounded-xl text-sm sm:text-lg md:text-xl font-black
+              ${roundedClass} ${textClass} font-black
               border-2 transition-all duration-300
               ${bgClass}
             `}

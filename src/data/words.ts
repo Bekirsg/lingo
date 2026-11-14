@@ -38,6 +38,7 @@ export function createWordRepository(data: {
   words5: string[]
   words6: string[]
   words7: string[]
+  bonus?: BonusWordItem[]
   bonus8?: BonusWordItem[]
   levels?: Record<number, LevelData>
 }): WordRepository {
@@ -55,7 +56,7 @@ export function createWordRepository(data: {
     7: new Set(data.words7),
   }
 
-  let bonusData: BonusWordItem[] = data.bonus8 ?? []
+  let bonusData: BonusWordItem[] = data.bonus ?? data.bonus8 ?? []
   const levelsData: Record<number, LevelData> = data.levels ? { ...data.levels } : {}
 
   return {

@@ -14,21 +14,24 @@ describe('V2-M2 Üretilen Seviye Verisi Doğrulaması', () => {
   const publicDir = path.resolve(__dirname, '../../public/data')
   const dataSrcDir = path.resolve(__dirname, '../../data-src')
 
-  const officialWords: Record<number, Set<string>> = {
-    4: new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-4.json'), 'utf-8'))),
-    5: new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-5.json'), 'utf-8'))),
-    6: new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-6.json'), 'utf-8'))),
-    7: new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-7.json'), 'utf-8'))),
-    8: new Set(
-      JSON.parse(fs.readFileSync(path.join(publicDir, 'bonus-8.json'), 'utf-8')).map(
+  const officialWords: Record<string, Set<string>> = {
+    '4': new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-4.json'), 'utf-8'))),
+    '5': new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-5.json'), 'utf-8'))),
+    '6': new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-6.json'), 'utf-8'))),
+    '7': new Set(JSON.parse(fs.readFileSync(path.join(publicDir, 'words-7.json'), 'utf-8'))),
+    'bonus': new Set(
+      JSON.parse(fs.readFileSync(path.join(publicDir, 'bonus.json'), 'utf-8')).map(
         (b: { w: string }) => b.w
       )
     ),
   }
 
-  for (const len of [4, 5, 6, 7, 8]) {
-    describe(`${len} harfli seviye dosyası (levels-${len}.json)`, () => {
-      const levelFile = path.join(publicDir, `levels-${len}.json`)
+  for (const tag of ['4', '5', '6', '7', 'bonus']) {
+    const filename = tag === 'bonus' ? 'levels-bonus.json' : `levels-${tag}.json`
+    const title = tag === 'bonus' ? 'Bonus seviye dosyası (levels-bonus.json)' : `${tag} harfli seviye dosyası (levels-${tag}.json)`
+
+    describe(title, () => {
+      const levelFile = path.join(publicDir, filename)
 
       it('dosya mevcut olmalı', () => {
         expect(fs.existsSync(levelFile)).toBe(true)
@@ -51,7 +54,7 @@ describe('V2-M2 Üretilen Seviye Verisi Doğrulaması', () => {
 
       it('tüm kelimeler ilgili resmi kelime havuzunda bulunmalı', () => {
         const content = JSON.parse(fs.readFileSync(levelFile, 'utf-8'))
-        const official = officialWords[len]
+        const official = officialWords[tag]
 
         for (const w of content.kolay) {
           expect(official.has(w)).toBe(true)
@@ -63,7 +66,7 @@ describe('V2-M2 Üretilen Seviye Verisi Doğrulaması', () => {
 
       it('önerilen asgari havuz boyutunu aşmalı (4-7 için ≥ 30, bonus için ≥ 10)', () => {
         const content = JSON.parse(fs.readFileSync(levelFile, 'utf-8'))
-        const minThreshold = len === 8 ? 10 : 30
+        const minThreshold = tag === 'bonus' ? 10 : 30
         expect(content.kolay.length).toBeGreaterThanOrEqual(minThreshold)
         expect(content.orta.length).toBeGreaterThanOrEqual(minThreshold)
       })

@@ -46,7 +46,7 @@ async function run() {
     { name: '5-letter words JSON', path: '/data/words-5.json' },
     { name: '6-letter words JSON', path: '/data/words-6.json' },
     { name: '7-letter words JSON', path: '/data/words-7.json' },
-    { name: '8-letter bonus JSON', path: '/data/bonus-8.json' },
+    { name: 'Bonus words JSON', path: '/data/bonus.json' },
     { name: 'Maskable Icon PNG', path: '/icons/icon-512-maskable.png' },
     { name: 'Standard 192 Icon PNG', path: '/icons/icon-192.png' },
     { name: 'Apple Touch Icon PNG', path: '/icons/apple-touch-icon.png' },
@@ -69,8 +69,8 @@ async function run() {
           }
         }
         if (check.path === '/sw.js') {
-          if (res.body.includes('data/bonus-8.json') && res.body.includes('cleanupOutdatedCaches')) {
-            console.log('       Service worker verified: precaches data/bonus-8.json and includes cache cleanup')
+          if (res.body.includes('data/bonus.json') && res.body.includes('cleanupOutdatedCaches')) {
+            console.log('       Service worker verified: precaches data/bonus.json and includes cache cleanup')
           } else {
             console.error('       sw.js missing expected precache patterns!')
             allPassed = false

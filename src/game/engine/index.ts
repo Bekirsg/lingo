@@ -140,21 +140,22 @@ export const MAX_GUESSES = 5
 
 /**
  * Bonus puanı hesaplar.
- * SPEC Bölüm 4.6: puan(n) = 3000 − 200·n (n = açılan rastgele harf sayısı, 0…6)
- * n=7 → puan=0 (doğrudan)
+ * SPEC Bölüm 4.6 & Aşama 3B: puan(n) = 3000 − 200·n (n = açılan rastgele harf sayısı, 0…maxRevealed-1)
+ * n = maxRevealed (L - 1) → puan = 0 (tüm harfler açıldığında puan sıfırlanır)
  *
- * @param revealedCount Açılan rastgele harf sayısı (ilk harf hariç, 0–7)
+ * @param revealedCount Açılan rastgele harf sayısı (ilk harf hariç)
+ * @param maxRevealed Maksimum açılabilecek rastgele harf sayısı (varsayılan 7, L - 1)
  */
-export function bonusScore(revealedCount: number): number {
-  if (revealedCount >= 7) return 0
+export function bonusScore(revealedCount: number, maxRevealed: number = 7): number {
+  if (revealedCount >= maxRevealed) return 0
   return 3000 - 200 * revealedCount
 }
 
 /**
  * Bonus zamandan açılan harf sayısını hesaplar.
- * SPEC Bölüm 4.6 zaman çizelgesi:
+ * SPEC Bölüm 4.6 & Aşama 3B zaman çizelgesi:
  * - 0 ≤ t < 3: okuma süresi, harf açılmaz → n=0
- * - t = 4: 1. harf, t = 5: 2. harf, ..., t = 10: 7. harf (veya maxRevealed)
+ * - t = 4: 1. harf, t = 5: 2. harf, ..., t = L + 2: son harf (maxRevealed = L - 1)
  * - Yani t ≥ 4 ise n = t - 3, maks maxRevealed
  *
  * @param elapsedSeconds Bonus başlangıcından geçen süre (saniye)
@@ -168,12 +169,18 @@ export function bonusRevealedAtTime(elapsedSeconds: number, maxRevealed: number 
 /**
  * Belirli bir zamanda bonus puanı.
  * @param elapsedSeconds Bonus başlangıcından geçen süre
+ * @param maxRevealed Maksimum açılabilecek rastgele harf sayısı (varsayılan 7)
  */
-export function bonusScoreAtTime(elapsedSeconds: number): number {
-  return bonusScore(bonusRevealedAtTime(elapsedSeconds))
+export function bonusScoreAtTime(elapsedSeconds: number, maxRevealed: number = 7): number {
+  return bonusScore(bonusRevealedAtTime(elapsedSeconds, maxRevealed), maxRevealed)
 }
 
-/** Bonus toplam süresi (saniye): 3 sn okuma + 7 sn harf açılma */
+/** Bonus toplam süresi (saniye): 3 sn okuma + (L - 1) sn harf açılma = L + 2 sn */
+export function bonusTotalTime(wordLength: number = 8): number {
+  return wordLength + 2
+}
+
+/** Bonus varsayılan toplam süresi (8 harf için 10 sn) — geriye dönük uyumluluk */
 export const BONUS_TOTAL_TIME = 10
 
 /** Bonus yazma süresi (BİL basıldıktan sonra) */

@@ -90,7 +90,7 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
 
         {/* Bonus */}
         <Section title="⭐ Bonus Soru">
-          Her turun sonunda 8 harfli bir kelimenin tanımı verilir. Harfler birer birer
+          Her turun sonunda 8–11 harfli bir kelimenin tanımı verilir. Harfler birer birer
           açılır ve puan 3.000'den düşer. <strong>BİL</strong> butonuna bastığın anda
           puan donar ve kelimeyi yazmak için <strong>10 saniye</strong> süren olur! Doğru
           bilirsen donmuş puan kasana eklenir; yanlışta veya süre dolarsa 0 puan.

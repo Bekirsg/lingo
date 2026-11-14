@@ -71,10 +71,10 @@ Mevcut ses ve titreşim anahtarları + **Klavye Tercihi** (`be:settings` altınd
 ### 4.1 Havuz tanımı (iç içe seviyeler)
 - havuz(Kolay) = "kolay" seviyeli kelimeler (CEFR A1–A2).
 - havuz(Orta) = "kolay" ∪ "orta" seviyeli kelimeler (CEFR A1–B2).
-- havuz(Zor) = tüm TDK kelimeleri (şu anki words-4…7 ve bonus-8 havuzu).
+- havuz(Zor) = tüm TDK kelimeleri (words-4…7 ve bonus havuzu).
 - Hiçbir seviyeyle işaretlenmemiş kelime = "zor" (sadece Zor havuzunda).
 
-Havuzlar her harf sayısı (4, 5, 6, 7) ve bonus (8 harfli, tanımlı kelimeler) için ayrı tanımlanır.
+Havuzlar her harf sayısı (4, 5, 6, 7) ve bonus (8, 9, 10, 11 harfli, tanımlı kelimeler) için ayrı tanımlanır.
 
 ### 4.2 Hangi sorular seviyeye göre seçilir
 - Yarışma ve Çalışma'da sorulan kelimeler (1–3. tur kelimeleri, bonus kelimeleri, 4. tur 4/5/6/7 harfli kelimeleri) seçilen seviyenin havuzundan rastgele seçilir.
@@ -88,17 +88,17 @@ Bir harf sayısı için seçilen seviyenin havuzunda, o oyunda kullanılmamış 
 `scripts/export-level-sheet.mjs` betiği `data-src/kelime-listesi.csv` dosyasını üretir:
 - Kodlama UTF-8 BOM, ayırıcı noktalı virgül `;`.
 - Sütunlar: `kelime;harf;seviye`. `seviye` sütunu boş gelir.
-- İçerik: words-4…7.json'daki tüm kelimeler + bonus-8.json'daki tanımlı 8 harfli kelimeler (~23.700 satır). Sıralama: harf sayısı, sonra Türkçe alfabetik.
+- İçerik: words-4…7.json'daki tüm kelimeler + bonus.json'daki tanımlı 8–11 harfli kelimeler. Sıralama: harf sayısı, sonra Türkçe alfabetik.
 - Bu dosyayı **ajan** doldurur (Bölüm 4.7). Kullanıcı elle işaretleme yapmaz. Kabul edilen seviye değerleri: `kolay`, `orta`, `zor` (kısaltmalar k/o/z ve büyük/küçük harf farkı tr-TR'ye göre kabul edilir; boş = zor).
 - Kullanıcı isterse sonradan `data-src/seviye-duzeltmeleri.csv` (`kelime;seviye`) ile tek tek düzeltme yapabilir; bu dosya en son uygulanır ve her şeyin üstündedir.
 
 ### 4.5 Seviye listesi: içe aktarma
-`scripts/build-levels.mjs`, `data-src/kelime-listesi.csv` ve varsa `data-src/seviye-duzeltmeleri.csv` dosyalarını okur ve şunları üretir:
+`scripts/build-levels.mjs` ve `scripts/wordlist/revise-bonus.mjs` dosyaları şunları üretir:
 - `public/data/levels-4.json … levels-7.json`: `{ "kolay": [...], "orta": [...] }` ("orta" listesi yalnızca kolay olmayan, orta işaretli kelimeleri içerir; çalışma anında orta havuzu = kolay ∪ orta).
-- `public/data/levels-8.json`: aynı yapı, sadece bonus-8 kelimeleri için.
+- `public/data/levels-bonus.json`: aynı yapı, 8, 9, 10 ve 11 harfli bonus kelimeleri için ({ "kolay": [...], "orta": [...] }).
 
 Doğrulama ve rapor (zorunlu):
-- CSV'deki her kelime words-N.json / bonus-8.json içinde bulunmalı; bulunmayanlar listelenir (uyarı).
+- CSV'deki her kelime words-N.json / bonus.json içinde bulunmalı; bulunmayanlar listelenir (uyarı).
 - Aynı kelime iki farklı seviyeyle tekrarlanmışsa hata (kullanıcıya sor).
 - Her harf sayısı için kolay / orta / zor kelime sayısını yazdır.
 - Önerilen minimum havuz: 4–7 harfli için 30, bonus için 10 kelime. Altında kalan seviye için uyarı yaz (seviye yine çalışır, yedek kural devreye girer).
@@ -106,8 +106,17 @@ Doğrulama ve rapor (zorunlu):
 
 **Liste yokken:** `levels-*.json` dosyaları yoksa (geliştirme sırasında) tüm kelimeler "zor" sayılır ve Kolay/Orta seviyeler Zor havuzunu kullanır. Bu geçiş geliştiriciye uyarı olarak loglanmalı, oyuncuya gösterilmemeli. Test için birkaç yüz kelimelik sahte örnek `tests/fixtures/` altında üretilebilir; **sahte örnek `public/` altına ve yayına GİRMEZ.**
 
-### 4.6 Veri yükleme
-`levels-*.json` dosyaları, seçilen seviye Kolay veya Orta ise oyun başlarken tembel (lazy) yüklenir ve service worker ile önbelleğe alınır. Zor seviyede yüklenmesine gerek yoktur.
+### 4.6 Veri yükleme ve Parametrik Bonus Motoru (Aşama 3B)
+- `levels-*.json` dosyaları, seçilen seviye Kolay veya Orta ise oyun başlarken tembel (lazy) yüklenir ve service worker ile önbelleğe alınır. Zor seviyede yüklenmesine gerek yoktur.
+- Bonus kelime havuzu `public/data/bonus.json` ve seviye havuzu `public/data/levels-bonus.json` dosyalarından lazy yüklenir.
+- Parametrik Bonus Davranışı:
+  - Kelime uzunluğu $L \in \{8, 9, 10, 11\}$.
+  - Toplam süre: `bonusTotalTime(L) = L + 2` saniye (8 için 10s, 9 için 11s, 10 için 12s, 11 için 13s).
+  - Okuma süresi: 3 saniye ($t < 4$), ilk harf sabit yeşil ve kilitli.
+  - Açılış süreci: $t = 4$'ten itibaren saniyede 1 harf açılır.
+  - Puan formülü: $3000 - 200 \times n$ ($n = 0 \dots L-2$). BİL basılınca donar, 10 saniye yazma süresi verilir.
+  - Son harf açıldığında ($t = L + 2$, $n = L - 1$) puan 0 olur.
+  - Tek satır tahta (`BonusBoardRow`): 320px ve 393px ekranlarda taşma yapmadan, kare kutularla ve `font-black` ile gösterilir.
 
 ### 4.7 Otomatik seviyelendirme (ajan işi)
 

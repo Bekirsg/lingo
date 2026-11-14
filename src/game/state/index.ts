@@ -16,11 +16,11 @@ import {
   ROUND_CONFIGS,
   bonusScore,
   bonusRevealedAtTime,
+  bonusTotalTime,
   round4FinalScore,
   shuffleRevealOrder,
   GUESS_TIME_LIMIT,
   ROUND4_TIME_LIMIT,
-  BONUS_TOTAL_TIME,
   BONUS_WRITE_TIME,
 } from '../engine'
 import { Clock } from '../clock'
@@ -322,7 +322,8 @@ export class GameController {
       }
     } else if (target === 'bonus_reading') {
       this.state.screen = 'bonus_reading'
-      this.clock.start(BONUS_TOTAL_TIME, () => this.onBonusExpire())
+      const totalTime = bonusTotalTime(this.state.bonusState?.length || 8)
+      this.clock.start(totalTime, () => this.onBonusExpire())
     }
 
     this.emitState()
@@ -427,9 +428,10 @@ export class GameController {
       : pickBonusWordWithFallback(bonusPool, levelData, this.state.level, this.state.usedWords)
 
     if (!res) {
-      // SPEC 6 / 4.3: Bonus havuzu tükendiğinde bonus harf sayısı için kullanılmışlar sıfırlanır
+      // SPEC 6 / 4.3 & Aşama 3B: Bonus havuzu tükendiğinde 8-11 harfli bonus kelimeleri için kullanılmışlar sıfırlanır
       for (const w of Array.from(this.state.usedWords)) {
-        if (letterCount(w) === bonusLength) {
+        const len = letterCount(w)
+        if (len >= 8 && len <= 11) {
           this.state.usedWords.delete(w)
         }
       }
@@ -994,7 +996,7 @@ export class GameController {
       : pickBonusWordWithFallback(bonusPool, levelData, this.state.level, this.state.usedWords)
 
     if (!res) {
-      throw new Error('Bonus 8 harfli kelime havuzu tükendi!')
+      throw new Error('Bonus kelime havuzu tükendi!')
     }
 
     this.state.usedWords.add(res.word)
@@ -1024,11 +1026,12 @@ export class GameController {
     if (bs.bilPressed) return
 
     const maxRevealed = (bs.length || bs.word.length) - 1
+    const totalTime = bonusTotalTime(bs.length || bs.word.length)
     bs.revealedCount = bonusRevealedAtTime(elapsedSeconds, maxRevealed)
-    bs.currentScore = bonusScore(bs.revealedCount)
+    bs.currentScore = bonusScore(bs.revealedCount, maxRevealed)
 
-    if (elapsedSeconds >= BONUS_TOTAL_TIME) {
-      // 10 sn doldu ve BİL basılmadı -> kelime açılır, 0 puan
+    if (elapsedSeconds >= totalTime) {
+      // Süre doldu ve BİL basılmadı -> kelime açılır, 0 puan
       this.onBonusExpire()
       return
     }
@@ -1044,7 +1047,8 @@ export class GameController {
     if (this.state.screen !== 'bonus_reading' || !this.state.bonusState) return
     const bs = this.state.bonusState
 
-    this.bonusBilSeconds = Math.round(Math.max(0, BONUS_TOTAL_TIME - this.clock.getRemainingSeconds()) * 10) / 10
+    const totalTime = bonusTotalTime(bs.length || bs.word.length)
+    this.bonusBilSeconds = Math.round(Math.max(0, totalTime - this.clock.getRemainingSeconds()) * 10) / 10
     this.clock.stop()
     bs.bilPressed = true
     bs.frozenScore = bs.currentScore

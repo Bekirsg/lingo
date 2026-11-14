@@ -441,19 +441,19 @@ HUD'da değişiklik yok. "Nasıl Oynanır" ekranında PAS açıklanır.
 
 Her aşama sonunda testleri, `tsc` ve build'i çalıştır, commit'le, PROGRESS.md'yi güncelle, kullanıcıya özet ver ve onay bekle. `main`'e dokunma. Uzun işlerde (özellikle M2) düzenli ara commit ve PROGRESS.md notu bırak; iş kesilirse kaldığı yerden devam edilebilmeli.
 
-1. **V2-M1 — Seviye altyapısı (kod):** dal ve `v1-stable` etiketi, temel (baseline) kontrolleri ve SPEC.md–kod fark raporu, seviye tipleri, havuz seçici, yedek kural, "levels yok" davranışı, tembel yükleyici, `export-level-sheet` ve `build-levels` betikleri (+ `seviye-duzeltmeleri.csv` desteği), sahte test verisi (yayına girmez), testler.
-2. **V2-M2 — Otomatik seviyelendirme (veri), üç alt adım, her birinde onay:**
+1. **V2-M1 — Seviye altyapısı (kod):** dal ve `v1-stable` etiketi, temel (baseline) kontrolleri ve SPEC.md–kod fark raporu, seviye tipleri, havuz seçici, yedek kural, "levels yok" davranışı, tembel yükleyici, `export-level-sheet` ve `build-levels` betikleri (+ `seviye-duzeltmeleri.csv` desteği), sahte test verisi (yayına girmez), testler. (✅ Tamamlandı)
+2. **V2-M2 — Otomatik seviyelendirme (veri), üç alt adım, her birinde onay:** (✅ Tamamlandı)
    - **M2a:** Kaynak keşfi, lisans kontrolü, kanıt dosyası, çapa seti, aday kümesi ve kalibrasyon raporu (kullanıcıya kaynaklar ve sayılar gösterilir).
    - **M2b:** Birinci geçiş, ikinci bağımsız geçiş, uzlaştırma, otomatik tutarlılık kuralları.
    - **M2c:** Kalite kapıları (4.8), denetim örneği, `kelime-listesi.csv` ve `level-decisions.csv`, `build-levels` ile `levels-*.json` üretimi, rapor. Bu dosyalar `v2-gelistirme` dalına girer.
-3. **V2-M3 — Klavye ve PAS:** Bölüm 9 ve 10; ergonomi analizi; regresyon testleri.
-4. **V2-M4 — Menü ve Yarışma:** yeni ana menü, seviye seçimi, Yarışma akışını seviyeye bağlama, seviye başına rekor, eski veri taşıma, HUD seviye rozeti.
+3. **V2-M3 — Klavye ve PAS:** Bölüm 9 ve 10; ergonomi analizi; regresyon testleri. (✅ Tamamlandı)
+4. **V2-M4 — Menü ve Yarışma:** yeni ana menü, seviye seçimi, Yarışma akışını seviyeye bağlama, seviye başına rekor, eski veri taşıma, HUD seviye rozeti. (✅ Tamamlandı)
 5. **V2-M5 — Çalışma modu:** döngü, kurallar, Bitir, oturum özeti, parametrik bonus. (✅ Tamamlandı)
 6. **V2-M6 — Analiz kaydı:** analytics modülü, kova şeması, olay kaydı (üç mod), sınırlar, testler. (✅ Tamamlandı)
 7. **V2-M7 — Analizler ekranı:** tüm sekmeler, Mod/Seviye filtreleri, öneriler, tembel yükleme. (✅ Tamamlandı)
-8. **V2-M8 — Hatalarımla çalış:** seçici, öğrenildi mantığı, Analizler'den geçiş düğmesi.
-9. **V2-M9 — Cila:** Nasıl Oynanır ve metinler, PWA önbelleği (`levels-*.json` dahil) ve v1→v2 güncelleme yolu (autoUpdate, kurulu uygulamanın yenilenmesi), performans, sürüm v2.0.0.
-10. **V2-M10 — Son kalite kontrol ve yayın:** Bölüm 11 tam geçişi, denetim örneği sonucu (kullanıcı doldurduysa) ve gerekirse seviye düzeltmeleri, rapor. Kullanıcı onaylayınca `main`'e birleştir ve push et (Vercel yayınlar).
+8. **V2-M8 — Hatalarımla çalış:** seçici, öğrenildi mantığı, Analizler'den geçiş düğmesi. (✅ Tamamlandı)
+9. **V2-M9 — Cila:** Nasıl Oynanır ve metinler, PWA önbelleği (`levels-*.json` dahil) ve v1→v2 güncelleme yolu (autoUpdate, kurulu uygulamanın yenilenmesi), performans, sürüm v2.0.0. (✅ Tamamlandı)
+10. **V2-M10 — Son kalite kontrol ve yayın:** Bölüm 11 tam geçişi, denetim örneği sonucu (kullanıcı doldurduysa) ve gerekirse seviye düzeltmeleri, rapor. Kullanıcı onaylayınca `main`'e birleştir ve push et (Vercel yayınlar). (✅ Tamamlandı)
 
 ## 13. Onaylanmış Kararlar ve Varsayımlar
 

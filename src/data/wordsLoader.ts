@@ -2,7 +2,7 @@
  * Web tarayıcısı için kelime ve seviye verisi yükleyicisi
  * public/data/ dizininden JSON dosyalarını fetch ile çeker ve WordRepository oluşturur.
  *
- * SPEC 2.1-5: bonus-8.json yalnızca gerektiğinde (lazy) yüklenir.
+ * SPEC 2.1-5 & Plan 5.2: bonus.json ve levels-bonus.json yalnızca gerektiğinde (lazy) yüklenir.
  * SPEC-v2 4.6: levels-*.json dosyaları Kolay veya Orta seçilirse lazy yüklenir.
  * Zor seviyede yüklenmesine gerek yoktur.
  */

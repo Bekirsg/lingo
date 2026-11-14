@@ -128,6 +128,7 @@ describe('CSV Dışa/İçe Aktarma ve Seviye Derleyici', () => {
       fs.writeFileSync(path.join(publicDir, 'words-5.json'), JSON.stringify(['araba', 'kitap', 'kalem']))
       fs.writeFileSync(path.join(publicDir, 'words-6.json'), JSON.stringify(['doktor', 'meyve']))
       fs.writeFileSync(path.join(publicDir, 'words-7.json'), JSON.stringify(['arkadaş', 'hastane']))
+      fs.writeFileSync(path.join(publicDir, 'bonus.json'), JSON.stringify([{ w: 'apartman', d: 'Bina' }, { w: 'bisiklet', d: 'Araç' }]))
       fs.writeFileSync(path.join(publicDir, 'bonus-8.json'), JSON.stringify([{ w: 'apartman', d: 'Bina' }, { w: 'bisiklet', d: 'Araç' }]))
 
       return { publicDir, dataSrcDir, outDir }

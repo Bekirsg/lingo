@@ -168,12 +168,12 @@ export const SANITY_BONUS = {
   orta: [
     'yılanbaşı', 'yılaniğnesi', 'yılaşırı', 'yılışkan', 'katmerli', 'kavalyelik', 'kavrayışlı', 'kavuniçi',
     'kayabaşı', 'kaydırak', 'kaydırma', 'kaygısızca', 'kaynaşma', 'kaypakça', 'kazandibi', 'kazayağı',
-    'kediyaladı', 'kefaletname', 'kekremsi', 'kekremsilik'
+    'arızasız', 'kefaletname', 'kekremsi', 'kekremsilik'
   ],
   zor: [
     'boynuzlu', 'demokrasi', 'hükümdar', 'karşılama', 'savaşmak', 'pezevenk', 'bürokrasi', 'domuzluk',
     'başsızlık', 'destekleme', 'devletli', 'mektupçu', 'yarımlık', 'kurultay', 'perakende', 'yazıcılık',
-    'kaltaklık', 'müsademe', 'arızasız', 'çakmaksız'
+    'kaltaklık', 'müsademe', 'kılıçkuyruk', 'çakmaksız'
   ]
 }
 
@@ -238,7 +238,19 @@ export async function runReviseBonus(options = {}) {
       }
     })
   }
-  console.log(`   • Hunspell tr_TR: ${hunStems.size} kök biçim\n`)
+  console.log(`   • Hunspell tr_TR: ${hunStems.size} kök biçim`)
+
+  // seviye-duzeltmeleri.csv
+  const manualOverrides = new Map()
+  const duzPath = path.join(DATA_SRC, 'seviye-duzeltmeleri.csv')
+  if (fs.existsSync(duzPath)) {
+    fs.readFileSync(duzPath, 'utf-8').split(/\r?\n/).forEach((l, idx) => {
+      if (idx === 0 || !l.trim()) return
+      const [w, lv] = l.split(';').map(p => p?.trim().toLocaleLowerCase('tr-TR'))
+      if (w && lv) manualOverrides.set(w, lv)
+    })
+  }
+  console.log(`   • seviye-duzeltmeleri.csv: ${manualOverrides.size} düzeltme kuralı\n`)
 
   // ─── 2. TDK GTS v12'den Aday Havuzu ve Tanım Seçimi ──────────────
   console.log('📖 2. TDK GTS v12 okunuyor ve tanım kalite filtreleri uygulanıyor...')
@@ -554,7 +566,9 @@ export async function runReviseBonus(options = {}) {
     const item = scoredBonusWords[i]
     const w = item.w
 
-    if (sanityZorSet.has(w) || item.forcedZor) {
+    if (manualOverrides.has(w)) {
+      assignedMap.set(w, manualOverrides.get(w))
+    } else if (sanityZorSet.has(w) || item.forcedZor) {
       assignedMap.set(w, 'zor')
     } else if (sanityKolaySet.has(w)) {
       assignedMap.set(w, 'kolay')

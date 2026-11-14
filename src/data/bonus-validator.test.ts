@@ -27,12 +27,12 @@ const SANITY_BONUS = {
   orta: [
     'yılanbaşı', 'yılaniğnesi', 'yılaşırı', 'yılışkan', 'katmerli', 'kavalyelik', 'kavrayışlı', 'kavuniçi',
     'kayabaşı', 'kaydırak', 'kaydırma', 'kaygısızca', 'kaynaşma', 'kaypakça', 'kazandibi', 'kazayağı',
-    'kediyaladı', 'kefaletname', 'kekremsi', 'kekremsilik'
+    'arızasız', 'kefaletname', 'kekremsi', 'kekremsilik'
   ],
   zor: [
     'boynuzlu', 'demokrasi', 'hükümdar', 'karşılama', 'savaşmak', 'pezevenk', 'bürokrasi', 'domuzluk',
     'başsızlık', 'destekleme', 'devletli', 'mektupçu', 'yarımlık', 'kurultay', 'perakende', 'yazıcılık',
-    'kaltaklık', 'müsademe', 'arızasız', 'çakmaksız'
+    'kaltaklık', 'müsademe', 'kılıçkuyruk', 'çakmaksız'
   ]
 }
 

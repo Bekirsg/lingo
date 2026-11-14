@@ -62,15 +62,15 @@ Tüm bonus kelimeleri (8, 9, 10 ve 11 harf birlikte) **TEK havuz** olarak puanla
 | Seviye | Kelime Sayısı | Oran | Hedef Oran | Tolerans Bandı | Asgari Havuz (MIN_HAVUZ >= 100) |
 |---|---|---|---|---|---|
 | **Kolay** | **1699** | **%33.0** | %33 | %26 – %40 | Sağlandı (%1699) |
-| **Orta** | **1699** | **%33.0** | %33 | %26 – %40 | Sağlandı (%1699) |
-| **Zor** | **1751** | **%34.0** | %34 | %27 – %41 | Sağlandı (%1751) |
+| **Orta** | **1700** | **%33.0** | %33 | %26 – %40 | Sağlandı (%1700) |
+| **Zor** | **1750** | **%34.0** | %34 | %27 – %41 | Sağlandı (%1750) |
 | **Toplam** | **5149** | **%100** | **%100** | - | - |
 
 ### Harf Uzunluklarına Göre Seviye Kırılımı
 
 | Uzunluk | Kolay | Orta | Zor | Toplam |
 |---|---|---|---|---|
-| **8 harfli** | 946 | 681 | 625 | 2252 |
+| **8 harfli** | 946 | 682 | 624 | 2252 |
 | **9 harfli** | 409 | 462 | 465 | 1336 |
 | **10 harfli** | 236 | 350 | 386 | 972 |
 | **11 harfli** | 108 | 206 | 275 | 589 |

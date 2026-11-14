@@ -328,5 +328,53 @@
 - `src/data/level-acceptance.test.ts`: 70/70 test geçti (`anahtar` $\implies$ Kolay, `mahkeme`, `hemşire`, `görüntü` $\implies$ en az Orta).
 - Toplam 27 test dosyası, 537 test ve Vite build (%100 temiz).
 
+---
+
+## LİNGO v2 — Bonus Kelime Havuzu Revizyonu ve Seviyelendirme (Aşama 3A)
+
+> Tarih: 2026-11-15 | Şube: `v2-gelistirme` | Standart: `docs/KELIME-REVIZYON-PLANI.md` (Bölüm 0, 1, 2, 5.0, 5.1)
+
+### 1. Aday Havuzu ve Fark Analizi
+Mevcut `public/data/bonus-8.json` (yalnızca 8 harfli 2.269 kelime) Aşama 3B entegrasyonu tamamlanana kadar yedek olarak korunmuştur. Yeni `public/data/bonus.json` havuzu 8, 9, 10 ve 11 harfli TDK onaylı, tanımlı kelimelerle oluşturulmuştur:
+- **8 harfli:** 2.252 kelime (%43,7)
+- **9 harfli:** 1.336 kelime (%25,9)
+- **10 harfli:** 972 kelime (%18,9)
+- **11 harfli:** 589 kelime (%11,4)
+- **Toplam Kabul:** **5.149** kelime (Mevcut havuza göre +2.880 net artış).
+
+### 2. Çok Kaynaklı Doğrulama ve Katman 2 Ayrımı
+1. **Katman 1 (Çevrimdışı TDK GTS v12 Seti):** 5.149 / 5.149 (%100 onaylı).
+2. **Katman 2 (İkinci Bağımsız Kaynaklar — KeNet WordNet + Zemberek):**
+   - **KeNet WordNet:** 2.879 kelime doğrulanmıştır (%55,9).
+   - **Zemberek 10k:** 284 lemma doğrulanmıştır (%5,5).
+   - **Hunspell tr_TR (Yaygınlık Kanıtı):** 3.762 kök biçim (%73,1).
+   > [!IMPORTANT]
+   > Hunspell tr_TR yalnızca yaygınlık/frekans kanıtı olarak değerlendirilmiştir; kelime silme veya ekleme için bağımsız doğrulama otoritesi olarak kullanılmamıştır. Katman 2 bağımsız doğrulama yetkisi KeNet WordNet ve Zemberek'tedir.
+
+### 3. Tek Havuz Seviyelendirme Dağılımı
+
+| Seviye | Kelime Sayısı | Oran | Hedef Oran | Tolerans Bandı | Asgari Havuz (MIN_HAVUZ >= 100) |
+|---|---|---|---|---|---|
+| **Kolay** | **1.699** | **%33,0** | %33 | %26 – %40 | Sağlandı (%1.699) |
+| **Orta** | **1.699** | **%33,0** | %33 | %26 – %40 | Sağlandı (%1.699) |
+| **Zor** | **1.751** | **%34,0** | %34 | %27 – %41 | Sağlandı (%1.751) |
+| **Toplam** | **5.149** | **%100** | **%100** | - | - |
+
+### 4. Tanım Kalite Kapıları ve Sızıntı (Leak) Engeli
+- Tüm tanımlar 20–90 karakter ve $\ge 4$ sözcük kuralına uyar.
+- Soru cevabının kendisi, ilk 4 harf öneki, fiillerde ilk 3 harf öneki ve morfolojik gövde kökleri tanım metninde aranmış; sızıntı içeren 3.790 aday elenmiştir.
+- Noktalı virgül sonrası yan anlamlar budanmış, parantez içi bibliyografik/ek bilgiler sadeleştirilmiştir.
+
+### 5. Koruma Kuralları ve Plan 2.7 Uyarısı
+- Toplam **555** kelime doğrudan Zor seviyesine kilitlenmiştir (Argo/küfür: 3, Özel ad: 2, Eskimiş sıfır frekans: 336, Ağız sıfır frekans: 180, Tanımda yer/kişi adı: 34).
+> [!WARNING]
+> **Plan 2.7 Uyarısı:** Havuzlar iç içe olduğu için Zor modda tüm seviyelerden soru gelebilir. Argo/küfür kelimeler Kolay ve Orta'dan çıkarılmıştır ancak Zor modda soru olarak gelebilir.
+
+### 6. Doğrulama ve Testler
+- `src/data/bonus-validator.test.ts`: 19/19 test geçti.
+- 20 Kolay, 20 Orta, 20 Zor sağduyu seti %100 başarıyla doğrulandı.
+- Toplam 28 test dosyası, 556 test, `tsc -b` ve Vite build (%100 temiz).
+
+
 
 

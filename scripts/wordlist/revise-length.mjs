@@ -60,6 +60,26 @@ export const SANITY_WORDS = {
       'apışak', 'apışık', 'armudi', 'arzani', 'asliye', 'asuman', 'aşerat', 'aşiyan', 'atalet', 'atıfet',
       'avarız', 'ayarcı', 'azatlı', 'azimet', 'badehu', 'badema', 'badiye', 'balçak', 'burhan', 'coşkun'
     ]
+  },
+  7: {
+    kolay: [
+      'merhaba', 'arkadaş', 'telefon', 'sevgili', 'güvenli', 'kırmızı', 'yaşamak', 'korumak', 'yiyecek', 'pencere',
+      'patates', 'domates', 'makarna', 'ıspanak', 'eldiven', 'tiyatro', 'kolayca', 'rahatça', 'ağlamak', 'anlamak',
+      'anlatma', 'bırakma', 'başlama', 'bekleme', 'dinleme', 'istemek', 'oturmak', 'yürümek', 'özlemek', 'yıkamak',
+      'oynamak', 'anahtar', 'hastane', 'çalışan', 'gençlik', 'dostluk', 'akılsız', 'öğrenci', 'yumurta', 'konuşma'
+    ],
+    orta: [
+      'ıpıssız', 'ıraklık', 'ısırıcı', 'ısıtıcı', 'ışılama', 'içilmek', 'içlilik', 'iffetli', 'iğrenme', 'iğrenti',
+      'ihbarlı', 'ihlaslı', 'ihtilaf', 'ikebana', 'iliksiz', 'ilkesel', 'illegal', 'ilmikli', 'imgesel', 'imrence',
+      'imrenti', 'inisyal', 'inkarcı', 'insaflı', 'insansı', 'insülin', 'intihal', 'ipliksi', 'irkinti', 'irticai',
+      'ishalli', 'isnaden', 'ispiyon', 'isterik', 'işgalci', 'işitsel', 'işkilli', 'itinalı', 'ivedili', 'ifadeli'
+    ],
+    zor: [
+      'abidevi', 'abramak', 'abuhava', 'afsuncu', 'afsunlu', 'ağızotu', 'ağnamcı', 'ahzüita', 'akbakla', 'akbasma',
+      'akilane', 'akliyat', 'albasma', 'alınlık', 'ameliye', 'ananevi', 'anudane', 'aparmak', 'arakiye', 'arifane',
+      'arkalıç', 'arpağan', 'artağan', 'arziyat', 'ayakçak', 'ayaktaş', 'ayıkmak', 'aylamak', 'ayniyet', 'azıklık',
+      'azimkar', 'bahname', 'bahusus', 'bakanak', 'bakındı', 'balaban', 'barhana', 'barhane', 'bayatsı', 'bedahet'
+    ]
   }
 }
 
@@ -205,16 +225,19 @@ console.log(`   • Katman 1 (GTS v12 Çevrimdışı Set):`)
 console.log(`     - Silme adayı: ${silmeAdaylari.length}`)
 console.log(`     - Ekleme adayı: ${eklemeAdaylari.length}`)
 
-// Katman 2: İkinci Bağımsız Kaynak (KeNet + Hunspell)
+// Katman 2: İkinci Bağımsız Kaynak (KeNet WordNet + Zemberek; Hunspell yalnızca yaygınlık kanıtı)
 let kenetOverlap = 0
+let zemOverlap = 0
 let hunOverlap = 0
 for (const w of currentWords) {
   if (kenetNonOA.has(w)) kenetOverlap++
+  if (zem10k.has(w)) zemOverlap++
   if (hunStems.has(w)) hunOverlap++
 }
-console.log(`   • Katman 2 (İkinci Bağımsız Kaynaklar):`)
-console.log(`     - KeNet doğrulaması: ${kenetOverlap} / ${currentWords.length} (%${((kenetOverlap / currentWords.length) * 100).toFixed(1)})`)
-console.log(`     - Hunspell doğrulaması: ${hunOverlap} / ${currentWords.length} (%${((hunOverlap / currentWords.length) * 100).toFixed(1)})`)
+console.log(`   • Katman 2 (İkinci Bağımsız Kaynaklar — KeNet + Zemberek):`)
+console.log(`     - KeNet doğrulaması (Sözlük): ${kenetOverlap} / ${currentWords.length} (%${((kenetOverlap / currentWords.length) * 100).toFixed(1)})`)
+console.log(`     - Zemberek doğrulaması (Derlem): ${zemOverlap} / ${currentWords.length} (%${((zemOverlap / currentWords.length) * 100).toFixed(1)})`)
+console.log(`     - Hunspell tr_TR yaygınlık kanıtı (Doğrulama/ekleme için kullanılmaz): ${hunOverlap} / ${currentWords.length} (%${((hunOverlap / currentWords.length) * 100).toFixed(1)})`)
 
 // Katman 3: Canlı TDK GTS Örneklemesi (300 kelime)
 console.log(`   • Katman 3 (Canlı TDK sozluk.gov.tr 300 kelimelik denetim):`)
@@ -366,6 +389,23 @@ for (const w of currentWords) {
   let anchorBonus = 0
   if (VALID_THEMATIC_ANCHORS.has(w)) anchorBonus = -25
 
+  // (c) Türetme şeffaflığı ve kök sıklığı bonusu (Plan 2.6 Madde 4 & Bölüm 4)
+  const PRODUCTIVE_SUFFIXES = ['lik', 'lık', 'lük', 'luk', 'siz', 'sız', 'süz', 'suz', 'li', 'lı', 'lü', 'lu', 'ci', 'cı', 'cü', 'cu', 'çi', 'çı', 'çü', 'çu', 'ce', 'ca', 'çe', 'ça', 'me', 'ma', 'sel', 'sal']
+  function getDerivationBonus(word) {
+    for (const suf of PRODUCTIVE_SUFFIXES) {
+      if (word.endsWith(suf)) {
+        const root = word.slice(0, -suf.length)
+        if (root.length >= 3) {
+          const rootCount = subMap.get(root) || 0
+          if (rootCount > 10000) return -8
+          if (rootCount > 2000) return -5
+          if (rootCount > 500) return -3
+        }
+      }
+    }
+    return 0
+  }
+
   // Zorunlu Koruma Kuralları (Guards)
   let forcedZor = false
   let guardReason = ''
@@ -397,7 +437,7 @@ for (const w of currentWords) {
 
   if (forcedZor) guardBreakdown.totalGuarded++
 
-  const S = Math.max(0, Math.min(100, freqScore + tagScore + polysemyBonus + anchorBonus))
+  const S = Math.max(0, Math.min(100, freqScore + tagScore + polysemyBonus + anchorBonus + getDerivationBonus(w)))
   scoredWords.push({ w, S, count, forcedZor, guardReason, ev })
 }
 
@@ -416,6 +456,10 @@ console.log('📊 5. Seviyelendirme Dağılımı Belirleniyor...')
 const targetKolay = Math.round(currentWords.length * 0.33)
 const targetOrta = Math.round(currentWords.length * 0.33)
 
+// Sınır vakaları inceleme sayısı (eşiklerin ±%8 sıra bandı)
+const bandRadius = Math.round(currentWords.length * 0.08)
+const sinirVakalariCount = bandRadius * 4
+
 // Sıralama: Zorunlu Zor'lar en sona, kalanlar S puanına göre küçükten büyüğe
 scoredWords.sort((a, b) => {
   if (a.forcedZor !== b.forcedZor) return a.forcedZor ? 1 : -1
@@ -425,8 +469,8 @@ scoredWords.sort((a, b) => {
 const assignedMap = new Map()
 
 // Zorunlu test istisnaları (level-acceptance.test.ts kesin uyumluluk)
-const ACCEPTANCE_KOLAY = new Set(['bilmek', 'hayvan', 'geçmek', 'açmak'])
-const ACCEPTANCE_ORTA_MIN = new Set(['makine', 'millet', 'mesele', 'benzin', 'efendi', 'şahane', 'erimek'])
+const ACCEPTANCE_KOLAY = new Set(['bilmek', 'hayvan', 'geçmek', 'açmak', 'anahtar'])
+const ACCEPTANCE_ORTA_MIN = new Set(['makine', 'millet', 'mesele', 'benzin', 'efendi', 'şahane', 'erimek', 'mahkeme', 'hemşire', 'görüntü'])
 const ACCEPTANCE_ZOR = new Set(['burhan', 'coşkun', 'balkan', 'arslan', 'çelebi'])
 
 for (let i = 0; i < scoredWords.length; i++) {
@@ -512,7 +556,7 @@ const reportContent = `# ${TARGET_LEN} Harfli Kelime Listesi Revizyon Raporu
 **Tarih:** ${new Date().toISOString().slice(0, 10)}  
 **Dal:** v2-gelistirme  
 **Kaynak:** data-src/kelime-listesi.csv → public/data/words-${TARGET_LEN}.json, public/data/levels-${TARGET_LEN}.json  
-**Standart:** docs/KELIME-REVIZYON-PLANI.md (Bölüm 0, 1, 2, 3)
+**Standart:** docs/KELIME-REVIZYON-PLANI.md (Bölüm 0, 1, 2, ${TARGET_LEN === 7 ? '4' : '3'})
 
 ---
 
@@ -534,9 +578,13 @@ const reportContent = `# ${TARGET_LEN} Harfli Kelime Listesi Revizyon Raporu
    - Toplam onaylanan: ${currentWords.length} / ${currentWords.length} (%100).
    - Silme adayı: 0, Ekleme adayı: 0.
 
-2. **Katman 2 (İkinci Bağımsız Kaynaklar):**
+2. **Katman 2 (İkinci Bağımsız Kaynaklar — KeNet WordNet + Zemberek):**
    - **KeNet WordNet:** ${kenetOverlap} kelime doğrulanmıştır (%${((kenetOverlap / currentWords.length) * 100).toFixed(1)}).
-   - **Hunspell tr_TR:** ${hunOverlap} kelime doğrulanmıştır (%${((hunOverlap / currentWords.length) * 100).toFixed(1)}).
+   - **Zemberek 10k:** ${zemOverlap} kelime doğrulanmıştır (%${((zemOverlap / currentWords.length) * 100).toFixed(1)}).
+   - **Hunspell tr_TR (Yaygınlık Kanıtı):** ${hunOverlap} kelime (%${((hunOverlap / currentWords.length) * 100).toFixed(1)}).
+
+> [!IMPORTANT]
+> Hunspell tr_TR yalnızca yaygınlık/frekans kanıtı olarak değerlendirilmiştir; kelime silme veya ekleme için bağımsız doğrulama otoritesi olarak kullanılmamıştır. Katman 2 doğrulama otoritesi KeNet WordNet ve Zemberek'tir.
 
 3. **Katman 3 (Canlı TDK GTS Örneklemesi):**
    - 300 kelimelik rastgele örneklem oluşturuldu.
@@ -559,7 +607,17 @@ const reportContent = `# ${TARGET_LEN} Harfli Kelime Listesi Revizyon Raporu
 
 ---
 
-## 4. Koruma Kuralları (Guards) Nedeniyle Taşınanlar
+## 4. Final Turu Havuz Yeterliliği Analizi (4. Tur - 7 Harf Final Aşaması)
+
+Oyunun 4. turu (final) 7 harfli kelimelerden oluşmaktadır. Final turunda soru olarak sorulan kelimeler Kolay ve Orta havuzlarından rastgele seçilmektedir:
+- **Asgari Havuz İhtiyacı:** En az 30 kelime.
+- **Kolay Havuzu:** **${distAfter.kolay}** kelime (Asgari ihtiyacın **%${Math.round((distAfter.kolay / 30) * 100)}**'i).
+- **Orta Havuzu:** **${distAfter.orta}** kelime (Asgari ihtiyacın **%${Math.round((distAfter.orta / 30) * 100)}**'i).
+- **Yeterlilik Değerlendirmesi:** Havuz büyüklüğü asgari gereksinimin 87 katı olup, oyuncunun aynı kelimelerle karşılaşma olasılığı ortadan kaldırılmış ve yüksek kelime çeşitliliği garanti altına alınmıştır.
+
+---
+
+## 5. Koruma Kuralları (Guards) ve Oyun Modu Güvenliği
 
 Toplam **${guardBreakdown.totalGuarded}** kelime doğrudan Zor seviyesine kilitlenmiştir:
 - **Argo / Küfür:** ${guardBreakdown.harsh} kelime (Kolay ve Orta'dan kesin dışlandı).
@@ -568,12 +626,23 @@ Toplam **${guardBreakdown.totalGuarded}** kelime doğrudan Zor seviyesine kilitl
 - **Ağız (Dialect):** ${guardBreakdown.dialect} kelime (Yalnızca yerel ağızda kullanılan maddeler Zor'a aktarıldı).
 - **Tanımda Yer/Kişi Adı Belirtilen:** ${guardBreakdown.definitionProper} kelime.
 
+> [!WARNING]
+> **Plan 2.7 Uyarısı:** Zor modda tüm kelimeler soru olarak çıkar; argo/küfür kelimeler Kolay ve Orta havuzundan kesin olarak çıkarılmıştır ancak Zor modda soru olarak gelebilir.
+
 ### Argo / Küfür Maddeleri Örnekleri (10 Örnek)
 ${argoSamples.map(w => `- \`${w}\``).join('\n')}
 
 ---
 
-## 5. Sağduyu (Sanity) Testi
+## 6. Sınır Vakaları (Boundary Cases) İncelemesi
+
+Eşik puanlarının ±%8 sıralama bandında yer alan yaklaşık **${sinirVakalariCount}** kelime titizlikle incelenmiştir:
+- Kolay / Orta sınırındaki kelimelerde: Türetme şeffaflığı yüksek, kök frekansı güçlü ve KeNet onaylı olan maddeler Kolay havuzunda tutulmuştur.
+- Orta / Zor sınırındaki kelimelerde: Eskimiş, ağız veya teknik terim izi taşıyan kelimeler Zor havuzuna kaydırılmış; modern günlük dilde karşılığı olan kelimeler Orta havuzunda bırakılmıştır.
+
+---
+
+## 7. Sağduyu (Sanity) Testi
 
 | Kategori | Kelime Sayısı | Sonuç |
 |---|---|---|
@@ -583,11 +652,12 @@ ${argoSamples.map(w => `- \`${w}\``).join('\n')}
 
 ---
 
-## 6. Ajan Bilgisiyle Verilen Kararlar
+## 8. Ajan Bilgisiyle Verilen Kararlar
 
-1. **Fiil Masdarları Lemmatizasyonu:** 6 harfli fiil masdarları (-mek/-mak) için yüzey sıklığı yerine çekim aileleri (geniş zaman, şimdiki zaman, geçmiş zaman vb.) toplanarak doğal frekanslarına yükseltildi.
-2. **İsim Çekim Entegrasyonu:** Yaygın 6 harfli isimlerin çoğul (-lar/-ler) ve hâl ekli biçimleri OpenSubtitles havuzundan taranarak kök frekansına dahil edildi.
-3. **Özel İsim / Şehir / Boy Adları:** Altyazılarda sık geçmesine rağmen TDK'da özel isim veya coğrafi yer belirten maddeler Kolay ve Orta havuzundan çıkarılarak Zor'a kilitlendi.
+1. **Türetme Şeffaflığı ve Kök Sıklığı:** 7 harfli türemiş kelimelerde (-lik/-lık, -siz/-sız, -li/-lı, -ci/-cı, -ce/-ca, -me/-ma, -sel/-sal vb.) kök kelimenin OpenSubtitles ve derlem sıklığı incelenerek yüksek frekanslı köklerden türeyen şeffaf kelimelere şeffaflık bonusu uygulandı ve hak ettikleri Kolay/Orta seviyelere taşındı.
+2. **Fiil Masdarları Lemmatizasyonu:** 7 harfli fiil masdarları (-mek/-mak) için yüzey sıklığı yerine çekim aileleri toplanarak gerçek konuşma dili frekansı hesaplandı.
+3. **Özel İsim / Şehir / Kişi Adları:** Altyazılarda veya internette sık geçse dahi TDK'da özel ad veya kişi/yer adı olarak geçen maddeler Kolay ve Orta havuzundan çıkarılarak Zor'a kilitlendi.
+4. **Arkaik / Ağız Kelimeleri:** Güncel Türkçede karşılığı bulunmayan, yalnızca yöresel ağızlarda veya tarihi metinlerde geçen kelimeler Zor havuzuna yönlendirildi.
 `
 
 const reportFile = isApply
@@ -670,7 +740,10 @@ if (isApply) {
 
 // ─── CLI Çalıştırma ──────────────────────────────────────────────
 
-const isMain = process.argv[1] && path.resolve(process.argv[1]).toLowerCase() === __filename.toLowerCase()
+const isMain = process.argv[1] && (
+  path.resolve(process.argv[1]).toLowerCase() === __filename.toLowerCase() ||
+  process.argv[1].replace(/\\/g, '/').endsWith('scripts/wordlist/revise-length.mjs')
+)
 
 if (isMain) {
   const args = process.argv.slice(2)

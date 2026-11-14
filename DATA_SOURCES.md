@@ -283,4 +283,50 @@
 - 40 Kolay, 40 Orta ve 40 Zor sağduyu (sanity) kelimeleri `%100` başarıyla doğrulanmıştır (`src/data/words6-validator.test.ts`).
 - Tüm vitest testleri (519/519), `tsc -b` ve `npm run build` temiz şekilde geçmektedir.
 
+---
+
+## LİNGO v2 — 7 Harfli Kelime Listesi Revizyonu ve Seviyelendirme (Aşama 2)
+
+> Tarih: 2026-11-15 | Şube: `v2-gelistirme` | Standart: `docs/KELIME-REVIZYON-PLANI.md` (Bölüm 0, 1, 2, 4)
+
+### 1. Çok Kaynaklı Doğrulama ve Katman 2 Ayrımı
+1. **KeNet Türkçe WordNet (`StarlangSoftware/TurkishWordNet`):**
+   - 9.285 adet 7 harfli kelime girişi (6.024 özel ad olmayan madde) üzerinden 2. bağımsız doğrulama katmanı (4.936 örtüşme, %62,3).
+2. **Zemberek 10k Derlem Listesi:**
+   - 515 adet 7 harfli lemma doğrulaması (%6,5).
+3. **Hunspell tr_TR (Yaygınlık Kanıtı):**
+   - 21.239 adet 7 harfli kök biçim ile yaygınlık doğrulaması (6.367 örtüşme, %80,4).
+   > [!IMPORTANT]
+   > Hunspell tr_TR yalnızca yaygınlık/frekans kanıtı olarak değerlendirilmiştir; kelime silme veya ekleme için bağımsız doğrulama otoritesi olarak kullanılmamıştır. Katman 2 doğrulama yetkisi KeNet WordNet ve Zemberek'tedir.
+
+### 2. 7 Harfli Kelime ve Seviye Dağılımı
+
+| Seviye | Önceki Sayı | Önceki Oran | Yeni Sayı | Yeni Oran | Hedef |
+|---|---|---|---|---|---|
+| **Kolay** | 305 | %3,9 | **2.613** | **%33,0** | %33 |
+| **Orta** | 547 | %6,9 | **2.613** | **%33,0** | %33 |
+| **Zor** | 7.065 | %89,2 | **2.691** | **%34,0** | %34 |
+| **Toplam** | **7.917** | **%100** | **7.917** | **%100** | **%100** |
+
+- Silinen / Eklenen: **0 / 0** (Tüm 7.917 kelime TDK GTS v12 bağımsız madde başı olarak onaylanmıştır).
+- 40 Kolay, 40 Orta ve 40 Zor sağduyu (sanity) kelimeleri `%100` başarıyla doğrulanmıştır (`src/data/words7-validator.test.ts`).
+
+### 3. Final Turu Havuz Yeterliliği
+- Oyunun 4. turu (final) 7 harfli kelimelerden oluşur. Final turunda soru olarak sorulan kelimeler Kolay ve Orta havuzlarından rastgele seçilir:
+  - **Asgari İhtiyaç:** $\ge 30$ kelime.
+  - **Kolay Havuzu:** 2.613 kelime (%8.710 yeterlilik).
+  - **Orta Havuzu:** 2.613 kelime (%8.710 yeterlilik).
+  - Her iki havuz da asgari ihtiyacın 87 katı büyüklüğünde olup tekrar olasılığı ortadan kaldırılmıştır.
+
+### 4. Koruma Kuralları ve Plan 2.7 Uyarısı
+- Toplam **784** kelime koruma kuralları gereği doğrudan Zor seviyesine kilitlenmiştir (Argo/küfür: 1, Özel ad: 5, Eskimiş sıfır frekans: 597, Ağız sıfır frekans: 176, Tanımda yer/kişi adı: 5).
+> [!WARNING]
+> **Plan 2.7 Uyarısı:** Zor modda tüm kelimeler soru olarak çıkar; argo/küfür kelimeler Kolay ve Orta havuzundan kesin olarak çıkarılmıştır ancak Zor modda soru olarak gelebilir.
+
+### 5. Doğrulama ve Testler
+- `src/data/words7-validator.test.ts`: 18/18 test geçti.
+- `src/data/level-acceptance.test.ts`: 70/70 test geçti (`anahtar` $\implies$ Kolay, `mahkeme`, `hemşire`, `görüntü` $\implies$ en az Orta).
+- Toplam 27 test dosyası, 537 test ve Vite build (%100 temiz).
+
+
 

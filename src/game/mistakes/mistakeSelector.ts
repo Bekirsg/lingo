@@ -24,11 +24,100 @@ export interface StudyablePool {
   totalCount: number
 }
 
+export interface StudyListItem {
+  word: string
+  total: number
+  y: number
+  c: number
+  last: number
+  length: number
+  firstLetter: string
+  isLearned: boolean
+  isHidden: boolean
+}
+
+export interface GetStudyListOptions {
+  missedWordsMap: Record<string, MissedWordRecord>
+  studyData?: {
+    learned?: Record<string, number>
+    hidden?: Record<string, number>
+  }
+  filter?: {
+    type?: 'all' | 'length' | 'initial'
+    length?: number
+    initial?: string
+  }
+  minThreshold?: number
+  includeHidden?: boolean
+  includeLearned?: boolean
+}
+
 /**
- * missedWords ve be:v2:study.learned verilerinden çalışılabilir kelime havuzunu çıkarır.
+ * Plan 6.1: Tek Saf Kaynak Fonksiyonu (getStudyList)
+ * Hem Analizler ekranını ("En Çok Bilinemeyen Kelimeler") hem "Hatalarım" düzenleme ekranını
+ * aynı kaynaktan besler.
+ * - Düzenleme ekranı tüm kaçırılan kelimeleri (minThreshold = 1) listeler.
+ * - Analizler özet kutusu en az 2 kez kaçırılanları (minThreshold = 2) filtreler.
+ */
+export function getStudyList(options: GetStudyListOptions): StudyListItem[] {
+  const {
+    missedWordsMap,
+    studyData,
+    filter,
+    minThreshold = 1,
+    includeHidden = false,
+    includeLearned = true,
+  } = options
+
+  const list: StudyListItem[] = []
+  const initialLower = filter?.initial?.toLocaleLowerCase('tr-TR')
+
+  for (const [rawWord, record] of Object.entries(missedWordsMap || {})) {
+    const total = (record?.y || 0) + (record?.c || 0)
+    if (total < minThreshold) continue
+
+    const word = rawWord.toLocaleLowerCase('tr-TR')
+    const isLearned = Boolean(studyData?.learned && studyData.learned[word] !== undefined)
+    const isHidden = Boolean(studyData?.hidden && studyData.hidden[word] !== undefined)
+
+    if (!includeHidden && isHidden) continue
+    if (!includeLearned && isLearned) continue
+
+    const len = letterCount(word)
+    if (filter?.type === 'length' && filter.length && len !== filter.length) {
+      continue
+    }
+
+    const firstLetter = word.charAt(0).toLocaleLowerCase('tr-TR')
+    if (filter?.type === 'initial' && initialLower && firstLetter !== initialLower) {
+      continue
+    }
+
+    list.push({
+      word,
+      total,
+      y: record?.y || 0,
+      c: record?.c || 0,
+      last: record?.last || 0,
+      length: len,
+      firstLetter,
+      isLearned,
+      isHidden,
+    })
+  }
+
+  // Sıralama: Toplam kaçırma azalan, son tarih azalan, alfabetik artan
+  list.sort((a, b) => b.total - a.total || b.last - a.last || a.word.localeCompare(b.word, 'tr-TR'))
+
+  return list
+}
+
+/**
+ * missedWords ve be:v2:study (learned ve hidden) verilerinden çalışılabilir kelime havuzunu çıkarır.
  *
- * GELECEĞE DÖNÜK GÜVENLİK (SPEC M8):
- * missedWords içindeki bir kelime güncel kelime havuzunda (words-4..7 veya bonus verisinde tanımıyla)
+ * GELECEĞE DÖNÜK GÜVENLİK (SPEC M8 & Aşama 4):
+ * - learned ve hidden kelimeler havuzdan dışlanır (çalışma havuzuna ve kart sayısına dahil edilmez).
+ * - missedWords içindeki bir kelime güncel kelime havuzunda (words-4..7 veya bonus verisinde tanımıyla)
  * bulunmayabilir. Bulunmayan kelimeler SESSİZCE ATLANIR (çökme yok, kart sayısına ve seçime
  * dahil edilmez, depolamadan silinmez).
  */
@@ -36,7 +125,8 @@ export function getStudyableCandidates(
   missedWordsMap: Record<string, MissedWordRecord>,
   learnedWordsMap: Record<string, number>,
   repo: WordRepository,
-  usedInSession?: Set<string>
+  usedInSession?: Set<string>,
+  hiddenWordsMap?: Record<string, number>
 ): StudyablePool {
   const byLength: Record<number, StudyCandidate[]> = {
     4: [],
@@ -68,8 +158,11 @@ export function getStudyableCandidates(
     }
     if (weight <= 0) continue
 
-    // 2) Öğrenilmiş kelimeler hariç tutulur
+    // 2) Öğrenilmiş ve gizlenmiş kelimeler hariç tutulur (Plan 6.2)
     if (learnedWordsMap && learnedWordsMap[word] !== undefined) {
+      continue
+    }
+    if (hiddenWordsMap && hiddenWordsMap[word] !== undefined) {
       continue
     }
 

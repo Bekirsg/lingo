@@ -56,7 +56,7 @@ Butonlar: Yarışma, Çalışma, Analizler, Nasıl Oynanır, Ayarlar. Eski "En Y
 Üç seviye kartı + dördüncü kart: "Hatalarımla çalış" (seviye seçimi yoktur, Bölüm 6.5). Henüz kaçırılan kelime yoksa kart pasif ve altında "Önce Yarışma veya Çalışma modunda oyna" yazar.
 
 ### 3.4 Analizler
-Tek ekran, sekmeli: Özet • Kelimeler • Sözlük Dışı • Performans • Harfler • İlerleme (Bölüm 7). Üstte iki filtre: **Mod** (Tümü / Yarışma / Çalışma / Hatalarımla) ve **Seviye** (Tümü / Kolay / Orta / Zor). Veri yoksa her sekmede sade bir "Henüz veri yok" mesajı.
+Mobil öncelikli tek dikey akış: Üstte filtre çipleri (Tümü / Harf Sayısı / Baş Harf), Genel Özet, En Çok Bilinemeyen Kelimeler, Sözlük Dışı Denemeler, Harf Performansı ve İlerleme bölümleri (Bölüm 7). Kaçırılan kelimeler ve sözlük dışı bölümlerinde listeyi düzenleme ("Hatalarım" modalı) düğmesi bulunur. Veri yoksa sade bir "Henüz veri yok" mesajı gösterilir.
 
 ### 3.5 Ayarlar
 Mevcut ses ve titreşim anahtarları + **Klavye Tercihi** (`be:settings` altında `keyboard: 'game' | 'system'` — Oyun Klavyesi veya Telefon Klavyesi) + iki ayrı sıfırlama düğmesi (ikisi de onay penceresiyle):
@@ -234,6 +234,11 @@ Kaçırılan kelimelerle çalışma:
   - Analizdeki toplam kaçırma sayacı DEĞİŞMEZ (Hatalarımla çalış oturumundaki hatalar sayaca eklenmez). Analiz ekranında öğrenilen kelimenin yanında "✓ öğrenildi" işareti görünür.
   - Öğrenildi sayılan bir kelime Yarışma veya Çalışma'da tekrar kaçırılırsa öğrenildi durumu ve ardışık sayaç sıfırlanır (kelime tekrar havuza girer).
   - Sayaç sadece "Hatalarımla çalış" oturumlarında işler (normal Çalışma oturumları sayacı artırmaz).
+- **Oyuncunun Listeleri Elle Düzenlemesi ("Hatalarım" Ekranı):**
+  - **Erişim:** Analizler ekranında kaçırılan ve sözlük dışı kelimelerin yanındaki "Düzenle" butonu veya Çalışma seviye seçim kartındaki "Listeyi düzenle" bağlantısı.
+  - **Silme = Gizleme:** Bir kelimeyi veya sözlük dışı diziyi silmek, analitik sayaçlarını sıfırlamaz; yalnızca `hidden` / `invalidHidden` altına zaman damgasıyla gizler. Gizlenen kelimeler "Hatalarımla çalış" havuzundan ve Analizler genel özetinden çıkarılır.
+  - **Yeniden Kaçırma Kuralı:** Gizlenen bir kelime Yarışma veya Çalışma modunda tekrar kaçırılırsa gizlilik otomatik kalkar (`unlearnMistakeWord`).
+  - **Etkileşim:** Mobil jest desteği (Pointer Events ile sola kaydırma, 72px eşik) ve sağ menü (`⋯` açılır menü) üzerinden "Listeden çıkar", "Öğrenildi say", "Listeye geri al" aksiyonları. 5 saniyelik "Geri al" bildirimi (toast) mevcuttur. Çoklu seçim desteklenir.
 - Bu oturumların oynanış verisi de analiz verisine işlenir (mod etiketi `hatalar`, seviye yok).
 
 ## 7. Analizler (Yarışma + Çalışma + Hatalarımla çalış verisi)
@@ -313,7 +318,7 @@ Yeni anahtarlar `be:v2:*` önekiyle, her biri `version` alanı taşır:
 | `be:v2:records` | `{ kolay, orta, zor }` en yüksek skorlar (yalnızca Yarışma) |
 | `be:v2:stats` | seviye başına `{ gamesPlayed, bestStage }` (yalnızca Yarışma) |
 | `be:v2:analytics` | analiz verisi (aşağıda) |
-| `be:v2:study` | `{ streak: {kelime: sayı}, learned: {kelime: zaman} }` |
+| `be:v2:study` | `{ version: 2, streak: {kelime: sayı}, learned: {kelime: zaman}, hidden: {kelime: zaman}, invalidHidden: {dizi: zaman} }` |
 
 `be:v2:analytics` içeriği:
 - `buckets`: yedi kova: `yarisma:kolay`, `yarisma:orta`, `yarisma:zor`, `calisma:kolay`, `calisma:orta`, `calisma:zor`, `hatalar`. Her kova şunları içerir:

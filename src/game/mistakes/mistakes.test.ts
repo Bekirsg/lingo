@@ -160,9 +160,11 @@ describe('V2-M8 Hatalarımla Çalış Modu ve Öğrenildi Mantığı', () => {
       clearStudyCache()
 
       const data = loadStudyData()
-      expect(data.version).toBe(1)
+      expect(data.version).toBe(2)
       expect(data.streak).toEqual({})
       expect(data.learned).toEqual({})
+      expect(data.hidden).toEqual({})
+      expect(data.invalidHidden).toEqual({})
     })
   })
 

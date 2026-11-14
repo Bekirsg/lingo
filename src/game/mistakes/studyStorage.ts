@@ -6,26 +6,33 @@
 export const STUDY_STORAGE_KEY = 'be:v2:study'
 
 export interface StudyData {
-  version: 1
+  version: 2
   /** Kelime başına ardışık doğru sayısı (2 olunca learned'a geçer) */
   streak: Record<string, number>
   /** Öğrenilmiş kelimeler: { [kelime]: öğrenilme zamanı (timestamp) } */
   learned: Record<string, number>
+  /** Listeden çıkarılan / gizlenen kaçırılmış kelimeler: { [kelime]: gizlenme zamanı (timestamp) } */
+  hidden: Record<string, number>
+  /** Listeden çıkarılan / gizlenen sözlük dışı denemeler: { [dizi]: gizlenme zamanı (timestamp) } */
+  invalidHidden: Record<string, number>
 }
 
 let cachedStudyData: StudyData | null = null
 
 export function createEmptyStudyData(): StudyData {
   return {
-    version: 1,
+    version: 2,
     streak: {},
     learned: {},
+    hidden: {},
+    invalidHidden: {},
   }
 }
 
 /**
  * be:v2:study verisini localStorage'dan yükler.
  * Bozuk veya eksik veri durumunda çökmeden temiz şemaya geri döner.
+ * v1 -> v2 migrasyonunu şeffafça yapar (hidden ve invalidHidden alanları eklenir).
  */
 export function loadStudyData(): StudyData {
   if (cachedStudyData) {
@@ -52,9 +59,14 @@ export function loadStudyData(): StudyData {
     }
 
     cachedStudyData = {
-      version: 1,
+      version: 2,
       streak: { ...parsed.streak },
       learned: { ...parsed.learned },
+      hidden: parsed.hidden && typeof parsed.hidden === 'object' ? { ...parsed.hidden } : {},
+      invalidHidden:
+        parsed.invalidHidden && typeof parsed.invalidHidden === 'object'
+          ? { ...parsed.invalidHidden }
+          : {},
     }
     return cachedStudyData
   } catch (err) {
@@ -141,8 +153,71 @@ export function recordMistakeAnswer(word: string, won: boolean): RecordMistakeRe
 }
 
 /**
+ * Kaçırılmış bir kelimeyi listeden çıkarır (gizler).
+ * Analiz sayaçları bozulmaz; kelime çalışma havuzundan ve varsayılan listeden çıkarılır.
+ */
+export function hideMistakeWord(word: string): void {
+  const data = loadStudyData()
+  const lowerWord = word.toLocaleLowerCase('tr-TR')
+  data.hidden[lowerWord] = Date.now()
+  delete data.streak[lowerWord]
+  saveStudyData(data)
+}
+
+/**
+ * Gizlenmiş bir kelimeyi listeye geri alır.
+ */
+export function unhideMistakeWord(word: string): void {
+  const data = loadStudyData()
+  const lowerWord = word.toLocaleLowerCase('tr-TR')
+  if (data.hidden[lowerWord] !== undefined) {
+    delete data.hidden[lowerWord]
+    saveStudyData(data)
+  }
+}
+
+/**
+ * Sözlük dışı bir deneme dizisini listeden çıkarır (gizler).
+ */
+export function hideInvalidWord(word: string): void {
+  const data = loadStudyData()
+  const lowerWord = word.toLocaleLowerCase('tr-TR')
+  data.invalidHidden[lowerWord] = Date.now()
+  saveStudyData(data)
+}
+
+/**
+ * Gizlenmiş bir sözlük dışı deneme dizisini listeye geri alır.
+ */
+export function unhideInvalidWord(word: string): void {
+  const data = loadStudyData()
+  const lowerWord = word.toLocaleLowerCase('tr-TR')
+  if (data.invalidHidden[lowerWord] !== undefined) {
+    delete data.invalidHidden[lowerWord]
+    saveStudyData(data)
+  }
+}
+
+/**
+ * Bir kelimenin öğrenildi durumunu elle belirler ("Öğrenildi say" / "Öğrenildi durumunu kaldır").
+ */
+export function setWordLearned(word: string, isLearned: boolean): void {
+  const data = loadStudyData()
+  const lowerWord = word.toLocaleLowerCase('tr-TR')
+  if (isLearned) {
+    data.learned[lowerWord] = Date.now()
+    delete data.streak[lowerWord]
+  } else {
+    delete data.learned[lowerWord]
+    delete data.streak[lowerWord]
+  }
+  saveStudyData(data)
+}
+
+/**
  * Yarışma veya normal Çalışma modunda bir kelime tekrar kaçırılırsa (kayıp veya PAS):
- * Kelimenin öğrenildi durumu ve sayacı sıfırlanır; kelime tekrar Hatalarımla Çalış havuzuna döner.
+ * Kelimenin öğrenildi durumu ve sayacı sıfırlanır; ayrıca gizlenmişse gizlilik kalkar.
+ * Kelime tekrar Hatalarımla Çalış havuzuna ve listesine döner (SPEC Bölüm 6.2).
  */
 export function unlearnMistakeWord(word: string): boolean {
   const data = loadStudyData()
@@ -156,6 +231,11 @@ export function unlearnMistakeWord(word: string): boolean {
 
   if (data.streak[lowerWord] !== undefined) {
     delete data.streak[lowerWord]
+    changed = true
+  }
+
+  if (data.hidden[lowerWord] !== undefined) {
+    delete data.hidden[lowerWord]
     changed = true
   }
 

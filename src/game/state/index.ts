@@ -214,7 +214,7 @@ export class GameController {
     if (this.mode === 'hatalar') {
       const missedWords = loadAnalytics().missedWords
       const study = loadStudyData()
-      const pool = getStudyableCandidates(missedWords, study.learned, this.words)
+      const pool = getStudyableCandidates(missedWords, study.learned, this.words, undefined, study.hidden)
 
       const practiceState: PracticeState = {
         cycle: 1,
@@ -518,7 +518,7 @@ export class GameController {
     const ps = this.state.practiceState!
     const missedWords = loadAnalytics().missedWords
     const study = loadStudyData()
-    const pool = getStudyableCandidates(missedWords, study.learned, this.words, this.state.usedWords)
+    const pool = getStudyableCandidates(missedWords, study.learned, this.words, this.state.usedWords, study.hidden)
 
     ps.remainingCount = pool.totalCount
 
@@ -600,7 +600,7 @@ export class GameController {
       // Havuzda kalan çalışılabilir kelime sayısını güncelle
       const missedWords = loadAnalytics().missedWords
       const study = loadStudyData()
-      const pool = getStudyableCandidates(missedWords, study.learned, this.words, this.state.usedWords)
+      const pool = getStudyableCandidates(missedWords, study.learned, this.words, this.state.usedWords, study.hidden)
       ps.remainingCount = pool.totalCount
     }
   }

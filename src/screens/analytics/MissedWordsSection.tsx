@@ -10,9 +10,10 @@ import { triggerHaptic } from '../../haptics/vibration'
 interface MissedWordsSectionProps {
   words: SimplifiedMissedWord[]
   onStartMistakes?: () => void
+  onOpenManage?: () => void
 }
 
-export function MissedWordsSection({ words, onStartMistakes }: MissedWordsSectionProps) {
+export function MissedWordsSection({ words, onStartMistakes, onOpenManage }: MissedWordsSectionProps) {
   const [displayLimit, setDisplayLimit] = useState(15)
 
   const visibleWords = words.slice(0, displayLimit)
@@ -35,9 +36,25 @@ export function MissedWordsSection({ words, onStartMistakes }: MissedWordsSectio
             Tekrarlanan kaçırılma sayılarına göre (en az 2 kez bilinemeyenler)
           </p>
         </div>
-        <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
-          {words.length} Kelime
-        </span>
+        <div className="flex items-center gap-2">
+          {onOpenManage && (
+            <button
+              type="button"
+              onClick={() => {
+                playSound('key_press')
+                triggerHaptic('tap')
+                onOpenManage()
+              }}
+              className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-[11px] font-bold text-slate-300 border border-white/10 transition-all flex items-center gap-1 min-h-[32px]"
+              title="Listeyi düzenle"
+            >
+              <span>✏️</span> Düzenle
+            </button>
+          )}
+          <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+            {words.length} Kelime
+          </span>
+        </div>
       </div>
 
       {words.length === 0 ? (

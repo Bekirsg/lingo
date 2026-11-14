@@ -3,12 +3,15 @@
  */
 
 import type { SimplifiedInvalidWordsResult } from '../../analytics/selectors'
+import { playSound } from '../../audio/sound'
+import { triggerHaptic } from '../../haptics/vibration'
 
 interface InvalidWordsSectionProps {
   data: SimplifiedInvalidWordsResult
+  onOpenManage?: () => void
 }
 
-export function InvalidWordsSection({ data }: InvalidWordsSectionProps) {
+export function InvalidWordsSection({ data, onOpenManage }: InvalidWordsSectionProps) {
   const { totalAttempts, uniqueCount, items } = data
 
   return (
@@ -22,12 +25,28 @@ export function InvalidWordsSection({ data }: InvalidWordsSectionProps) {
             Sözlükte yer almayan ve tahmin hakkını boşa harcayan diziler
           </p>
         </div>
-        <div className="text-right">
-          <div className="text-xs font-mono font-bold text-rose-400">
-            {`${totalAttempts} Toplam`}
-          </div>
-          <div className="text-[10px] text-slate-400">
-            {`${uniqueCount} Farklı Dizi`}
+        <div className="flex items-center gap-2">
+          {onOpenManage && (
+            <button
+              type="button"
+              onClick={() => {
+                playSound('key_press')
+                triggerHaptic('tap')
+                onOpenManage()
+              }}
+              className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-[11px] font-bold text-slate-300 border border-white/10 transition-all flex items-center gap-1 min-h-[32px]"
+              title="Listeyi düzenle"
+            >
+              <span>✏️</span> Düzenle
+            </button>
+          )}
+          <div className="text-right">
+            <div className="text-xs font-mono font-bold text-rose-400">
+              {`${totalAttempts} Toplam`}
+            </div>
+            <div className="text-[10px] text-slate-400">
+              {`${uniqueCount} Farklı Dizi`}
+            </div>
           </div>
         </div>
       </div>

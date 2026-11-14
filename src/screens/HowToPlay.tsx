@@ -120,20 +120,18 @@ export default function HowToPlay({ onBack }: HowToPlayProps) {
           Yarışma ve Çalışma'da kaçırdığın kelimeler bu modda karşına çıkar. Kelimeler
           kaçırılma sayısına göre ağırlıklı seçilir; en çok zorlandığın kelimeler daha
           sık gelir. Bir kelimeyi <strong>2 kez üst üste</strong> doğru bilirsen
-          "✓ Öğrenildi" sayılır ve havuzdan düşer. Tüm kelimeler öğrenilince oturum
-          otomatik biter.
+          "✓ Öğrenildi" sayılır ve havuzdan düşer. İstemediğin kelimeleri veya yanlışlıkla
+          yazdığın sözlük dışı dizileri <strong>Listeyi Düzenle</strong> ekranından sola kaydırarak
+          veya <strong>⋯</strong> menüsünden gizleyebilirsin. Gizlenen kelimeler istatistiklerini
+          bozmaz ve dilediğinde "Gizlenenler" sekmesinden geri alınabilir.
         </Section>
 
         {/* Analizler */}
         <Section title="📈 Analizler">
-          Tüm istatistiklerin Analizler ekranında toplanır:{' '}
-          <strong>Özet</strong> (rekorlar, genel başarı),{' '}
-          <strong>Kelimeler</strong> (kaçırdıkların),{' '}
-          <strong>Sözlük Dışı</strong> (hatalı yazdıkların),{' '}
-          <strong>Performans</strong> (harf ve tahmin dağılımı),{' '}
-          <strong>Harfler</strong> (en çok yanıldığın harfler),{' '}
-          <strong>İlerleme</strong> (son oyunlar ve eğilimler).
-          Mod ve Seviye filtreleriyle dilediğin kesiti incele.
+          Tüm oyun performansın Analizler ekranında tek dikey akışta özetlenir:{' '}
+          genel özet kartı, harf sayılarına göre başarı sıralaması, en çok kaçırılan kelimeler,
+          ilk harf analizi, sözlük dışı denemeler ve gelişim önerileri.
+          Tümü, Harf Sayısı ve Baş Harf filtreleriyle verilerini detaylı inceleyebilirsin.
         </Section>
 
       </div>

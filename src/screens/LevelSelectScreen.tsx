@@ -3,7 +3,7 @@
  * SPEC-v2 Bölüm 3.2, 3.3, 4.6, 5, 6 & V2-M4 / V2-M5
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { GameLevel } from '../data/levels'
 import { getLevelRecords } from '../data/storage'
 import { loadWordRepository, ensureLevelsLoaded, ensureBonusLevelLoaded, ensureBonusLoaded } from '../data/wordsLoader'
@@ -13,6 +13,7 @@ import { triggerHaptic } from '../haptics/vibration'
 import { loadAnalytics } from '../analytics/storage'
 import { loadStudyData } from '../game/mistakes/studyStorage'
 import { getStudyableCandidates, MISTAKE_POOL_SOURCES } from '../game/mistakes/mistakeSelector'
+import MistakesManagerModal from './MistakesManagerModal'
 
 export { MISTAKE_POOL_SOURCES }
 export type GameMode = 'yarisma' | 'calisma'
@@ -77,33 +78,31 @@ export default function LevelSelectScreen({
   const [loadingLevel, setLoadingLevel] = useState<GameLevel | null>(null)
   const [loadError, setLoadError] = useState<{ level: GameLevel; message: string } | null>(null)
   const [studyableCount, setStudyableCount] = useState<number | null>(null)
+  const [showManagerModal, setShowManagerModal] = useState(false)
   const records = getLevelRecords()
 
   const isPractice = mode === 'calisma'
 
-  // Hatalarımla Çalış kartı için çalışılabilir kelime sayısını hesapla
-  useEffect(() => {
+  const refreshStudyableCount = useCallback(() => {
     if (!isPractice) return
-    let active = true
-
     loadWordRepository()
       .then(async (repo) => {
         await ensureBonusLoaded(repo)
-        if (!active) return
         const analytics = loadAnalytics()
         const study = loadStudyData()
-        const pool = getStudyableCandidates(analytics.missedWords, study.learned, repo)
+        const pool = getStudyableCandidates(analytics.missedWords, study.learned, repo, undefined, study.hidden)
         setStudyableCount(pool.totalCount)
       })
       .catch((err) => {
         console.warn('[LevelSelectScreen] Kelime havuzu okunamadı:', err)
-        if (active) setStudyableCount(0)
+        setStudyableCount(0)
       })
-
-    return () => {
-      active = false
-    }
   }, [isPractice])
+
+  // Hatalarımla Çalış kartı için çalışılabilir kelime sayısını hesapla
+  useEffect(() => {
+    refreshStudyableCount()
+  }, [refreshStudyableCount])
 
   const handleSelect = async (level: GameLevel) => {
     if (loadingLevel) return
@@ -301,9 +300,23 @@ export default function LevelSelectScreen({
                   <span className="text-xl">🔁</span>
                   <span className="text-xl font-black text-white">Hatalarımla Çalış</span>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-rose-500/20 text-rose-300 border-rose-500/40">
-                  {studyableCount} kelime
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      playSound('key_press')
+                      triggerHaptic('tap')
+                      setShowManagerModal(true)
+                    }}
+                    className="text-[11px] font-bold text-rose-300 hover:text-white underline underline-offset-2 min-h-[32px] flex items-center"
+                  >
+                    Listeyi düzenle
+                  </button>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-rose-500/20 text-rose-300 border-rose-500/40">
+                    {studyableCount} kelime
+                  </span>
+                </div>
               </div>
               <p className="text-xs text-slate-300 mb-3 leading-relaxed">
                 Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
@@ -319,22 +332,37 @@ export default function LevelSelectScreen({
             </button>
           ) : (
             <div
-              className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-50 cursor-not-allowed text-left relative"
+              className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-80 text-left relative"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🔁</span>
                   <span className="text-xl font-black text-slate-300">Hatalarımla Çalış</span>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-500/20 text-slate-400 border border-slate-500/30">
-                  {studyableCount === 0 ? '0 kelime' : 'Yükleniyor...'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playSound('key_press')
+                      triggerHaptic('tap')
+                      setShowManagerModal(true)
+                    }}
+                    className="text-[11px] font-bold text-slate-300 hover:text-white underline underline-offset-2 min-h-[32px] flex items-center"
+                  >
+                    Listeyi düzenle
+                  </button>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-500/20 text-slate-400 border border-slate-500/30">
+                    {studyableCount === 0 ? '0 kelime' : 'Yükleniyor...'}
+                  </span>
+                </div>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed mb-2">
                 Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
               </p>
               <p className="text-[11px] text-amber-300/80 font-medium">
-                Önce Yarışma veya Çalışma modunda oyna
+                {studyableCount === 0
+                  ? 'Kayıtlı aktif hata yok (veya tümü gizlendi).'
+                  : 'Önce Yarışma veya Çalışma modunda oyna'}
               </p>
             </div>
           )
@@ -345,6 +373,14 @@ export default function LevelSelectScreen({
       <p className="text-center text-[11px] text-slate-500 mt-4 mb-2">
         Tahmin doğrulama tüm seviyelerde 23.717 TDK kelimesiyle geçerlidir.
       </p>
+
+      {/* Hatalarım Düzenleme Ekranı Modal'ı */}
+      {showManagerModal && (
+        <MistakesManagerModal
+          onClose={() => setShowManagerModal(false)}
+          onDataChanged={refreshStudyableCount}
+        />
+      )}
     </div>
   )
 }

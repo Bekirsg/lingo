@@ -24,6 +24,8 @@ import { FirstLetterSection } from './analytics/FirstLetterSection'
 import { InvalidWordsSection } from './analytics/InvalidWordsSection'
 import { InsightsSection } from './analytics/InsightsSection'
 import { EmptyState } from './analytics/EmptyState'
+import MistakesManagerModal from './MistakesManagerModal'
+import { loadStudyData } from '../game/mistakes/studyStorage'
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
 
@@ -38,8 +40,14 @@ export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsSc
   const [selectedLength, setSelectedLength] = useState<number>(5)
   const [selectedInitial, setSelectedInitial] = useState<string>('A')
 
-  // Veriyi be:v2:analytics'ten oku
-  const rawData = useMemo(() => loadAnalytics(), [])
+  // Hatalarım Düzenleme Ekranı
+  const [showManagerModal, setShowManagerModal] = useState(false)
+  const [managerInitialTab, setManagerInitialTab] = useState<'missed' | 'invalid'>('missed')
+  const [dataRevision, setDataRevision] = useState(0)
+
+  // Veriyi be:v2:analytics ve be:v2:study'den oku
+  const rawData = useMemo(() => loadAnalytics(), [dataRevision])
+  const studyData = useMemo(() => loadStudyData(), [dataRevision])
 
   // Birleşik filtre nesnesi
   const filter: AnalyticsFilter = useMemo(
@@ -62,12 +70,12 @@ export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsSc
   )
   const ranking = useMemo(() => computeRankingByLength(merged), [merged])
   const missedWords = useMemo(
-    () => computeMissedWords(rawData.missedWords || {}, filter, 2),
-    [rawData.missedWords, filter]
+    () => computeMissedWords(rawData.missedWords || {}, filter, 2, studyData.hidden),
+    [rawData.missedWords, filter, studyData.hidden]
   )
   const invalidWords = useMemo(
-    () => computeInvalidWords(rawData.invalidWords || {}, filter, 2),
-    [rawData.invalidWords, filter]
+    () => computeInvalidWords(rawData.invalidWords || {}, filter, 2, studyData.invalidHidden),
+    [rawData.invalidWords, filter, studyData.invalidHidden]
   )
   const firstLetterStats = useMemo(
     () => computeMissedByFirstLetter(rawData.missedWords || {}, filter),
@@ -243,19 +251,38 @@ export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsSc
             <MissedWordsSection
               words={missedWords}
               onStartMistakes={onStartMistakes}
+              onOpenManage={() => {
+                setManagerInitialTab('missed')
+                setShowManagerModal(true)
+              }}
             />
 
             {/* 5. En Başarısız Olunan Kelimeler (İlk Harfe Göre) */}
             <FirstLetterSection stats={firstLetterStats} />
 
             {/* 6. TDK Dışı Kelime Denemeleri */}
-            <InvalidWordsSection data={invalidWords} />
+            <InvalidWordsSection
+              data={invalidWords}
+              onOpenManage={() => {
+                setManagerInitialTab('invalid')
+                setShowManagerModal(true)
+              }}
+            />
 
             {/* 7. Gelişim Önerileri */}
             <InsightsSection insights={insights} />
           </>
         )}
       </main>
+
+      {/* Hatalarım Düzenleme Ekranı Modal'ı */}
+      {showManagerModal && (
+        <MistakesManagerModal
+          initialTab={managerInitialTab}
+          onClose={() => setShowManagerModal(false)}
+          onDataChanged={() => setDataRevision((prev) => prev + 1)}
+        />
+      )}
     </div>
   )
 }

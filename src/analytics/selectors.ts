@@ -1084,7 +1084,8 @@ export interface SimplifiedMissedWord {
 export function computeMissedWords(
   missedWordsMap: Record<string, { y: number; c: number; last: number }>,
   filter: AnalyticsFilter,
-  minThreshold = 2
+  minThreshold = 2,
+  hiddenMap?: Record<string, number>
 ): SimplifiedMissedWord[] {
   const list: SimplifiedMissedWord[] = []
   const initialLower = filter.initial?.toLocaleLowerCase('tr-TR')
@@ -1092,6 +1093,11 @@ export function computeMissedWords(
   for (const [word, rec] of Object.entries(missedWordsMap || {})) {
     const total = (rec.y || 0) + (rec.c || 0)
     if (total < minThreshold) continue
+
+    const lowerWord = word.toLocaleLowerCase('tr-TR')
+    if (hiddenMap && hiddenMap[lowerWord] !== undefined) {
+      continue
+    }
 
     const len = Array.from(word).length
     if (filter.type === 'length' && filter.length && len !== filter.length) {
@@ -1139,7 +1145,8 @@ export interface SimplifiedInvalidWordsResult {
 export function computeInvalidWords(
   invalidWordsMap: Record<string, { y: number; c: number; h: number; last: number }>,
   filter: AnalyticsFilter,
-  minThreshold = 2
+  minThreshold = 2,
+  invalidHiddenMap?: Record<string, number>
 ): SimplifiedInvalidWordsResult {
   let totalAttempts = 0
   let uniqueCount = 0
@@ -1162,6 +1169,11 @@ export function computeInvalidWords(
 
     totalAttempts += total
     uniqueCount++
+
+    const lowerWord = word.toLocaleLowerCase('tr-TR')
+    if (invalidHiddenMap && invalidHiddenMap[lowerWord] !== undefined) {
+      continue
+    }
 
     if (total >= minThreshold) {
       list.push({

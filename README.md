@@ -31,8 +31,16 @@ Türk televizyon klasiği Lingo formatında, TDK Güncel Türkçe Sözlük (GTS 
 - **PWA & Offline:** `vite-plugin-pwa`, Workbox (tüm kod, stiller, ikonlar ve 5 veri JSON'u tam önbelleğe alınır)
 - **Ses:** WebAudio API ile saf kod sentezli 12 ses efekti (harici dosya/telif/ağ yok)
 - **Titreşim:** Web Haptics (`navigator.vibrate`)
-- **Veri:** TDK Güncel Türkçe Sözlük (23.600+ temiz maddebaşı kelime havuzu)
-- **Test:** Vitest (171+ birim ve entegrasyon testi)
+- **Veri:** TDK Güncel Türkçe Sözlük GTS 12. baskı (23.717 temiz maddebaşı kelime + 5.149 tanımlı 8–11 harfli bonus havuzu)
+- **Test:** Vitest (596 birim, render, veri doğrulayıcı ve kabul testi — %100 yeşil)
+- **v2 Yenilikleri:**
+  - Seviye Sistemi (Kolay / Orta / Zor ve seviye bazlı rekorlar)
+  - Çalışma & Hatalarımla Çalış Modları (ardışık 2 doğru ile "öğrenildi" takibi)
+  - Analizler Modülü (mobil öncelikli tek dikey akış, akıllı öneriler, harf ısı haritası)
+  - "Hatalarım" Yönetim Ekranı (sola kaydırma, `⋯` menüsü, 5 saniye Geri Al bildirimi)
+  - Parametrik Bonus Motoru (8, 9, 10 ve 11 harfli kelimeler, 10 sn yazma)
+  - PAS Tuşu (iki aşamalı onay koruması)
+  - Çift Klavye Desteği (Özel Oyun Klavyesi & Sistem/Telefon Klavyesi)
 
 ---
 

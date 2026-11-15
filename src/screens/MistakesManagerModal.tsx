@@ -331,9 +331,20 @@ export default function MistakesManagerModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[var(--color-bg-primary)] text-white select-none animate-fade-in">
-      {/* ─── Başlık Çubuğu ────────────────────────────────────── */}
-      <header className="px-4 pt-3 pb-2.5 border-b border-white/10 flex items-center justify-between shrink-0 bg-slate-900/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-0 sm:p-4 animate-fade-in">
+      <div
+        className="w-full max-w-[430px] h-full sm:h-[92dvh] sm:max-h-[850px] sm:rounded-3xl flex flex-col bg-[var(--color-bg-primary)] text-white select-none relative overflow-hidden shadow-2xl border-0 sm:border sm:border-white/10"
+        style={{
+          maxHeight: 'var(--app-height, 100dvh)',
+        }}
+      >
+        {/* ─── Başlık Çubuğu ────────────────────────────────────── */}
+        <header
+          className="px-4 pb-2.5 border-b border-white/10 flex items-center justify-between shrink-0 bg-slate-900/90 backdrop-blur-md"
+          style={{
+            paddingTop: 'max(0.75rem, env(safe-area-inset-top, 0px))',
+          }}
+        >
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -503,7 +514,7 @@ export default function MistakesManagerModal({
       </div>
 
       {/* ─── Liste İçeriği ───────────────────────────────────────── */}
-      <main className="flex-1 overflow-y-auto p-4 space-y-2">
+      <main className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2 overscroll-contain">
         {tab === 'missed' ? (
           missedList.length === 0 ? (
             <div className="py-12 text-center text-xs text-slate-400 bg-white/[0.02] rounded-2xl border border-white/5 p-6">
@@ -760,7 +771,12 @@ export default function MistakesManagerModal({
 
       {/* ─── Çoklu Seçim Alt Eylem Çubuğu ────────────────────────── */}
       {isMultiSelect && (
-        <div className="p-3 border-t border-white/10 bg-slate-900/95 flex items-center justify-between shrink-0 gap-3">
+        <div
+          className="p-3 border-t border-white/10 bg-slate-900/95 flex items-center justify-between shrink-0 gap-3"
+          style={{
+            paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))',
+          }}
+        >
           <button
             type="button"
             onClick={handleSelectAll}
@@ -793,7 +809,10 @@ export default function MistakesManagerModal({
         <aside
           role="status"
           aria-live="polite"
-          className="fixed bottom-4 left-4 right-4 z-50 flex items-center justify-between p-3.5 bg-slate-800/95 border border-rose-500/50 rounded-2xl shadow-2xl backdrop-blur-md animate-slide-up"
+          className="absolute left-4 right-4 z-50 flex items-center justify-between p-3.5 bg-slate-800/95 border border-rose-500/50 rounded-2xl shadow-2xl backdrop-blur-md animate-slide-up"
+          style={{
+            bottom: 'max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.5rem))',
+          }}
         >
           <div className="flex items-center gap-2">
             <span className="text-base">🗑️</span>
@@ -811,6 +830,7 @@ export default function MistakesManagerModal({
           </button>
         </aside>
       )}
+      </div>
     </div>
   )
 }

@@ -171,9 +171,9 @@ export default function LevelSelectScreen({
   }
 
   return (
-    <div className="flex flex-col min-h-dvh bg-[var(--color-bg-primary)] px-5 py-6 select-none">
+    <div className="flex flex-col h-full flex-1 bg-[var(--color-bg-primary)] px-4 sm:px-5 py-3 sm:py-5 overflow-y-auto select-none no-scrollbar">
       {/* Üst Bar */}
-      <div className="flex items-center mb-6">
+      <div className="flex items-center mb-3 sm:mb-4 shrink-0">
         <button
           type="button"
           onClick={() => {
@@ -201,7 +201,7 @@ export default function LevelSelectScreen({
       </div>
 
       {/* Seviye Kartları */}
-      <div className="flex-1 flex flex-col justify-center gap-3.5 max-w-sm mx-auto w-full">
+      <div className="flex-1 flex flex-col justify-start sm:justify-center gap-2.5 sm:gap-3.5 max-w-sm mx-auto w-full my-auto">
         {LEVEL_CARDS.map((card) => {
           const isLoading = loadingLevel === card.level
           const recordScore = records[card.level]
@@ -213,7 +213,7 @@ export default function LevelSelectScreen({
               disabled={Boolean(loadingLevel)}
               onClick={() => handleSelect(card.level)}
               className={`
-                w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border text-left
+                w-full p-3 sm:p-4 rounded-2xl bg-[var(--color-bg-card)] border text-left
                 transition-all duration-200 active:scale-98 relative overflow-hidden
                 ${card.borderColor}
                 ${isLoading ? 'ring-2 ring-violet-400 animate-pulse' : 'hover:bg-white/5'}
@@ -232,12 +232,12 @@ export default function LevelSelectScreen({
               </div>
 
               {/* Açıklama */}
-              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+              <p className="text-xs text-slate-300 mb-2 sm:mb-3 leading-relaxed">
                 {card.description}
               </p>
 
               {/* Alt Bilgi: Rekor veya Çalışma Notu ve Durum */}
-              <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
+              <div className="flex items-center justify-between pt-2 sm:pt-2.5 border-t border-white/10 text-xs">
                 {isPractice ? (
                   <span className="text-slate-400 text-[11px]">
                     🎯 Sınırsız alıştırma • Puan tutulmaz
@@ -284,16 +284,25 @@ export default function LevelSelectScreen({
         {/* 4. Kart: Hatalarımla Çalış (Çalışma modunda görünür, SPEC-v2 6.5 & M8) */}
         {isPractice && (
           studyableCount !== null && studyableCount > 0 ? (
-            <button
-              type="button"
-              disabled={Boolean(loadingLevel)}
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 if (loadingLevel) return
                 playSound('key_press')
                 triggerHaptic('tap')
                 onSelectMistakes?.()
               }}
-              className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-rose-500/30 hover:border-rose-400/70 text-left transition-all duration-200 active:scale-98 relative overflow-hidden group hover:bg-white/5"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  if (loadingLevel) return
+                  playSound('key_press')
+                  triggerHaptic('tap')
+                  onSelectMistakes?.()
+                }
+              }}
+              className="w-full p-3 sm:p-4 rounded-2xl bg-[var(--color-bg-card)] border border-rose-500/30 hover:border-rose-400/70 text-left transition-all duration-200 active:scale-98 relative overflow-hidden group hover:bg-white/5 cursor-pointer"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
@@ -309,7 +318,7 @@ export default function LevelSelectScreen({
                       triggerHaptic('tap')
                       setShowManagerModal(true)
                     }}
-                    className="text-[11px] font-bold text-rose-300 hover:text-white underline underline-offset-2 min-h-[32px] flex items-center"
+                    className="text-[11px] font-bold text-rose-300 hover:text-white underline underline-offset-2 min-h-[32px] flex items-center px-1.5 py-0.5 rounded-lg hover:bg-white/10 active:scale-95 transition-all"
                   >
                     Listeyi düzenle
                   </button>
@@ -318,10 +327,10 @@ export default function LevelSelectScreen({
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+              <p className="text-xs text-slate-300 mb-2 sm:mb-3 leading-relaxed">
                 Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
               </p>
-              <div className="flex items-center justify-between pt-2.5 border-t border-white/10 text-xs">
+              <div className="flex items-center justify-between pt-2 sm:pt-2.5 border-t border-white/10 text-xs">
                 <span className="text-slate-400 text-[11px]">
                   🎯 Hedefli tekrar • Puan tutulmaz
                 </span>
@@ -329,10 +338,10 @@ export default function LevelSelectScreen({
                   Başla ➔
                 </span>
               </div>
-            </button>
+            </div>
           ) : (
             <div
-              className="w-full p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-80 text-left relative"
+              className="w-full p-3 sm:p-4 rounded-2xl bg-[var(--color-bg-card)] border border-white/5 opacity-80 text-left relative"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
@@ -347,7 +356,7 @@ export default function LevelSelectScreen({
                       triggerHaptic('tap')
                       setShowManagerModal(true)
                     }}
-                    className="text-[11px] font-bold text-slate-300 hover:text-white underline underline-offset-2 min-h-[32px] flex items-center"
+                    className="text-[11px] font-bold text-slate-300 hover:text-white underline underline-offset-2 min-h-[32px] flex items-center px-1.5 py-0.5 rounded-lg hover:bg-white/10 active:scale-95 transition-all"
                   >
                     Listeyi düzenle
                   </button>
@@ -356,7 +365,7 @@ export default function LevelSelectScreen({
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed mb-2">
+              <p className="text-xs text-slate-400 leading-relaxed mb-1.5 sm:mb-2">
                 Yarışma ve Çalışma modlarında bilemediğin kelimelerle hedeflenmiş pratik yap.
               </p>
               <p className="text-[11px] text-amber-300/80 font-medium">
@@ -370,7 +379,7 @@ export default function LevelSelectScreen({
       </div>
 
       {/* Bilgilendirme Notu */}
-      <p className="text-center text-[11px] text-slate-500 mt-4 mb-2">
+      <p className="text-center text-[11px] text-slate-500 mt-2 sm:mt-4 mb-1 sm:mb-2 shrink-0">
         Tahmin doğrulama tüm seviyelerde 23.717 TDK kelimesiyle geçerlidir.
       </p>
 

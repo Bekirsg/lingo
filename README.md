@@ -1,27 +1,53 @@
-# LİNGO — Türkçe Kelime Oyunu (PWA)
+# LİNGO v2.0.0 — Türkçe Kelime Oyunu (PWA)
 
-Türk televizyon klasiği Lingo formatında, TDK Güncel Türkçe Sözlük (GTS 12. baskı) tabanlı, mobil öncelikli ve çevrimdışı (offline) çalışabilen Progressive Web App (PWA).
+Türk televizyon klasiği Lingo formatında, TDK Güncel Türkçe Sözlük (GTS 12. baskı) tabanlı, seviye sistemli, kapsamlı antrenman/analiz modlarına sahip, mobil öncelikli ve tamamen çevrimdışı (offline) çalışabilen Progressive Web App (PWA).
 
 ---
 
-## 🎮 Oyun Formatı
+## 🎮 Oyun Modları ve Özellikler
 
+### 1. 🏆 Yarışma Modu
+- **Seviye Seçimi:** Kolay (A1–A2), Orta (A1–B2) ve Zor (tüm kelimeler) seviyeleri. Her seviyenin en yüksek skoru ayrı kaydedilir.
 - **1–3. Turlar:** 
-  - Her turda 5 kelime (1. Tur: 4 harf, 2. Tur: 5 harf, 3. Tur: 6 harf).
+  - Her turda 5 kelime (1. Tur: 4 harfli, 2. Tur: 5 harfli, 3. Tur: 6 harfli).
   - Her tahmin için 15 saniye süre ve 5 tahmin hakkı.
   - Kelime bilindiğinde harf başına 100 puan; ilk harf daima açık ve yeşildir.
-  - Tur sonlarında 8 harfli **Bonus Soru**: 3 saniye okuma, her saniye rastgele bir harf açılır, puan 3.000'den 0'a doğru 200'er düşer. "BİL" tuşuna basıldığı anda puan donar ve **10 saniye** içinde kelimeyi yazma hakkı verilir.
+- **Parametrik Bonus Soru (8, 9, 10 ve 11 Harf):**
+  - Tur sonlarında 8, 9, 10 veya 11 harfli TDK tanımlı sürpriz kelimeler.
+  - Toplam $L + 2$ saniye süre; ilk 3 saniye okuma fazı, ardından saniyede 1 harf açılışı (3.000 puandan 0'a azalan puan).
+  - **"BİL"** tuşuna basıldığı anda puan ve harfler donar, oyuncuya kelimeyi tamamlaması için **10 saniye** yazma süresi verilir.
 - **4. Tur (Büyük Final):**
   - Toplam **120 saniye** tek sayaç!
   - Sırasıyla 4 → 5 → 6 → 7 harfli kelime etapları.
-  - Kelime bilinince sayaç donar, duraklama ekranında kazanç görünür ve oyuncu hazır olduğunda devam eder.
+  - Kelime bilinince sayaç donar, duraklama ekranında kazanç görünür.
   - Kelime kaybedilirse doğru kelime gösterilir, sayaç 3 saniye donar ve otomatik olarak aynı harf sayısında yeni kelimeye geçilir.
-  - 120 saniye dolduğunda son tamamlanan etabın kazancı alınır:
-    - *Hiçbiri:* 0 puan (kasa yanar)
-    - *4 Harfli:* Kasa / 2
-    - *5 Harfli:* Kasa × 1
-    - *6 Harfli:* Kasa × 2
-    - *7 Harfli:* 250.000 + (Kasa × 2)
+  - Final kazanç çarpanları: 4 Harf ($Kasa / 2$), 5 Harf ($Kasa \times 1$), 6 Harf ($Kasa \times 2$), 7 Harf ($250.000 + Kasa \times 2$).
+
+### 2. 📚 Çalışma Modu
+- Kolay, Orta veya Zor seviyede sınırsız kelime antrenmanı.
+- 4 → 5 → 6 → 7 → Bonus döngüsüyle kesintisiz pratik.
+- Süre kısıtları aynı kalır, puan baskısı yoktur; kaybedilen kelimelerde doğru cevap anında gösterilir.
+- İstendiğinde "Bitir" ile detaylı oturum özeti görüntülenir ve veriler Analizler'e işlenir.
+
+### 3. 🎯 "Hatalarımla Çalış" Modu
+- Yarışma ve Çalışma oturumlarında bilemediğiniz veya PAS geçtiğiniz kelimelerden dinamik havuz oluşturulur.
+- Bir kelime arka arkaya 2 kez doğru bilinince **"✓ öğrenildi"** sayılır ve çalışma havuzundan otomatik düşer.
+
+### 4. 📊 Detaylı Analizler ve İstatistikler
+- Mobil öncelikli, tek dikey akışlı modern gösterge paneli.
+- Harf sayısı ve baş harf filtreleri; en çok kaçırılan kelimeler ve sözlük dışı denemeler listesi.
+- Harf başarı ısı haritası, 9 kural öncelikli Akıllı Öneriler ve son oyunların ilerleme grafiği.
+
+### 5. ✏️ "Hatalarım" Yönetici Ekranı
+- Analizler ve Çalışma menüsünden erişilebilen tam denetimli liste yöneticisi.
+- Mobil uyumlu sola kaydırma (swipe-left 72px eşik) veya `⋯` menüsü ile kelimeleri listeden gizleme/geri alma.
+- Yanlışlıkla silmelere karşı 5 saniyelik **Geri Al (Undo)** bildirimi ve çoklu seçim desteği.
+- Gizlenen bir kelime oyunda tekrar kaçırılırsa otomatik olarak listeye geri döner.
+
+### 6. ⌨️ Ergonomik Klavye & PAS Tuşu
+- **Türkçe 29 Harf:** Q/W/X içermeyen, kenar boşlukları optimize edilmiş, gecikmesiz basış hissi veren özel dokunmatik klavye.
+- **Klavye Tercihi:** Ayarlar'dan dilediğiniz zaman "Oyun Klavyesi" veya "Telefon/Sistem Klavyesi" arasında geçiş yapabilirsiniz.
+- **İki Aşamalı PAS:** Yanlış dokunmalara karşı korumalı, 2 saniye içinde çift basışla onaylanan PAS tuşu.
 
 ---
 

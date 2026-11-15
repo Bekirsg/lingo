@@ -232,16 +232,18 @@ export default function AnalyticsScreen({ onBack, onStartMistakes }: AnalyticsSc
           />
         ) : (
           <>
-            {/* 1. Performans Özeti */}
-            <SummarySection summary={summary} />
+            {/* 1 & 2. Yalnızca "Tümü" görünümünde: Performans Özeti ve Başarı Sıralaması */}
+            {filterType === 'all' && (
+              <>
+                <SummarySection summary={summary} />
+                <RankingSection
+                  ranking={ranking}
+                  activeLength={undefined}
+                />
+              </>
+            )}
 
-            {/* 2. Başarı Sıralaması (Harf Sayılarına Göre) */}
-            <RankingSection
-              ranking={ranking}
-              activeLength={filterType === 'length' ? selectedLength : undefined}
-            />
-
-            {/* 3. Harf Sayısına Göre Başarı Performansı */}
+            {/* 3. Harf Sayısına Göre Başarı Performansı (Tümü, Harf Sayısı ve Baş Harf sekmelerinde doğrudan başlar) */}
             <LengthPerformanceSection
               items={ranking}
               activeLength={filterType === 'length' ? selectedLength : undefined}

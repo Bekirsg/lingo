@@ -249,18 +249,12 @@ export class Clock {
       this.pause()
     }
 
-    const handleBlur = () => {
-      this.pause()
-    }
-
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('pagehide', handlePageHide)
-    window.addEventListener('blur', handleBlur)
 
     this.cleanupListeners = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('pagehide', handlePageHide)
-      window.removeEventListener('blur', handleBlur)
     }
   }
 

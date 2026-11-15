@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GameLogo from '../components/GameLogo'
 
 interface SplashScreenProps {
   onReady: () => void
@@ -19,24 +20,14 @@ export default function SplashScreen({ onReady }: SplashScreenProps) {
   }, [onReady])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-dvh bg-[var(--color-bg-primary)]">
+    <div className="flex flex-col items-center justify-center min-h-dvh bg-[var(--color-bg-primary)] px-6">
       <div
-        className={`transition-all duration-700 ease-out ${
+        className={`transition-all duration-700 ease-out flex flex-col items-center ${
           fadeIn ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
         }`}
       >
-        {/* Logo */}
-        <div className="relative">
-          <div className="absolute -inset-8 bg-[var(--color-accent)] opacity-20 blur-3xl rounded-full" />
-          <h1 className="relative text-5xl font-black tracking-widest text-[var(--color-text-primary)] text-center">
-            LİNGO
-          </h1>
-        </div>
-
-        {/* Alt başlık */}
-        <p className="mt-4 text-sm text-[var(--color-text-secondary)] text-center tracking-widest uppercase">
-          Türkçe Kelime Oyunu
-        </p>
+        {/* 3D Modern Logo */}
+        <GameLogo size="large" />
 
         {/* Yükleniyor göstergesi */}
         <div className="mt-8 flex justify-center">

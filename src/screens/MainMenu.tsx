@@ -1,5 +1,6 @@
 import { playSound } from '../audio/sound'
 import { triggerHaptic } from '../haptics/vibration'
+import GameLogo from '../components/GameLogo'
 
 export type AppScreen =
   | 'splash'
@@ -25,18 +26,8 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-dvh bg-[var(--color-bg-primary)] px-6 select-none">
-      {/* Logo */}
-      <div className="mb-10 text-center">
-        <div className="relative inline-block">
-          <div className="absolute -inset-6 bg-[var(--color-accent)] opacity-20 blur-3xl rounded-full" />
-          <h1 className="relative text-5xl font-black tracking-widest text-[var(--color-text-primary)]">
-            LİNGO
-          </h1>
-        </div>
-        <p className="mt-2 text-xs text-[var(--color-text-muted)] tracking-widest uppercase">
-          Türkçe Kelime Oyunu
-        </p>
-      </div>
+      {/* 3D Modern Logo */}
+      <GameLogo className="mb-8" />
 
       {/* Menü butonları */}
       <div className="w-full max-w-xs flex flex-col gap-3">
@@ -75,7 +66,7 @@ export default function MainMenu({ onNavigate }: MainMenuProps) {
 
       {/* Alt bilgi */}
       <p className="mt-10 text-xs text-[var(--color-text-muted)] font-mono">
-        v2.0.0
+        v2.0.1
       </p>
     </div>
   )

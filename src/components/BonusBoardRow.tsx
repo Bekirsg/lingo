@@ -79,8 +79,8 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
           displayChar = turkishUpper(userChar)
           bgClass = 'bg-white/10 border-white/30 text-white font-bold'
         } else if (isCursor) {
-          // Aktif imleç
-          bgClass = 'bg-white/10 border-violet-400 text-white ring-2 ring-violet-400/50 animate-pulse'
+          // Aktif imleç — Son derece belirgin altın/kehribar ışık efekti, kalın parlak çerçeve ve hafif büyüme
+          bgClass = 'bg-amber-400/30 border-amber-300 text-white ring-4 ring-amber-400/80 shadow-[0_0_22px_rgba(251,191,36,0.95)] scale-105 z-10 animate-pulse'
         }
 
         return (
@@ -88,14 +88,18 @@ export default function BonusBoardRow({ bonusState, isWriting }: BonusBoardRowPr
             key={idx}
             className={`
               flex-1 min-w-0 max-w-[42px] sm:max-w-[46px] aspect-square
-              flex items-center justify-center
+              flex flex-col items-center justify-center
               ${roundedClass} ${textClass} font-black
-              border-2 transition-all duration-300
+              border-2 transition-all duration-200 relative
               ${bgClass}
             `}
             role="gridcell"
           >
             <span>{displayChar}</span>
+            {/* Boş aktif kutuda ekstra dikkat çekici zıplayan imleç çizgisi */}
+            {isCursor && displayChar === '' && (
+              <div className="w-3.5 sm:w-5 h-1 sm:h-1.5 bg-amber-300 rounded-full animate-bounce shadow-[0_0_10px_rgba(251,191,36,1)] absolute bottom-1" />
+            )}
           </div>
         )
       })}

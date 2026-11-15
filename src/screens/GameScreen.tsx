@@ -57,15 +57,15 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
       .then(async (repo) => {
         if (!active) return
 
-        // Hatalarımla modunda seviye dosyası İNDİRİLMEZ (SPEC M8)
+        // Bonus kelimelerini tüm modlar (Yarışma, Çalışma, Hatalarımla) için önceden garantiye al
+        try {
+          await ensureBonusLoaded(repo)
+        } catch (err) {
+          console.warn('[LİNGO v2] Bonus kelime verisi ön yükleme uyarısı (yedek havuz devrede):', err)
+        }
+
         // Kolay veya Orta ise seviye dosyalarının hazır olduğundan emin ol (Zor hiçbir şey indirmez)
-        if (mode === 'hatalar') {
-          try {
-            await ensureBonusLoaded(repo)
-          } catch (err) {
-            console.error('[LİNGO v2] Bonus kelime verisi yüklenemedi:', err)
-          }
-        } else if (level !== 'zor') {
+        if (mode !== 'hatalar' && level !== 'zor') {
           try {
             await Promise.all([
               ensureLevelsLoaded(repo, level),
@@ -103,9 +103,6 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
 
         // Oyunu seçilen seviye ve modla hemen başlat
         game.startNewGame(level, mode)
-
-        // Bonus verisini arka planda pre-fetch et (bonusa gelince hazır olsun)
-        ensureBonusLoaded(repo).catch(() => {})
       })
       .catch((err) => {
         console.error('Kelime verisi yüklenirken hata:', err)
@@ -122,25 +119,20 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
   }, [level, mode, reloadKey])
 
   // SPEC Bölüm 2.1-4: Arka plana atılınca (sekme gizlenince / blur) otomatik duraklama
+  // Sekme değişimi ve arka plan otomatik duraklatma (yalnızca gerçek sekme gizlenmesinde)
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.hidden && controllerRef.current) {
-        controllerRef.current.pauseGame()
-      }
-    }
-
-    const handleBlur = () => {
-      if (controllerRef.current) {
-        controllerRef.current.pauseGame()
+      if (document.hidden) {
+        if (controllerRef.current) {
+          controllerRef.current.pauseGame()
+        }
       }
     }
 
     document.addEventListener('visibilitychange', handleVisibility)
-    window.addEventListener('blur', handleBlur)
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibility)
-      window.removeEventListener('blur', handleBlur)
     }
   }, [])
 
@@ -482,7 +474,7 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
         <div className="w-full max-w-sm px-4 my-2 z-20 animate-fade-in">
           <div className="bg-rose-950/90 border border-rose-500/60 rounded-2xl px-4 py-2.5 flex flex-col items-center justify-center shadow-lg shadow-rose-950/50 backdrop-blur-md text-center">
             <span className="text-[11px] uppercase font-black tracking-wider text-rose-300">
-              ❌ KELİME KAYBEDİLDİ
+              {controller?.getClock().getRemainingSeconds() === 0 ? '⏰ 120 SANİYE DOLDU' : '❌ KELİME KAYBEDİLDİ'}
             </span>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-xs text-slate-400">Doğru Kelime:</span>
@@ -490,7 +482,9 @@ export default function GameScreen({ onBackToMenu, level = 'zor', mode = 'yarism
                 {turkishUpper(r4.lostWord)}
               </span>
             </div>
-            <span className="text-[10px] text-slate-400 mt-0.5">Yeni kelime hazırlanıyor...</span>
+            <span className="text-[10px] text-slate-400 mt-0.5">
+              {controller?.getClock().getRemainingSeconds() === 0 ? 'Sonuçlar hazırlanıyor...' : 'Yeni kelime hazırlanıyor...'}
+            </span>
           </div>
         </div>
       )}

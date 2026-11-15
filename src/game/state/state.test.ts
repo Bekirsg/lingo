@@ -188,6 +188,14 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     mockTime += 125_000
     game.getClock().check()
 
+    // Önce doğru cevap ve kayıp ekranı gösterilir
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getState().round4State!.lostWord).toBeDefined()
+
+    // 3 sn bekleme bitince game_over
+    mockTime += 4000
+    game.getWaitClock().check()
+
     // Kasa yanar -> final skor = 0
     expect(game.getState().screen).toBe('game_over')
     expect(game.getState().finalScore).toBe(0)
@@ -526,14 +534,20 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
 
     // 6 harflideyken süre doldu (120 sn bitti)
     game.onRound4Timeout()
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getState().round4State!.lostWord).toBeDefined()
+    mockTime += 4000
+    game.getWaitClock().check()
     expect(game.getState().screen).toBe('game_over')
     // 5 harfli tamamlandığı için kazanç K = 20.000
     expect(game.getState().finalScore).toBe(20_000)
   })
 
   it('senaryo 9: 4. turda 6 harfli etap tamamlandıktan sonra süre dolarsa final skor 2*K olur', () => {
+    let mockTime = 1000
     const game = new GameController({
       words: mockRepo,
+      nowFn: () => mockTime,
     })
 
     // 15.000 kasa ile doğrudan 4. tura atla
@@ -554,6 +568,10 @@ describe('Game State Machine (SPEC Bölüm 2.1-2, Bölüm 4)', () => {
     expect(game.getState().round4State!.stage).toBe(7)
     // Süre doldu
     game.onRound4Timeout()
+    expect(game.getState().screen).toBe('round4_word_lost')
+    expect(game.getState().round4State!.lostWord).toBeDefined()
+    mockTime += 4000
+    game.getWaitClock().check()
     expect(game.getState().screen).toBe('game_over')
     // 6 harfli tamamlandığı için final skor = 2 * 15.000 = 30.000
     expect(game.getState().finalScore).toBe(30_000)

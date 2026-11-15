@@ -27,7 +27,6 @@ export type SoundType =
   | 'new_record'
 
 let audioCtx: AudioContext | null = null
-let isUnlocked = false
 let masterGain: GainNode | null = null
 
 /**
@@ -57,39 +56,55 @@ function getAudioContext(): AudioContext | null {
 }
 
 /**
- * İlk kullanıcı dokunuşunda (pointerdown, touchstart, keydown) AudioContext kilidini açar.
+ * Kullanıcı etkileşiminde (dokunma, tıklama, tuş) AudioContext'i güvenceye alır ve uyandırır.
+ * Mobil tarayıcılar (özellikle Chrome ve Safari) sekme değişiminden sonra resume() çağrısını
+ * yalnızca kullanıcı jesti sırasında kabul eder.
  */
-export function initAudioUnlock(): void {
-  if (typeof window === 'undefined' || isUnlocked) return
+export function ensureAudioActive(): void {
+  if (typeof window === 'undefined') return
 
-  const unlock = () => {
-    const ctx = getAudioContext()
-    if (ctx) {
-      if (ctx.state === 'suspended') {
-        ctx.resume().catch(() => {})
-      }
-      isUnlocked = true
-    }
-
-    window.removeEventListener('pointerdown', unlock)
-    window.removeEventListener('touchstart', unlock)
-    window.removeEventListener('keydown', unlock)
+  if (!audioCtx || audioCtx.state === 'closed') {
+    audioCtx = null
+    masterGain = null
+    getAudioContext()
   }
 
-  window.addEventListener('pointerdown', unlock, { once: true, passive: true })
-  window.addEventListener('touchstart', unlock, { once: true, passive: true })
-  window.addEventListener('keydown', unlock, { once: true, passive: true })
+  if (audioCtx && (audioCtx.state === 'suspended' || (audioCtx.state as string) === 'interrupted')) {
+    audioCtx.resume().catch(() => {})
+  }
 }
 
-// Sekme arka plana atıldığında sesi otomatik duraklat
+/**
+ * İlk ve sonraki tüm kullanıcı dokunuşlarında AudioContext'i canlı tutar.
+ */
+export function initAudioUnlock(): void {
+  if (typeof window === 'undefined') return
+
+  ensureAudioActive()
+
+  // Sürekli dinleyiciler ile sekme değişimi sonrası herhangi bir dokunuşta ses anında geri gelir
+  window.addEventListener('pointerdown', ensureAudioActive, { passive: true })
+  window.addEventListener('touchstart', ensureAudioActive, { passive: true })
+  window.addEventListener('keydown', ensureAudioActive, { passive: true })
+  window.addEventListener('focus', ensureAudioActive, { passive: true })
+}
+
+// Sekme arka plana atıldığında sesi otomatik duraklat; öne gelince hazırla
 if (typeof document !== 'undefined') {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && audioCtx && audioCtx.state === 'running') {
       audioCtx.suspend().catch(() => {})
-    } else if (!document.hidden && audioCtx && audioCtx.state === 'suspended' && isUnlocked) {
-      audioCtx.resume().catch(() => {})
+    } else if (!document.hidden) {
+      ensureAudioActive()
     }
   })
+}
+
+// Global kalıcı dinleyicileri bağla
+if (typeof window !== 'undefined') {
+  window.addEventListener('pointerdown', ensureAudioActive, { passive: true })
+  window.addEventListener('touchstart', ensureAudioActive, { passive: true })
+  window.addEventListener('keydown', ensureAudioActive, { passive: true })
 }
 
 /**
@@ -100,11 +115,16 @@ export function playSound(type: SoundType): void {
   if (typeof document !== 'undefined' && document.hidden) return
   if (!getSettings().sound) return
 
-  const ctx = getAudioContext()
+  let ctx = getAudioContext()
+  if (!ctx || ctx.state === 'closed') {
+    audioCtx = null
+    masterGain = null
+    ctx = getAudioContext()
+  }
   if (!ctx || !masterGain) return
 
-  // AudioContext henüz başlamamışsa resume dene
-  if (ctx.state === 'suspended') {
+  // AudioContext henüz başlamamış veya askıya alınmışsa resume dene
+  if (ctx.state === 'suspended' || (ctx.state as string) === 'interrupted') {
     ctx.resume().catch(() => {})
   }
 

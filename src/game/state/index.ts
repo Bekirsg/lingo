@@ -33,7 +33,7 @@ import {
 } from '../mistakes/mistakeSelector'
 import type { WordRepository } from '../../data/words'
 import type { GameLevel } from '../../data/levels'
-import { pickWordWithFallback, pickBonusWordWithFallback } from '../../data/levels'
+import { pickWordWithFallback, pickBonusWordWithFallback, type PickBonusResult } from '../../data/levels'
 import type {
   GameState,
   GameMode,
@@ -440,16 +440,18 @@ export class GameController {
         : pickBonusWordWithFallback(bonusPool, levelData, this.state.level, this.state.usedWords)
     }
 
-    if (!res) {
-      throw new Error('Çalışma modu bonus kelime havuzu bulunamadı!')
+    const finalRes: PickBonusResult = res || {
+      word: 'apartman',
+      definition: 'Birden çok katlı ve bağımsız bölümleri olan bina',
+      fromLevel: 'orta',
     }
 
-    this.state.usedWords.add(res.word)
-    const actualLen = letterCount(res.word)
+    this.state.usedWords.add(finalRes.word)
+    const actualLen = letterCount(finalRes.word)
 
     this.state.bonusState = {
-      word: res.word,
-      definition: res.definition,
+      word: finalRes.word,
+      definition: finalRes.definition,
       length: actualLen,
       revealOrder: shuffleRevealOrder(actualLen),
       revealedCount: 0,
@@ -930,30 +932,42 @@ export class GameController {
 
     if (this.state.mode === 'calisma') {
       const ps = this.state.practiceState!
-      if (ps.questionIndexInCycle === 1) {
-        ps.questionIndexInCycle = 2
-        this.setupPracticeWord(5)
+      try {
+        if (ps.questionIndexInCycle === 1) {
+          ps.questionIndexInCycle = 2
+          this.setupPracticeWord(5)
+          this.state.screen = 'countdown'
+          this.state.countdownValue = 3
+          this.state.countdownTarget = 'playing_round'
+        } else if (ps.questionIndexInCycle === 2) {
+          ps.questionIndexInCycle = 3
+          this.setupPracticeWord(6)
+          this.state.screen = 'countdown'
+          this.state.countdownValue = 3
+          this.state.countdownTarget = 'playing_round'
+        } else if (ps.questionIndexInCycle === 3) {
+          ps.questionIndexInCycle = 4
+          this.setupPracticeWord(7)
+          this.state.screen = 'countdown'
+          this.state.countdownValue = 3
+          this.state.countdownTarget = 'playing_round'
+        } else {
+          // questionIndexInCycle >= 4 (7 harfli tamamlandı -> bonus soruya geç)
+          ps.questionIndexInCycle = 5
+          this.setupPracticeBonus(8)
+          this.state.screen = 'countdown'
+          this.state.countdownValue = 3
+          this.state.countdownTarget = 'bonus_reading'
+        }
+      } catch (err) {
+        console.error('[LİNGO v2] Çalışma modu soru geçiş hatası:', err)
+        // Hata durumunda asla kilitlenme; yeni döngüye 4 harfli kelimeyle güvenle devam et
+        ps.cycle++
+        ps.questionIndexInCycle = 1
+        this.setupPracticeWord(4)
         this.state.screen = 'countdown'
         this.state.countdownValue = 3
         this.state.countdownTarget = 'playing_round'
-      } else if (ps.questionIndexInCycle === 2) {
-        ps.questionIndexInCycle = 3
-        this.setupPracticeWord(6)
-        this.state.screen = 'countdown'
-        this.state.countdownValue = 3
-        this.state.countdownTarget = 'playing_round'
-      } else if (ps.questionIndexInCycle === 3) {
-        ps.questionIndexInCycle = 4
-        this.setupPracticeWord(7)
-        this.state.screen = 'countdown'
-        this.state.countdownValue = 3
-        this.state.countdownTarget = 'playing_round'
-      } else if (ps.questionIndexInCycle === 4) {
-        ps.questionIndexInCycle = 5
-        this.setupPracticeBonus(8)
-        this.state.screen = 'countdown'
-        this.state.countdownValue = 3
-        this.state.countdownTarget = 'bonus_reading'
       }
       this.emitState()
       return
@@ -1543,11 +1557,19 @@ export class GameController {
   /**
    * 4. turda kelime kaybedilince ~3 sn bekleme sona erince (waitClock callback).
    * Ana sayaç kaldığı yerden devam eder, aynı harf sayısında yeni kelime gelir.
+   * Eğer 120 sn süre dolmuşsa oyun sonlandırılır.
    */
   private onRound4WordLostExpire(): void {
     if (this.state.screen !== 'round4_word_lost' || !this.state.round4State) return
     const r4 = this.state.round4State
     r4.lostWord = undefined
+
+    // 120 saniyelik ana süre dolmuşsa doğrudan oyunu bitir
+    if (this.clock.getRemainingSeconds() <= 0) {
+      this.finishGame()
+      return
+    }
+
     this.setupRound4Word(r4.stage)
     this.state.screen = 'round4_playing'
     // Ana sayaç kaldığı yerden devam eder
@@ -1575,13 +1597,36 @@ export class GameController {
     this.emitState()
   }
 
-  /** 4. tur 120 saniyesi dolduğunda */
+  /**
+   * 4. tur 120 saniyesi dolduğunda:
+   * Eğer o anda bir kelime çözülüyorsa doğrudan bitirmek yerine önce doğru kelimeyi
+   * kaybedilmiş olarak kırmızı tahtada ~3 sn gösterir, ardından oyunu sonlandırır.
+   */
   onRound4Timeout(): void {
     if (
       this.state.screen !== 'round4_playing' &&
       this.state.screen !== 'round4_stage_cleared' &&
       this.state.screen !== 'round4_word_lost'
     ) return
+
+    // Eğer oyuncu kelimeyi çözerken süre dolduysa:
+    if (this.state.screen === 'round4_playing' && this.state.round4State) {
+      const r4 = this.state.round4State
+      r4.lostWord = r4.currentWord
+      this.clock.stop()
+      this.gameLostWordsCount++
+      this.state.screen = 'round4_word_lost'
+      this.waitClock.start(3, () => this.finishGame())
+      this.emitState()
+      return
+    }
+
+    // Zaten round4_word_lost ekranında doğru kelime gösteriliyorsa waitClock bitiminde sonlanır
+    if (this.state.screen === 'round4_word_lost') {
+      this.clock.stop()
+      return
+    }
+
     // Bekleme sayacını da durdur
     this.waitClock.stop()
     this.finishGame()
